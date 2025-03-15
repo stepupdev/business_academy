@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       routerConfig: _router,
       title: 'Flutter Demo',
-      theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple)),
+      theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple )),
     );
   }
 }
@@ -46,7 +46,7 @@ class _InitialScreenState extends State<InitialScreen> {
   @override
   void initState() {
     super.initState();
-    _checkFirstLaunch();
+    // _checkFirstLaunch();
   }
 
   Future<void> _checkFirstLaunch() async {
