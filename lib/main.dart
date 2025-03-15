@@ -1,3 +1,4 @@
+import 'package:business_application/features/onboarding/presentation/pages/splash_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -18,7 +19,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       routerConfig: _router,
       title: 'Flutter Demo',
-      theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple )),
+      theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple)),
     );
   }
 }
@@ -26,7 +27,8 @@ class MyApp extends StatelessWidget {
 final GoRouter _router = GoRouter(
   initialLocation: '/',
   routes: [
-    GoRoute(path: '/', builder: (context, state) => const InitialScreen()),
+    GoRoute(path: '/', builder: (context, state) => const SplashPage()),
+    GoRoute(path: '/initial', builder: (context, state) => const InitialScreen()),
     GoRoute(path: '/onboarding', builder: (context, state) => const OnboardingPage()),
     GoRoute(path: '/signin', builder: (context, state) => const SignInPage()),
     GoRoute(path: '/home', builder: (context, state) => HomePage(user: state.extra as GoogleSignInAccount?)),
@@ -46,7 +48,7 @@ class _InitialScreenState extends State<InitialScreen> {
   @override
   void initState() {
     super.initState();
-    // _checkFirstLaunch();
+    _checkFirstLaunch();
   }
 
   Future<void> _checkFirstLaunch() async {
