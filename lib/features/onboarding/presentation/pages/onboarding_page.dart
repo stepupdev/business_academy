@@ -1,4 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:business_application/core/config/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
@@ -68,7 +69,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
         padding: const EdgeInsets.all(8.0),
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xff205EEF),
+            backgroundColor: AppColors.primaryColor,
             padding: const EdgeInsets.symmetric(vertical: 16),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
           ),
@@ -91,7 +92,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
       height: 12,
       width: 12,
       decoration: BoxDecoration(
-        color: isActive ? Color(0xff205EEF) : Colors.grey.shade400,
+        color: isActive ? AppColors.primaryColor: Colors.grey.shade400,
         borderRadius: BorderRadius.circular(12),
       ),
     );

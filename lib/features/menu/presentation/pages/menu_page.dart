@@ -1,4 +1,4 @@
-import 'package:business_application/features/auth/controller/auth_service.dart';
+import 'package:business_application/features/auth/controller/auth_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -24,11 +24,20 @@ class MenuPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              CircleAvatar(radius: 50, backgroundImage: NetworkImage(authController.userPhoto.value)),
+              CircleAvatar(
+                radius: 50,
+                backgroundImage: NetworkImage(authController.loginResponseModel.value.result?.user?.avatar ?? ""),
+              ),
               SizedBox(height: 10),
-              Text(authController.userDisplayName.value, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+              Text(
+                authController.loginResponseModel.value.result?.user?.name ?? "",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
               SizedBox(height: 10),
-              Text(authController.userEmail.value, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+              Text(
+                authController.loginResponseModel.value.result?.user?.email ?? "",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
               SizedBox(height: 20),
               Container(
                 decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10)),
@@ -68,7 +77,7 @@ class MenuPage extends StatelessWidget {
                 children: [
                   TextButton.icon(
                     onPressed: () {
-                      authController.signOut();
+                      authController.signOut(context);
                     },
                     icon: Icon(Icons.logout, color: Colors.black, size: 20),
                     label: Text(

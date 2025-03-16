@@ -1,6 +1,10 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:business_application/features/auth/controller/auth_service.dart';
+import 'package:business_application/core/config/app_colors.dart';
+import 'package:business_application/core/config/app_size.dart';
+import 'package:business_application/features/auth/controller/auth_controller.dart';
+import 'package:business_application/features/auth/data/login_response_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -21,13 +25,13 @@ class CommunityPage extends StatelessWidget {
             return Column(
               children: [
                 Container(
-                  width: 40,
-                  height: 5,
-                  margin: EdgeInsets.symmetric(vertical: 10),
+                  width: 40.w,
+                  height: 5.h,
+                  margin: EdgeInsets.symmetric(vertical: 10.h),
                   decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(10)),
                 ),
                 Text("Comments", style: GoogleFonts.plusJakartaSans(fontSize: 15, fontWeight: FontWeight.w700)),
-                SizedBox(height: 40),
+                40.hS,
                 Expanded(
                   child: ListView(
                     controller: scrollController,
@@ -40,13 +44,13 @@ class CommunityPage extends StatelessWidget {
                     ],
                   ),
                 ),
-                Divider(height: 1),
+                Divider(height: 1.h),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
                     children: [
                       CircleAvatar(child: Text('U')),
-                      SizedBox(width: 10),
+                      10.wS,
                       Expanded(
                         child: TextField(
                           decoration: InputDecoration(hintText: 'Add a comment...', border: InputBorder.none),
@@ -110,17 +114,20 @@ class CommunityPage extends StatelessWidget {
         flexibleSpace: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [Color(0xFF0056D2), Color(0xFF003BC6)],
+              colors: [AppColors.primaryColor, Color(0xFF003BC6)],
               begin: Alignment.centerLeft,
               end: Alignment.centerRight,
             ),
           ),
         ),
-        bottom: PreferredSize(preferredSize: Size.fromHeight(30), child: Container(color: Colors.grey[300], height: 1)),
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(30.h),
+          child: Container(color: Colors.grey[300], height: 1.h),
+        ),
         title: Row(
           children: [
             SvgPicture.asset("assets/logo/bg_logo.svg"),
-            SizedBox(width: 10),
+            10.wS,
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -133,19 +140,22 @@ class CommunityPage extends StatelessWidget {
         actions: [IconButton(icon: Icon(Icons.search, color: Colors.white), onPressed: () {})],
       ),
       body: ListView.separated(
-        separatorBuilder: (context, index) => Divider(thickness: 1),
+        separatorBuilder: (context, index) => Divider(thickness: 1.h),
         itemCount: 11, // Increased by 1 to include the create post section
         itemBuilder: (context, index) {
           if (index == 0) {
             return Container(
-              margin: EdgeInsets.all(10),
-              color: Colors.white,
+              color: Color(0xffE9F0FF),
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
                   children: [
-                    CircleAvatar(backgroundImage: NetworkImage(Get.find<AuthController>().userPhoto.value)),
-                    SizedBox(width: 10),
+                    CircleAvatar(
+                      backgroundImage: NetworkImage(
+                        Get.find<AuthController>().loginResponseModel.value.result?.user?.avatar ?? "",
+                      ),
+                    ),
+                    10.wS,
                     Expanded(
                       child: TextButton(
                         onPressed: () {
@@ -153,13 +163,19 @@ class CommunityPage extends StatelessWidget {
                         },
                         style: TextButton.styleFrom(
                           alignment: Alignment.centerLeft,
-                          backgroundColor: Colors.grey[200],
-                          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                          backgroundColor: Colors.white,
+                          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                          side: BorderSide(color: Colors.blue),
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                         ),
-                        child: Text('What\'s on your mind?', style: TextStyle(color: Colors.grey)),
+                        child: Text(
+                          'Creatre a Post!',
+                          style: GoogleFonts.plusJakartaSans(color: Colors.grey, fontWeight: FontWeight.w600),
+                        ),
                       ),
                     ),
+                    14.wS,
+                    IconButton(icon: Icon(Icons.add_circle_outline), onPressed: () {}),
                   ],
                 ),
               ),
@@ -167,7 +183,7 @@ class CommunityPage extends StatelessWidget {
           } else {
             index -= 1; // Adjust index for the rest of the feed
             return Container(
-              margin: EdgeInsets.all(10),
+              margin: EdgeInsets.all(10.w),
               color: Colors.white,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -182,7 +198,7 @@ class CommunityPage extends StatelessWidget {
                     child: Text('This is the caption for post $index'),
                   ),
                   SizedBox(
-                    height: 200,
+                    height: 200.h,
                     child:
                         index % 3 == 0
                             ? Row(
@@ -192,7 +208,7 @@ class CommunityPage extends StatelessWidget {
                                     children: [
                                       Expanded(
                                         child: Container(
-                                          margin: EdgeInsets.only(bottom: 5),
+                                          margin: EdgeInsets.only(bottom: 5.h),
                                           decoration: BoxDecoration(
                                             color: Colors.grey[300],
                                             borderRadius: BorderRadius.circular(10),
@@ -212,7 +228,7 @@ class CommunityPage extends StatelessWidget {
                                     ],
                                   ),
                                 ),
-                                SizedBox(width: 5),
+                                5.wS,
                                 Expanded(
                                   child: Container(
                                     decoration: BoxDecoration(
@@ -229,7 +245,7 @@ class CommunityPage extends StatelessWidget {
                               children: [
                                 Expanded(
                                   child: Container(
-                                    margin: EdgeInsets.only(right: 5),
+                                    margin: EdgeInsets.only(right: 5.w),
                                     decoration: BoxDecoration(
                                       color: Colors.grey[300],
                                       borderRadius: BorderRadius.circular(10),

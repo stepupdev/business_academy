@@ -1,4 +1,4 @@
-import 'package:business_application/features/auth/controller/auth_service.dart';
+import 'package:business_application/features/auth/controller/auth_controller.dart';
 import 'package:get/get.dart';
 
 class DependencyInjection extends Bindings{

@@ -1,31 +1,15 @@
-import 'package:business_application/features/auth/controller/auth_service.dart';
+import 'package:business_application/core/config/app_colors.dart';
+import 'package:business_application/features/auth/controller/auth_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:go_router/go_router.dart';
 
 class SignInPage extends GetView<AuthController> {
   const SignInPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    Future<void> _handleSignIn() async {
-      try {
-        final user = await controller.signInWithGoogle();
-        print("user: $user");
-        if (user != null) {
-          context.go('/home', extra: user);
-        }
-        if (user == null) {
-          print("null");
-        }
-      } catch (error) {
-        print("Hello");
-        print(error);
-      }
-    }
-
     return Scaffold(
       body: SafeArea(
         child: Container(
@@ -52,7 +36,9 @@ class SignInPage extends GetView<AuthController> {
               ),
               SizedBox(height: 40),
               ElevatedButton(
-                onPressed: _handleSignIn,
+                onPressed: () {
+                  controller.signInWithGoogle(context);
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
                   elevation: 0,
@@ -60,14 +46,17 @@ class SignInPage extends GetView<AuthController> {
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SvgPicture.asset('assets/images/google.svg', height: 24),
-                    const SizedBox(width: 10),
-                    const Text('Continue with Google'),
-                  ],
-                ),
+                child:
+                    controller.isLoading.value
+                        ? Center(child: CircularProgressIndicator())
+                        : Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SvgPicture.asset('assets/images/google.svg', height: 24),
+                            const SizedBox(width: 10),
+                            const Text('Continue with Google'),
+                          ],
+                        ),
               ),
               SizedBox(height: 30),
               // Rich text for the terms and conditions
@@ -78,7 +67,7 @@ class SignInPage extends GetView<AuthController> {
                   children: [
                     TextSpan(
                       text: 'Terms and Conditions',
-                      style: GoogleFonts.lexend(fontSize: 14, color: Color(0xff205EEF)),
+                      style: GoogleFonts.lexend(fontSize: 14, color: AppColors.primaryColor),
                     ),
                   ],
                 ),

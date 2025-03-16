@@ -1,4 +1,4 @@
-import 'package:business_application/features/auth/controller/auth_service.dart';
+import 'package:business_application/features/auth/controller/auth_controller.dart';
 import 'package:business_application/features/auth/presentation/pages/signin_page.dart';
 import 'package:business_application/features/community/presentation/pages/community_page.dart';
 import 'package:business_application/features/feed/presentation/pages/feed_page.dart';
@@ -11,7 +11,6 @@ import 'package:business_application/features/onboarding/presentation/pages/spla
 import 'package:business_application/routes/not_found_page.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(
