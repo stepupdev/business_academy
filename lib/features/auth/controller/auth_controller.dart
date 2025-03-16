@@ -1,6 +1,8 @@
 import 'package:business_application/features/auth/data/login_response_model.dart';
 import 'package:business_application/repository/auth_repo/auth_repo.dart';
+import 'package:business_application/services/auth_services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:get/get.dart';
 import 'package:get/route_manager.dart';
 import 'package:get/state_manager.dart';
 import 'package:go_router/go_router.dart';
@@ -29,8 +31,11 @@ class AuthController extends GetxController {
           userToken.value = token;
           print("User token: ${userToken.value}");
         }
-        AuthRepository().signInWithGoogle(userToken.value).then((value) {
-          loginResponseModel(LoginResponseModel.fromJson(value));
+        AuthRepository().signInWithGoogle(userToken.value).then((value) async {
+          // if (value['message'] == "User logged in successfully.") {
+          //   var data = LoginResponseModel.fromJson(value);
+          //   await Get.find<AuthService>().setUser(data);
+          // }
           print("Login response model: ${loginResponseModel.value.result?.user?.name}");
           if (loginResponseModel.value.success == true) {
             print("Login successful");
