@@ -1,40 +1,31 @@
+import 'package:business_application/features/auth/controller/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:go_router/go_router.dart';
 
-class SignInPage extends StatefulWidget {
+class SignInPage extends GetView<AuthController> {
   const SignInPage({super.key});
 
   @override
-  State<SignInPage> createState() => _SignInPageState();
-}
-
-class _SignInPageState extends State<SignInPage> {
-  final GoogleSignIn _googleSignIn = GoogleSignIn(
-    serverClientId: "1036640298216-fktikfkdjgbn9aqermkpguc458lvhtjp.apps.googleusercontent.com",
-    scopes: ["email"],
-    signInOption: SignInOption.standard,
-  );
-
-  Future<void> _handleSignIn() async {
-    try {
-      final user = await _googleSignIn.signIn();
-      print("user: $user");
-      if (user != null) {
-        context.go('/home', extra: user);
-      } if(user == null){
-        print("null");
-      }
-    } catch (error) {
-      print("Hello");
-      print(error);
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
+    Future<void> _handleSignIn() async {
+      try {
+        final user = await controller.signInWithGoogle();
+        print("user: $user");
+        if (user != null) {
+          context.go('/home', extra: user);
+        }
+        if (user == null) {
+          print("null");
+        }
+      } catch (error) {
+        print("Hello");
+        print(error);
+      }
+    }
+
     return Scaffold(
       body: SafeArea(
         child: Container(
@@ -49,7 +40,7 @@ class _SignInPageState extends State<SignInPage> {
           child: Column(
             children: [
               const SizedBox(height: 75),
-              Image.asset('assets/images/logoname.png', height: 24),
+              Image.asset('assets/logo/logoname.png', height: 24),
               const SizedBox(height: 75),
               Text(
                 "Sign up Now and start your",

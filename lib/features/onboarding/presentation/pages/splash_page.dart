@@ -28,7 +28,7 @@ class _SplashPageState extends State<SplashPage> {
       body: Column(
         children: [
           const Spacer(),
-          Center(child: SvgPicture.asset('assets/images/logo.svg', height: 80)),
+          Center(child: SvgPicture.asset('assets/logo/logo.svg', height: 80)),
           const Spacer(),
           Padding(
             padding: const EdgeInsets.only(bottom: 20),
