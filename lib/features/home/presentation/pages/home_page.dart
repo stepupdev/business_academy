@@ -9,8 +9,12 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(user?.email ?? 'Home')),
-      body: ListView(children: [PostCard(user: user, content: 'This is a sample post.')]),
+      appBar: AppBar(
+        title: Text(user?.email ?? 'Home'),
+      ),
+      body: ListView(
+        children: [PostCard(user: user, content: 'This is a sample post.')],
+      ),
     );
   }
 }
@@ -26,7 +30,10 @@ class PostCard extends StatelessWidget {
     return Card(
       child: Column(
         children: [
-          ListTile(title: Text(user?.email ?? 'Anonymous'), subtitle: Text(content)),
+          ListTile(
+            title: Text(user?.email ?? 'Anonymous'),
+            subtitle: Text(content),
+          ),
           ButtonBar(
             children: [
               TextButton(onPressed: () {}, child: const Text('Like')),

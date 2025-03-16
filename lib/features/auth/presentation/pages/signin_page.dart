@@ -13,7 +13,9 @@ class SignInPage extends StatefulWidget {
 
 class _SignInPageState extends State<SignInPage> {
   final GoogleSignIn _googleSignIn = GoogleSignIn(
-    scopes: ['email', 'https://www.googleapis.com/auth/contacts.readonly'],
+    serverClientId: "1036640298216-fktikfkdjgbn9aqermkpguc458lvhtjp.apps.googleusercontent.com",
+    scopes: ["email"],
+    signInOption: SignInOption.standard,
   );
 
   Future<void> _handleSignIn() async {
@@ -22,6 +24,8 @@ class _SignInPageState extends State<SignInPage> {
       print("user: $user");
       if (user != null) {
         context.go('/home', extra: user);
+      } if(user == null){
+        print("null");
       }
     } catch (error) {
       print("Hello");
