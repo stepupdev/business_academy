@@ -66,7 +66,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
         ],
       ),
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(16),
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.primaryColor,
@@ -92,7 +92,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
       height: 12,
       width: 12,
       decoration: BoxDecoration(
-        color: isActive ? AppColors.primaryColor: Colors.grey.shade400,
+        color: isActive ? AppColors.primaryColor : Colors.grey.shade400,
         borderRadius: BorderRadius.circular(12),
       ),
     );
