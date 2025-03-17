@@ -1,11 +1,10 @@
 import 'package:business_application/core/config/app_colors.dart';
-import 'package:business_application/routes/dependency_injection.dart';
+import 'package:business_application/core/config/app_router.dart';
+import 'package:business_application/core/config/dependency_injection.dart';
 import 'package:business_application/services/auth_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-
-import 'routes/app_router.dart'; // Import the new router file
 
 void main() async {
   await Get.putAsync(() async => AuthService());

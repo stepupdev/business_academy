@@ -23,7 +23,7 @@ class HomePage extends StatelessWidget {
             onTap: controller.changeTabIndex,
             items: const [
               BottomNavigationBarItem(icon: Icon(Icons.people_outline_outlined), label: 'Community'),
-              BottomNavigationBarItem(icon: Icon(Icons.notifications), label: 'Notification'),
+              BottomNavigationBarItem(icon: Icon(Icons.topic_outlined), label: 'Topics'),
               BottomNavigationBarItem(icon: Icon(Icons.feed), label: 'Feed'),
               BottomNavigationBarItem(icon: Icon(Icons.menu), label: 'Menu'),
             ],

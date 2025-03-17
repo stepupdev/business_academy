@@ -103,9 +103,6 @@ class CommunityPage extends StatelessWidget {
     );
   }
 
-  void _createPost(BuildContext context) {
-    context.go('/create-post');
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -160,7 +157,7 @@ class CommunityPage extends StatelessWidget {
                     Expanded(
                       child: TextButton(
                         onPressed: () {
-                          _createPost(context);
+                          context.push('/create-post');
                         },
                         style: TextButton.styleFrom(
                           alignment: Alignment.centerLeft,

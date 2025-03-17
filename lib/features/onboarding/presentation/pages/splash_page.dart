@@ -1,6 +1,7 @@
+import 'package:business_application/core/utils/auth_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class SplashPage extends StatefulWidget {
@@ -14,8 +15,11 @@ class _SplashPageState extends State<SplashPage> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 2), () {
-      if (mounted) {
+    Future.delayed(const Duration(seconds: 2), () async {
+      final bool isLogin = await AuthUtlity.checkuserlogin();
+      if (mounted && isLogin) {
+        context.go('/home');
+      } else {
         context.go('/initial');
       }
     });
