@@ -1,7 +1,9 @@
 import 'package:business_application/core/utils/auth_utils.dart';
+import 'package:business_application/core/utils/ui_support.dart';
 import 'package:business_application/features/auth/data/login_response_model.dart';
 import 'package:business_application/repository/auth_repo/auth_repo.dart';
 import 'package:business_application/services/auth_services.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
@@ -41,6 +43,7 @@ class AuthController extends GetxController {
             await AuthUtlity.saveUserIdAndToken(data.result!.user!.id.toString(), data.result!.token!);
             if (data.success == true) {
               context.go('/home');
+              Ui.successSnackBar(message: "Login successful");
             } else {
               print("Login failed");
             }

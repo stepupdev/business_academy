@@ -53,16 +53,16 @@ class MenuPage extends StatelessWidget {
                       },
                     ),
                     ListTile(
-                      leading: Icon(Icons.favorite_border_outlined),
-                      title: Text('Bookmark'),
+                      leading: Icon(Icons.bookmark_outline),
+                      title: Text('Saved Posts'),
                       trailing: Icon(Icons.arrow_forward_ios),
                       onTap: () {
                         // Handle Bookmark action
                       },
                     ),
                     ListTile(
-                      leading: Icon(Icons.help_outline),
-                      title: Text('Help & Feedback'),
+                      leading: Icon(Icons.post_add_rounded),
+                      title: Text('My Posts'),
                       trailing: Icon(Icons.arrow_forward_ios),
                       onTap: () {
                         // Handle Help & Feedback action

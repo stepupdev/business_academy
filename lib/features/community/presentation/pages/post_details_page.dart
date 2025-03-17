@@ -1,11 +1,21 @@
+import 'package:business_application/core/config/app_colors.dart';
 import 'package:business_application/core/config/app_size.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class PostDetailsPage extends StatelessWidget {
+class PostDetailsPage extends StatefulWidget {
   final int postIndex;
   const PostDetailsPage({super.key, required this.postIndex});
+
+  @override
+  _PostDetailsPageState createState() => _PostDetailsPageState();
+}
+
+class _PostDetailsPageState extends State<PostDetailsPage> {
+  final TextEditingController _commentController = TextEditingController();
+  bool _isReplying = false;
 
   Widget _buildComment(
     BuildContext context,
@@ -17,16 +27,22 @@ class PostDetailsPage extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ListTile(leading: CircleAvatar(child: Text(avatarText)), title: Text(userName), subtitle: Text(commentText)),
+        ListTile(
+          leading: CircleAvatar(child: Text(avatarText)),
+          title: Text(userName, style: GoogleFonts.plusJakartaSans(fontSize: 14.sp)),
+          subtitle: Text(commentText, style: GoogleFonts.plusJakartaSans(fontSize: 12.sp)),
+        ),
         TextButton(
           onPressed: () {
-            // Handle reply action
+            setState(() {
+              _isReplying = true;
+            });
           },
-          child: Text('Reply', style: TextStyle(color: Colors.blue)),
+          child: Text('Reply', style: TextStyle(color: Colors.blue, fontSize: 12.sp)),
         ),
         if (replies.isNotEmpty)
           Padding(
-            padding: const EdgeInsets.only(left: 40.0),
+            padding: const EdgeInsets.only(left: 20.0),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: replies),
           ),
       ],
@@ -43,127 +59,120 @@ class PostDetailsPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                margin: EdgeInsets.all(10.w),
-                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10)),
+                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 16.h),
+                color: Colors.white,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ListTile(
-                      leading: CircleAvatar(child: Text('U$postIndex')),
-                      title: Text('User $postIndex'),
-                      subtitle: Text('2 hours ago'), // Example timestamp
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CircleAvatar(child: Text('FN')),
+                        10.wS,
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Fahmid Al Nayem',
+                              style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600, fontSize: 14.sp),
+                            ),
+                            Text(
+                              '2 hours ago',
+                              style: GoogleFonts.plusJakartaSans(color: Colors.grey, fontSize: 12.sp),
+                            ),
+                          ],
+                        ),
+                        10.wS,
+                        Text('Social Media', style: GoogleFonts.plusJakartaSans(color: Colors.grey, fontSize: 12.sp)),
+                      ],
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: Text('This is the caption for post $postIndex'),
+                    15.hS,
+                    Text('This is the caption for post ', style: GoogleFonts.plusJakartaSans(fontSize: 14.sp)),
+                    15.hS,
+                    SizedBox(height: 200.h, child: Image.asset("assets/images/stepup_image.png", fit: BoxFit.cover)),
+                    Row(
+                      children: [
+                        Icon(Icons.favorite_border),
+                        5.wS,
+                        Text('12', style: GoogleFonts.plusJakartaSans(color: Colors.grey, fontSize: 12.sp)),
+                        10.wS,
+                        SvgPicture.asset("assets/icons/comment.svg"),
+                        5.wS,
+                        Text('12', style: GoogleFonts.plusJakartaSans(color: Colors.grey, fontSize: 12.sp)),
+                        const Spacer(),
+                        IconButton(
+                          icon: SvgPicture.asset("assets/icons/share.svg"),
+                          onPressed: () {
+                            // Handle share action
+                          },
+                        ),
+                        OutlinedButton(
+                          style: OutlinedButton.styleFrom(shape: CircleBorder(), padding: EdgeInsets.all(5)),
+                          onPressed: () {
+                            // Handle share action
+                          },
+                          child: Icon(Icons.bookmark_outline, color: Colors.amber, size: 24),
+                        ),
+                      ],
                     ),
-                    SizedBox(
-                      height: 200.h,
-                      child:
-                          postIndex % 3 == 0
-                              ? Row(
-                                children: [
-                                  Expanded(
-                                    child: Column(
-                                      children: [
-                                        Expanded(
-                                          child: Container(
-                                            margin: EdgeInsets.only(bottom: 5.h),
-                                            decoration: BoxDecoration(
-                                              color: Colors.grey[300],
-                                              borderRadius: BorderRadius.circular(10),
-                                            ),
-                                            child: Center(child: Text('Photo 1')),
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              color: Colors.grey[300],
-                                              borderRadius: BorderRadius.circular(10),
-                                            ),
-                                            child: Center(child: Text('Photo 2')),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  5.wS,
-                                  Expanded(
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey[300],
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: Center(child: Text('Photo 3')),
-                                    ),
-                                  ),
-                                ],
-                              )
-                              : postIndex % 2 == 0
-                              ? Row(
-                                children: [
-                                  Expanded(
-                                    child: Container(
-                                      margin: EdgeInsets.only(right: 5.w),
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey[300],
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: Center(child: Text('Photo 1')),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey[300],
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: Center(child: Text('Photo 2')),
-                                    ),
-                                  ),
-                                ],
-                              )
-                              : Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[300],
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Center(child: Text('Photo $postIndex')),
-                              ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        children: [
-                          IconButton(
-                            icon: Icon(Icons.favorite_border),
-                            onPressed: () {
-                              // Handle like action
-                            },
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.comment),
-                            onPressed: () {
-                              // Handle comment action
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
+                    // Dropdown menu
+
                   ],
                 ),
               ),
               Divider(height: 1.h),
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text("Comments", style: GoogleFonts.plusJakartaSans(fontSize: 15, fontWeight: FontWeight.w700)),
+                child: Text(
+                  "Comments",
+                  style: GoogleFonts.plusJakartaSans(fontSize: 15.sp, fontWeight: FontWeight.w700),
+                ),
               ),
               _buildComment(context, 'U1', 'User1', 'Nice post!', [
                 _buildComment(context, 'U3', 'User3', 'Thanks!', []),
               ]),
               _buildComment(context, 'U2', 'User2', 'Great picture!', []),
               // ...additional comments...
+              if (_isReplying)
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextField(
+                    controller: _commentController,
+                    decoration: InputDecoration(hintText: 'Write a reply...', border: OutlineInputBorder()),
+                  ),
+                ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+                child: Row(
+                  children: [
+                    CircleAvatar(radius: 25.r, child: Text('FN')),
+                    10.wS,
+                    Expanded(
+                      child: TextFormField(
+                        controller: _commentController,
+                        decoration: InputDecoration(
+                          hintText: 'Add a comment...',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20),
+                            borderSide: BorderSide(color: AppColors.borderColor),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20),
+                            borderSide: BorderSide(color: AppColors.borderColor),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20),
+                            borderSide: BorderSide(color: AppColors.borderColor),
+                          ),
+                        ),
+                      ),
+                    ),
+                    10.wS,
+                    SvgPicture.asset("assets/icons/share.svg", height: 24.h),
+                  ],
+                ),
+              ),
             ],
           ),
         ),

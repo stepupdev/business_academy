@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:business_application/core/config/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -55,7 +56,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
             ],
           ),
           Positioned(
-            bottom: 80,
+            bottom: 50,
             left: 0,
             right: 0,
             child: Row(
@@ -65,20 +66,22 @@ class _OnboardingPageState extends State<OnboardingPage> {
           ),
         ],
       ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(16),
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.primaryColor,
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-          ),
-          onPressed: () {
-            context.go('/signin');
-          },
-          child: Text(
-            'Login Now',
-            style: GoogleFonts.lexend(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.white),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primaryColor,
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+            ),
+            onPressed: () {
+              context.go('/signin');
+            },
+            child: Text(
+              'Login Now',
+              style: GoogleFonts.lexend(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.white),
+            ),
           ),
         ),
       ),

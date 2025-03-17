@@ -36,6 +36,7 @@ flutter:
   assets:
     - assets/images/
     - assets/logo/
+    - assets/icons/
     - assets/images/google.svg
     - assets/images/onboarding1.svg
     - assets/images/onboarding2.svg

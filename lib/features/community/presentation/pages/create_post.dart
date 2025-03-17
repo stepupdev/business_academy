@@ -56,111 +56,120 @@ class CreatePostPage extends StatelessWidget {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Obx(
-              () => Container(
-                width: double.infinity,
-                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade100,
-                  border: Border.all(color: AppColors.borderColor),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: DropdownButton<String>(
-                  value: selectedTopic.value,
-                  onChanged: (newValue) {
-                    if (newValue != null) {
-                      selectedTopic.value = newValue;
-                    }
-                  },
-                  icon: Icon(Icons.keyboard_arrow_down_outlined),
-                  items:
-                      topics.map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value, style: TextStyle(color: Colors.grey.shade600)),
-                        );
-                      }).toList(),
-                  isExpanded: true,
-                  underline: SizedBox(),
-                ),
-              ),
-            ),
-            14.hS,
-            TextFormField(
-              controller: postController,
-              maxLines: 5,
-              decoration: InputDecoration(
-                hintText: "Write something...",
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide(color: AppColors.borderColor, width: 0.5),
-                ),
-              ),
-            ),
-            14.hS,
-            Obx(
-              () =>
-                  selectedImage.value != null
-                      ? Stack(
-                        children: [
-                          Container(
-                            height: 200.h,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              image: DecorationImage(image: FileImage(selectedImage.value!), fit: BoxFit.cover),
-                            ),
-                          ),
-                          Positioned(
-                            top: 8,
-                            right: 8,
-                            child: GestureDetector(
-                              onTap: () => selectedImage.value = null,
-                              child: Container(
-                                decoration: BoxDecoration(color: Colors.grey.shade600, shape: BoxShape.circle),
-                                child: Icon(Icons.close, color: Colors.white),
-                              ),
-                            ),
-                          ),
-                        ],
-                      )
-                      : Container(),
-            ),
-            14.hS,
-            Row(
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Flexible(
-                  child: ElevatedButton.icon(
-                    onPressed: () => _pickImage(ImageSource.camera),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFFE9F0FF),
-                      fixedSize: Size(165.w, 48.h),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
+                DropdownMenu<String>(
+                  initialSelection: topics.first,
+                  inputDecorationTheme: InputDecorationTheme(
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: AppColors.borderColor),
                     ),
-                    label: Text("Camera"),
-                    icon: Icon(Icons.photo_camera, size: 24, color: AppColors.primaryColor),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: AppColors.borderColor),
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: AppColors.borderColor),
+                    ),
                   ),
+                  width: double.infinity,
+                  requestFocusOnTap: true,
+                  enableFilter: true,
+                  trailingIcon: Icon(Icons.keyboard_arrow_down_sharp),
+                  onSelected: (val) {
+                    val = topics.first!;
+                  },
+                  dropdownMenuEntries:
+                      topics.map((grid) {
+                        return DropdownMenuEntry<String>(value: grid, label: grid);
+                      }).toList(),
                 ),
-                10.wS,
-                Flexible(
-                  child: ElevatedButton.icon(
-                    onPressed: () => _pickImage(ImageSource.gallery),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFFE9F0FF),
-                      fixedSize: Size(165.w, 48.h),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
+                14.hS,
+                TextFormField(
+                  controller: postController,
+                  maxLines: 5,
+                  decoration: InputDecoration(
+                    hintText: "Write something...",
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: AppColors.borderColor, width: 0.5),
                     ),
-                    label: Text("Add Photos"),
-                    icon: Icon(Icons.photo_size_select_actual_rounded, size: 24, color: AppColors.primaryColor),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: AppColors.primaryColor, width: 0.5),
+                    ),
                   ),
+                  onTapOutside: (event) => FocusScope.of(context).unfocus(),
+                ),
+                14.hS,
+                Obx(
+                  () =>
+                      selectedImage.value != null
+                          ? Stack(
+                            children: [
+                              Container(
+                                height: 200.h,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  image: DecorationImage(image: FileImage(selectedImage.value!), fit: BoxFit.cover),
+                                ),
+                              ),
+                              Positioned(
+                                top: 8,
+                                right: 8,
+                                child: GestureDetector(
+                                  onTap: () => selectedImage.value = null,
+                                  child: Container(
+                                    decoration: BoxDecoration(color: Colors.grey.shade600, shape: BoxShape.circle),
+                                    child: Icon(Icons.close, color: Colors.white),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
+                          : Container(),
+                ),
+                14.hS,
+                Row(
+                  children: [
+                    Flexible(
+                      child: ElevatedButton.icon(
+                        onPressed: () => _pickImage(ImageSource.camera),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFFE9F0FF),
+                          fixedSize: Size(165.w, 48.h),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
+                        ),
+                        label: Text("Camera"),
+                        icon: Icon(Icons.photo_camera, size: 24, color: AppColors.primaryColor),
+                      ),
+                    ),
+                    10.wS,
+                    Flexible(
+                      child: ElevatedButton.icon(
+                        onPressed: () => _pickImage(ImageSource.gallery),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFFE9F0FF),
+                          fixedSize: Size(165.w, 48.h),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
+                        ),
+                        label: Text("Add Photos"),
+                        icon: Icon(Icons.photo_size_select_actual_rounded, size: 24, color: AppColors.primaryColor),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
-          ],
+          ),
         ),
       ),
     );

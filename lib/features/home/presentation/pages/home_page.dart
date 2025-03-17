@@ -1,7 +1,6 @@
 import 'package:business_application/core/config/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:business_application/features/home/controller/home_controller.dart';
 
 class HomePage extends StatelessWidget {
@@ -15,6 +14,7 @@ class HomePage extends StatelessWidget {
         return Scaffold(
           body: controller.currentScreen,
           bottomNavigationBar: BottomNavigationBar(
+            backgroundColor: Colors.white,
             currentIndex: controller.currentIndex,
             type: BottomNavigationBarType.fixed,
             unselectedItemColor: Colors.grey,
@@ -30,30 +30,6 @@ class HomePage extends StatelessWidget {
           ),
         );
       },
-    );
-  }
-}
-
-class PostCard extends StatelessWidget {
-  final GoogleSignInAccount? user;
-  final String content;
-
-  const PostCard({super.key, required this.user, required this.content});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Column(
-        children: [
-          ListTile(title: Text(user?.email ?? 'Anonymous'), subtitle: Text(content)),
-          ButtonBar(
-            children: [
-              TextButton(onPressed: () {}, child: const Text('Like')),
-              TextButton(onPressed: () {}, child: const Text('Comment')),
-            ],
-          ),
-        ],
-      ),
     );
   }
 }

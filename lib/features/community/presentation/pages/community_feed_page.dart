@@ -105,7 +105,6 @@ class CommunityFeedScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
         flexibleSpace: Container(
           decoration: BoxDecoration(
@@ -117,7 +116,7 @@ class CommunityFeedScreen extends StatelessWidget {
           ),
         ),
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(30.h),
+          preferredSize: Size.fromHeight(24.h),
           child: Container(color: Colors.grey[300], height: 1.h),
         ),
         title: Row(
@@ -133,170 +132,138 @@ class CommunityFeedScreen extends StatelessWidget {
             ),
           ],
         ),
-        actions: [IconButton(icon: Icon(Icons.search, color: Colors.white), onPressed: () {})],
+        actionsPadding: EdgeInsets.only(right: 10.w),
+
+        actions: [
+          CircleAvatar(
+            backgroundColor: Color(0xff2F60CF),
+            child: IconButton(icon: Icon(Icons.notifications_outlined, color: Colors.white), onPressed: () {}),
+          ),
+          10.wS,
+          CircleAvatar(
+            backgroundColor: Color(0xff2F60CF),
+            child: IconButton(icon: Icon(Icons.search, color: Colors.white), onPressed: () {}),
+          ),
+        ],
       ),
-      body: ListView.separated(
-        separatorBuilder: (context, index) => Divider(thickness: 1.h),
-        itemCount: 11, // Increased by 1 to include the create post section
-        itemBuilder: (context, index) {
-          if (index == 0) {
-            return Container(
-              color: Color(0xffE9F0FF),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  children: [
-                    CircleAvatar(
-                      backgroundImage: NetworkImage(
-                        Get.find<AuthController>().loginResponseModel.value.result?.user?.avatar ?? "",
-                      ),
-                    ),
-                    10.wS,
-                    Expanded(
-                      child: TextButton(
-                        onPressed: () {
-                          context.push('/create-post');
-                        },
-                        style: TextButton.styleFrom(
-                          alignment: Alignment.centerLeft,
-                          backgroundColor: Colors.white,
-                          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-                          side: BorderSide(color: Colors.blue),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                        ),
-                        child: Text(
-                          'Creatre a Post!',
-                          style: GoogleFonts.plusJakartaSans(color: Colors.grey, fontWeight: FontWeight.w600),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Container(
+                color: Color(0xffE9F0FF),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      CircleAvatar(
+                        backgroundImage: NetworkImage(
+                          Get.find<AuthController>().loginResponseModel.value.result?.user?.avatar ?? "",
                         ),
                       ),
-                    ),
-                    14.wS,
-                    IconButton(icon: Icon(Icons.add_circle_outline), onPressed: () {}),
-                  ],
+                      10.wS,
+                      Expanded(
+                        child: TextButton(
+                          onPressed: () {
+                            context.push('/create-post');
+                          },
+                          style: TextButton.styleFrom(
+                            alignment: Alignment.centerLeft,
+                            backgroundColor: Colors.white,
+                            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                            side: BorderSide(color: Colors.blue),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                          ),
+                          child: Text(
+                            'Creatre a Post!',
+                            style: GoogleFonts.plusJakartaSans(color: Colors.grey, fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                      ),
+                      14.wS,
+                      IconButton(icon: Icon(Icons.add_circle_outline), onPressed: () {}),
+                    ],
+                  ),
                 ),
               ),
-            );
-          } else {
-            index -= 1; // Adjust index for the rest of the feed
-            return GestureDetector(
-              onTap: () {
-                context.push('/post-details', extra: index); // Navigate to post details page
-              },
-              child: Container(
-                margin: EdgeInsets.all(10.w),
-                color: Colors.white,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ListTile(
-                      leading: CircleAvatar(child: Text('U$index')),
-                      title: Text('User $index'),
-                      subtitle: Text('2 hours ago'), // Example timestamp
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: Text('This is the caption for post $index'),
-                    ),
-                    SizedBox(
-                      height: 200.h,
-                      child:
-                          index % 3 == 0
-                              ? Row(
-                                children: [
-                                  Expanded(
-                                    child: Column(
-                                      children: [
-                                        Expanded(
-                                          child: Container(
-                                            margin: EdgeInsets.only(bottom: 5.h),
-                                            decoration: BoxDecoration(
-                                              color: Colors.grey[300],
-                                              borderRadius: BorderRadius.circular(10),
-                                            ),
-                                            child: Center(child: Text('Photo 1')),
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              color: Colors.grey[300],
-                                              borderRadius: BorderRadius.circular(10),
-                                            ),
-                                            child: Center(child: Text('Photo 2')),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  5.wS,
-                                  Expanded(
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey[300],
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: Center(child: Text('Photo 3')),
-                                    ),
-                                  ),
-                                ],
-                              )
-                              : index % 2 == 0
-                              ? Row(
-                                children: [
-                                  Expanded(
-                                    child: Container(
-                                      margin: EdgeInsets.only(right: 5.w),
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey[300],
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: Center(child: Text('Photo 1')),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey[300],
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: Center(child: Text('Photo 2')),
-                                    ),
-                                  ),
-                                ],
-                              )
-                              : Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[300],
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Center(child: Text('Photo $index')),
-                              ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
+              ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                separatorBuilder: (context, index) => SizedBox(height: 5.h),
+                itemCount: 11, // Increased by 1 to include the create post section
+                itemBuilder: (context, index) {
+                  return GestureDetector(
+                    onTap: () {
+                      context.push('/post-details', extra: index); // Navigate to post details page
+                    },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 16.h),
+                      color: Colors.white,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          IconButton(
-                            icon: Icon(Icons.favorite_border),
-                            onPressed: () {
-                              // Handle like action
-                            },
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CircleAvatar(child: Text('U$index')),
+                              10.wS,
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Fahmid Al Nayem',
+                                    style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600),
+                                  ),
+                                  Text('2 hours ago', style: GoogleFonts.plusJakartaSans(color: Colors.grey)),
+                                ],
+                              ),
+                              10.wS,
+                              Text('Social Media', style: GoogleFonts.plusJakartaSans(color: Colors.grey)),
+                            ],
                           ),
-                          IconButton(
-                            icon: Icon(Icons.comment),
-                            onPressed: () {
-                              _showComments(context);
-                            },
+                          15.hS,
+                          Text('This is the caption for post $index'),
+                          15.hS,
+                          SizedBox(
+                            height: 200.h,
+                            child: Image.asset("assets/images/stepup_image.png", fit: BoxFit.cover),
+                          ),
+                          Row(
+                            children: [
+                              Icon(Icons.favorite_border),
+                              5.wS,
+                              Text('12', style: GoogleFonts.plusJakartaSans(color: Colors.grey)),
+                              10.wS,
+
+                              SvgPicture.asset("assets/icons/comment.svg"),
+                              5.wS,
+                              Text('12', style: GoogleFonts.plusJakartaSans(color: Colors.grey)),
+                              const Spacer(),
+                              IconButton(
+                                icon: SvgPicture.asset("assets/icons/share.svg"),
+                                onPressed: () {
+                                  // Handle share action
+                                },
+                              ),
+                              OutlinedButton(
+                                style: OutlinedButton.styleFrom(shape: CircleBorder(), padding: EdgeInsets.all(5)),
+                                onPressed: () {
+                                  // Handle share action
+                                },
+                                child: Icon(Icons.bookmark_outline, color: Colors.amber, size: 24),
+                              ),
+                            ],
                           ),
                         ],
                       ),
                     ),
-                  ],
-                ),
+                  );
+                },
               ),
-            );
-          }
-        },
+            ],
+          ),
+        ),
       ),
     );
   }
