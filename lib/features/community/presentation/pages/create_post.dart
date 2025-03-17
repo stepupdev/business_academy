@@ -8,8 +8,8 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
 class CreatePostPage extends StatelessWidget {
-  final List<String> categories = ["Category 1", "Category 2", "Category 3"];
-  final RxString selectedCategory = "Category 1".obs;
+  final List<String> topics = ["Topics 1", "Topics 2", "Topics 3"];
+  final RxString selectedTopic = "Topics 1".obs;
   final TextEditingController postController = TextEditingController();
   final Rx<File?> selectedImage = Rx<File?>(null);
 
@@ -43,7 +43,7 @@ class CreatePostPage extends StatelessWidget {
             onPressed: () {
               // Handle post submission
               final postContent = postController.text;
-              final category = selectedCategory.value;
+              final category = selectedTopic.value;
               // Save the post content and category
               print("Category: $category, Post: $postContent");
             },
@@ -71,15 +71,15 @@ class CreatePostPage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: DropdownButton<String>(
-                  value: selectedCategory.value,
+                  value: selectedTopic.value,
                   onChanged: (newValue) {
                     if (newValue != null) {
-                      selectedCategory.value = newValue;
+                      selectedTopic.value = newValue;
                     }
                   },
                   icon: Icon(Icons.keyboard_arrow_down_outlined),
                   items:
-                      categories.map<DropdownMenuItem<String>>((String value) {
+                      topics.map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
                           child: Text(value, style: TextStyle(color: Colors.grey.shade600)),

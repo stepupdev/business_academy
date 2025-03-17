@@ -23,7 +23,9 @@ class AuthController extends GetxController {
       final user = await _googleSignIn.signIn();
       if (user != null) {
         GoogleSignInAuthentication googleSignInAuthentication = await user.authentication;
-        String? token = googleSignInAuthentication.idToken;
+        String? token = googleSignInAuthentication.accessToken;
+        print("access Token === $token");
+        print("id token ------ ${googleSignInAuthentication.accessToken}");
         if (token != null) {
           userToken.value = token;
           print("User token: ${userToken.value}");
