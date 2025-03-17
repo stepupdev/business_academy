@@ -80,7 +80,7 @@ class CreatePostPage extends StatelessWidget {
                       borderSide: BorderSide(color: AppColors.borderColor),
                     ),
                   ),
-                  width: double.infinity,
+                  width: MediaQuery.of(context).size.width * 0.9,
                   requestFocusOnTap: true,
                   enableFilter: true,
                   trailingIcon: Icon(Icons.keyboard_arrow_down_sharp),
