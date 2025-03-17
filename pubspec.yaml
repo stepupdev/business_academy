@@ -21,6 +21,7 @@ dependencies:
   http: ^1.3.0
   image_picker: ^1.1.2
   get_storage:
+  flutter_launcher_icons: ^0.14.3
 
 dev_dependencies:
   flutter_test:
