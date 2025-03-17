@@ -2,7 +2,6 @@
 import 'package:business_application/core/config/app_colors.dart';
 import 'package:business_application/core/config/app_size.dart';
 import 'package:business_application/features/auth/controller/auth_controller.dart';
-import 'package:business_application/features/auth/data/login_response_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -11,9 +10,9 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-class CommunityPage extends StatelessWidget {
+class CommunityFeedScreen extends StatelessWidget {
   final GoogleSignInAccount? user;
-  const CommunityPage({super.key, this.user});
+  const CommunityFeedScreen({super.key, this.user});
 
   void _showComments(BuildContext context) {
     showModalBottomSheet(
@@ -103,7 +102,6 @@ class CommunityPage extends StatelessWidget {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -180,116 +178,121 @@ class CommunityPage extends StatelessWidget {
             );
           } else {
             index -= 1; // Adjust index for the rest of the feed
-            return Container(
-              margin: EdgeInsets.all(10.w),
-              color: Colors.white,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ListTile(
-                    leading: CircleAvatar(child: Text('U$index')),
-                    title: Text('User $index'),
-                    subtitle: Text('2 hours ago'), // Example timestamp
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Text('This is the caption for post $index'),
-                  ),
-                  SizedBox(
-                    height: 200.h,
-                    child:
-                        index % 3 == 0
-                            ? Row(
-                              children: [
-                                Expanded(
-                                  child: Column(
-                                    children: [
-                                      Expanded(
-                                        child: Container(
-                                          margin: EdgeInsets.only(bottom: 5.h),
-                                          decoration: BoxDecoration(
-                                            color: Colors.grey[300],
-                                            borderRadius: BorderRadius.circular(10),
-                                          ),
-                                          child: Center(child: Text('Photo 1')),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            color: Colors.grey[300],
-                                            borderRadius: BorderRadius.circular(10),
-                                          ),
-                                          child: Center(child: Text('Photo 2')),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                5.wS,
-                                Expanded(
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey[300],
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: Center(child: Text('Photo 3')),
-                                  ),
-                                ),
-                              ],
-                            )
-                            : index % 2 == 0
-                            ? Row(
-                              children: [
-                                Expanded(
-                                  child: Container(
-                                    margin: EdgeInsets.only(right: 5.w),
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey[300],
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: Center(child: Text('Photo 1')),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey[300],
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: Center(child: Text('Photo 2')),
-                                  ),
-                                ),
-                              ],
-                            )
-                            : Container(
-                              decoration: BoxDecoration(
-                                color: Colors.grey[300],
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Center(child: Text('Photo $index')),
-                            ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      children: [
-                        IconButton(
-                          icon: Icon(Icons.favorite_border),
-                          onPressed: () {
-                            // Handle like action
-                          },
-                        ),
-                        IconButton(
-                          icon: Icon(Icons.comment),
-                          onPressed: () {
-                            _showComments(context);
-                          },
-                        ),
-                      ],
+            return GestureDetector(
+              onTap: () {
+                context.push('/post-details', extra: index); // Navigate to post details page
+              },
+              child: Container(
+                margin: EdgeInsets.all(10.w),
+                color: Colors.white,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ListTile(
+                      leading: CircleAvatar(child: Text('U$index')),
+                      title: Text('User $index'),
+                      subtitle: Text('2 hours ago'), // Example timestamp
                     ),
-                  ),
-                ],
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Text('This is the caption for post $index'),
+                    ),
+                    SizedBox(
+                      height: 200.h,
+                      child:
+                          index % 3 == 0
+                              ? Row(
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      children: [
+                                        Expanded(
+                                          child: Container(
+                                            margin: EdgeInsets.only(bottom: 5.h),
+                                            decoration: BoxDecoration(
+                                              color: Colors.grey[300],
+                                              borderRadius: BorderRadius.circular(10),
+                                            ),
+                                            child: Center(child: Text('Photo 1')),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              color: Colors.grey[300],
+                                              borderRadius: BorderRadius.circular(10),
+                                            ),
+                                            child: Center(child: Text('Photo 2')),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  5.wS,
+                                  Expanded(
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey[300],
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: Center(child: Text('Photo 3')),
+                                    ),
+                                  ),
+                                ],
+                              )
+                              : index % 2 == 0
+                              ? Row(
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                      margin: EdgeInsets.only(right: 5.w),
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey[300],
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: Center(child: Text('Photo 1')),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey[300],
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: Center(child: Text('Photo 2')),
+                                    ),
+                                  ),
+                                ],
+                              )
+                              : Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[300],
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Center(child: Text('Photo $index')),
+                              ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: [
+                          IconButton(
+                            icon: Icon(Icons.favorite_border),
+                            onPressed: () {
+                              // Handle like action
+                            },
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.comment),
+                            onPressed: () {
+                              _showComments(context);
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             );
           }

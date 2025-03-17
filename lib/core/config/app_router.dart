@@ -1,6 +1,7 @@
 import 'package:business_application/core/config/app_routes.dart';
 import 'package:business_application/features/auth/presentation/pages/signin_page.dart';
 import 'package:business_application/features/community/presentation/pages/create_post.dart';
+import 'package:business_application/features/community/presentation/pages/post_details_page.dart';
 import 'package:business_application/features/home/presentation/pages/home_page.dart';
 import 'package:business_application/features/initial/presentation/pages/initial_screen.dart';
 import 'package:business_application/features/onboarding/presentation/pages/onboarding_page.dart';
@@ -30,6 +31,12 @@ class AppRouter {
         path: AppRoutes.createPost,
         builder: (context, state) => CreatePostPage(),
         pageBuilder: (context, state) => MaterialPage(key: state.pageKey, child: CreatePostPage()),
+      ),
+      GoRoute(
+        path: AppRoutes.postDetails,
+        builder: (context, state) => PostDetailsPage(postIndex: state.extra as int),
+        pageBuilder:
+            (context, state) => MaterialPage(key: state.pageKey, child: PostDetailsPage(postIndex: state.extra as int)),
       ),
       GoRoute(
         path: AppRoutes.onboarding,
