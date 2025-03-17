@@ -22,9 +22,9 @@ class HomePage extends StatelessWidget {
             showUnselectedLabels: true,
             onTap: controller.changeTabIndex,
             items: const [
-              BottomNavigationBarItem(icon: Icon(Icons.people_outline_outlined), label: 'Community'),
+              BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: 'Home'),
               BottomNavigationBarItem(icon: Icon(Icons.topic_outlined), label: 'Topics'),
-              BottomNavigationBarItem(icon: Icon(Icons.feed), label: 'Feed'),
+              BottomNavigationBarItem(icon: Icon(Icons.group_outlined), label: 'Groups'),
               BottomNavigationBarItem(icon: Icon(Icons.menu), label: 'Menu'),
             ],
           ),

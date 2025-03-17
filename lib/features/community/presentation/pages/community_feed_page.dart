@@ -180,8 +180,6 @@ class CommunityFeedScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                      14.wS,
-                      IconButton(icon: Icon(Icons.add_circle_outline), onPressed: () {}),
                     ],
                   ),
                 ),
