@@ -65,6 +65,7 @@ class SignInPage extends GetView<AuthController> {
                     SizedBox(height: 30),
                     // Rich text for the terms and conditions
                     RichText(
+                      textAlign: TextAlign.center,
                       text: TextSpan(
                         text: 'By signing up, you agree to our ',
                         style: GoogleFonts.lexend(fontSize: 14, color: Color(0xffA1A3AD)),

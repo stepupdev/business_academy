@@ -3,19 +3,21 @@ import 'package:business_application/features/auth/presentation/pages/signin_pag
 import 'package:business_application/features/community/presentation/pages/create_post.dart';
 import 'package:business_application/features/community/presentation/pages/post_details_page.dart';
 import 'package:business_application/features/home/presentation/pages/home_page.dart';
-import 'package:business_application/features/initial/presentation/pages/initial_screen.dart';
+import 'package:business_application/features/notification/presentation/pages/notification_page.dart';
 import 'package:business_application/features/onboarding/presentation/pages/onboarding_page.dart';
+import 'package:business_application/features/onboarding/presentation/pages/splash_page.dart';
+import 'package:business_application/features/save_posts/presentation/pages/save_posts.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(
-    initialLocation: AppRoutes.initial,
+    initialLocation: AppRoutes.splash,
     routes: [
       GoRoute(
-        path: AppRoutes.initial,
-        builder: (context, state) => const InitialScreen(),
-        pageBuilder: (context, state) => MaterialPage(key: state.pageKey, child: const InitialScreen()),
+        path: AppRoutes.splash,
+        builder: (context, state) => const SplashPage(),
+        pageBuilder: (context, state) => MaterialPage(key: state.pageKey, child: const SplashPage()),
       ),
       GoRoute(
         path: AppRoutes.signIn,
@@ -42,6 +44,16 @@ class AppRouter {
         path: AppRoutes.onboarding,
         builder: (context, state) => const OnboardingPage(),
         pageBuilder: (context, state) => MaterialPage(key: state.pageKey, child: const OnboardingPage()),
+      ),
+      GoRoute(
+        path: AppRoutes.notification,
+        builder: (context, state) => NotificationPage(),
+        pageBuilder: (context, state) => MaterialPage(key: state.pageKey, child: NotificationPage()),
+      ),
+      GoRoute(
+        path: AppRoutes.savedPosts,
+        builder: (context, state) => SavePostsPage(),
+        pageBuilder: (context, state) => MaterialPage(key: state.pageKey, child: SavePostsPage()),
       ),
     ],
   );

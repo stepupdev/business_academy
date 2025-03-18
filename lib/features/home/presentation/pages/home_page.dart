@@ -2,6 +2,7 @@ import 'package:business_application/core/config/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:business_application/features/home/controller/home_controller.dart';
+import 'package:heroicons/heroicons.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -22,10 +23,9 @@ class HomePage extends StatelessWidget {
             showUnselectedLabels: true,
             onTap: controller.changeTabIndex,
             items: const [
-              BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: 'Home'),
-              BottomNavigationBarItem(icon: Icon(Icons.topic_outlined), label: 'Topics'),
-              BottomNavigationBarItem(icon: Icon(Icons.group_outlined), label: 'Groups'),
-              BottomNavigationBarItem(icon: Icon(Icons.menu), label: 'Menu'),
+              BottomNavigationBarItem(icon: HeroIcon(HeroIcons.home), label: 'Home'),
+              BottomNavigationBarItem(icon: HeroIcon(HeroIcons.users), label: 'Groups'),
+              BottomNavigationBarItem(icon: HeroIcon(HeroIcons.bars3), label: 'Menu'),
             ],
           ),
         );

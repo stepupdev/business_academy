@@ -1,10 +1,13 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:business_application/core/config/app_colors.dart';
+import 'package:business_application/core/config/app_router.dart';
+import 'package:business_application/core/config/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
@@ -75,8 +78,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
             ),
-            onPressed: () {
-              context.go('/signin');
+            onPressed: () async {
+              final prefs = await SharedPreferences.getInstance();
+              await prefs.setBool('hasSeenOnboarding', true);
+
+              context.go(AppRoutes.signIn);
             },
             child: Text(
               'Login Now',

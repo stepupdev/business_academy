@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:business_application/features/community/presentation/pages/community_feed_page.dart';
-import 'package:business_application/features/topics/presentation/pages/topics_page.dart';
-import 'package:business_application/features/feed/presentation/pages/feed_page.dart';
+import 'package:business_application/features/groups/presentation/pages/groups_page.dart';
 import 'package:business_application/features/menu/presentation/pages/menu_page.dart';
 
 class HomeController extends GetxController {
   var currentIndex = 0;
 
-  final List<Widget> screens = [const CommunityFeedScreen(), const TopicsPage(), const FeedPage(), const MenuPage()];
+  final List<Widget> screens = [CommunityFeedScreen(), const GroupsPage(), const MenuPage()];
 
   Widget get currentScreen => screens[currentIndex];
 

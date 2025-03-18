@@ -73,51 +73,30 @@ class _PostDetailsPageState extends State<PostDetailsPage> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              'Fahmid Al Nayem',
-                              style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600, fontSize: 14.sp),
-                            ),
-                            Text(
-                              '2 hours ago',
-                              style: GoogleFonts.plusJakartaSans(color: Colors.grey, fontSize: 12.sp),
-                            ),
+                            Text('Fahmid Al Nayem', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600)),
+                            Text('2 hours ago', style: GoogleFonts.plusJakartaSans(color: Colors.grey)),
                           ],
                         ),
                         10.wS,
-                        Text('Social Media', style: GoogleFonts.plusJakartaSans(color: Colors.grey, fontSize: 12.sp)),
+                        Text('Social Media', style: GoogleFonts.plusJakartaSans(color: Colors.grey)),
                       ],
                     ),
                     15.hS,
-                    Text('This is the caption for post ', style: GoogleFonts.plusJakartaSans(fontSize: 14.sp)),
+                    Text('This is the caption for post index'),
                     15.hS,
                     SizedBox(height: 200.h, child: Image.asset("assets/images/stepup_image.png", fit: BoxFit.cover)),
+                    15.hS,
                     Row(
                       children: [
                         Icon(Icons.favorite_border),
-                        5.wS,
-                        Text('12', style: GoogleFonts.plusJakartaSans(color: Colors.grey, fontSize: 12.sp)),
-                        10.wS,
+                        15.wS,
                         SvgPicture.asset("assets/icons/comment.svg"),
                         5.wS,
-                        Text('12', style: GoogleFonts.plusJakartaSans(color: Colors.grey, fontSize: 12.sp)),
+                        Text('12', style: GoogleFonts.plusJakartaSans(color: Colors.grey)),
                         const Spacer(),
-                        IconButton(
-                          icon: SvgPicture.asset("assets/icons/share.svg"),
-                          onPressed: () {
-                            // Handle share action
-                          },
-                        ),
-                        OutlinedButton(
-                          style: OutlinedButton.styleFrom(shape: CircleBorder(), padding: EdgeInsets.all(5)),
-                          onPressed: () {
-                            // Handle share action
-                          },
-                          child: Icon(Icons.bookmark_outline, color: Colors.amber, size: 24),
-                        ),
+                        Icon(Icons.bookmark_outline, color: Colors.amber, size: 24),
                       ],
                     ),
-                    // Dropdown menu
-
                   ],
                 ),
               ),

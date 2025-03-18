@@ -1,5 +1,5 @@
+import 'package:business_application/core/config/app_routes.dart';
 import 'package:business_application/core/utils/auth_utils.dart';
-import 'package:business_application/core/utils/ui_support.dart';
 import 'package:business_application/features/auth/data/login_response_model.dart';
 import 'package:business_application/repository/auth_repo/auth_repo.dart';
 import 'package:business_application/services/auth_services.dart';
@@ -36,17 +36,17 @@ class AuthController extends GetxController {
           loginResponseModel(LoginResponseModel.fromJson(value));
           print("Login response model: ${loginResponseModel.value.result?.user?.name}");
           if (loginResponseModel.value.success == true) {
-            print("Login successful");
-            await Get.find<AuthService>().setLogged();
             var data = LoginResponseModel.fromJson(value);
             await Get.find<AuthService>().setUser(data);
+            print("Login successful");
+
+            // ✅ Save User Token & Info
             await AuthUtlity.saveUserIdAndToken(data.result!.user!.id.toString(), data.result!.token!);
-            if (data.success == true) {
-              context.go('/home');
-              Ui.successSnackBar(message: "Login successful");
-            } else {
-              print("Login failed");
-            }
+            await AuthUtlity.saveUserInfo(data);
+
+            print("✅ User logged in successfully.");
+            context.go('/home'); // Navigate to Home
+            await Get.find<AuthService>().getCurrentUser();
           } else {
             print("Login failed");
           }
@@ -60,11 +60,51 @@ class AuthController extends GetxController {
       isLoading.value = false;
     }
   }
+  // signInWithGoogle(BuildContext context) async {
+  //   try {
+  //     isLoading.value = true;
+
+  //     GoogleSignIn googleSignIn = GoogleSignIn();
+  //     GoogleSignInAccount? existingUser = await googleSignIn.signInSilently();
+  //     GoogleSignInAccount? user = existingUser ?? await googleSignIn.signIn();
+
+  //     if (user != null) {
+  //       GoogleSignInAuthentication googleAuth = await user.authentication;
+  //       String? token = googleAuth.accessToken;
+
+  //       if (token != null) {
+  //         userToken.value = token;
+  //         print("🔹 Google Sign-In Token: $token");
+
+  //         AuthRepository().signInWithGoogle(userToken.value).then((value) async {
+  //           loginResponseModel(LoginResponseModel.fromJson(value));
+
+  //           if (loginResponseModel.value.success == true) {
+  //             var data = LoginResponseModel.fromJson(value);
+
+  //             // ✅ Save User Token & Info
+  //             await AuthUtlity.saveUserIdAndToken(data.result!.user!.id.toString(), data.result!.token!);
+  //             await AuthUtlity.saveUserInfo(data);
+
+  //             print("✅ User logged in successfully.");
+  //             context.go('/home'); // Navigate to Home
+  //           } else {
+  //             print("❌ Login failed.");
+  //           }
+  //         });
+  //       }
+  //     }
+  //   } catch (error) {
+  //     print("❌ Error during Google Sign-in: $error");
+  //   } finally {
+  //     isLoading.value = false;
+  //   }
+  // }
 
   Future<void> signOut(BuildContext context) async {
     await _googleSignIn.signOut();
     await Get.find<AuthService>().removeCurrentUser();
     await Get.find<AuthService>().removeLogged();
-    context.go('/signin');
+    context.go(AppRoutes.signIn);
   }
 }
