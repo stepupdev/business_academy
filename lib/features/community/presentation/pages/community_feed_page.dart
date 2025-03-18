@@ -57,7 +57,7 @@ class CommunityFeedScreen extends StatelessWidget {
 
         actions: [
           CircleAvatar(
-            backgroundColor: Color(0xff2F60CF),
+            backgroundColor: AppColors.primaryColor,
             child: IconButton(
               icon: Icon(Icons.notifications_outlined, color: Colors.white),
               onPressed: () {
@@ -67,8 +67,13 @@ class CommunityFeedScreen extends StatelessWidget {
           ),
           10.wS,
           CircleAvatar(
-            backgroundColor: Color(0xff2F60CF),
-            child: IconButton(icon: Icon(Icons.search, color: Colors.white), onPressed: () {}),
+            backgroundColor: AppColors.primaryColor,
+            child: IconButton(
+              icon: Icon(Icons.search, color: Colors.white),
+              onPressed: () {
+                context.push(AppRoutes.search);
+              },
+            ),
           ),
         ],
       ),

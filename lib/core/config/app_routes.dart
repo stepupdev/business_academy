@@ -7,4 +7,5 @@ class AppRoutes {
   static const String onboarding = '/onboarding';
   static const String notification = '/notification';
   static const String savedPosts = '/saved-posts';
+  static const String search = '/search';
 }

@@ -7,6 +7,7 @@ import 'package:business_application/features/notification/presentation/pages/no
 import 'package:business_application/features/onboarding/presentation/pages/onboarding_page.dart';
 import 'package:business_application/features/onboarding/presentation/pages/splash_page.dart';
 import 'package:business_application/features/save_posts/presentation/pages/save_posts.dart';
+import 'package:business_application/features/search/presentation/page/search_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -54,6 +55,11 @@ class AppRouter {
         path: AppRoutes.savedPosts,
         builder: (context, state) => SavePostsPage(),
         pageBuilder: (context, state) => MaterialPage(key: state.pageKey, child: SavePostsPage()),
+      ),
+      GoRoute(
+        path: AppRoutes.search,
+        builder: (context, state) => SearchPage(),
+        pageBuilder: (context, state) => MaterialPage(key: state.pageKey, child: SearchPage()),
       ),
     ],
   );
