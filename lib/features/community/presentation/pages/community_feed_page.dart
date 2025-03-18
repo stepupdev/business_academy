@@ -39,6 +39,7 @@ class CommunityFeedScreen extends StatelessWidget {
           preferredSize: Size.fromHeight(24.h),
           child: Container(color: Colors.grey[300], height: 1.h),
         ),
+        titleSpacing: 10.w,
         title: Row(
           children: [
             SvgPicture.asset("assets/logo/bg_logo.svg"),
