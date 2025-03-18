@@ -1,5 +1,5 @@
 import 'package:business_application/features/community/data/community_model.dart';
-import 'package:business_application/services/auth_services.dart';
+import 'package:business_application/core/services/auth_services.dart';
 import 'package:get/get.dart';
 
 class CommunityController extends GetxController{

@@ -1,7 +1,7 @@
 import 'package:business_application/core/config/app_colors.dart';
 import 'package:business_application/core/config/app_router.dart';
 import 'package:business_application/core/config/dependency_injection.dart';
-import 'package:business_application/services/auth_services.dart';
+import 'package:business_application/core/services/auth_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
