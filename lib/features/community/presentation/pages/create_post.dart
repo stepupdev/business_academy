@@ -85,7 +85,7 @@ class CreatePostPage extends StatelessWidget {
                   enableFilter: true,
                   trailingIcon: Icon(Icons.keyboard_arrow_down_sharp),
                   onSelected: (val) {
-                    val = topics.first!;
+                    val = topics.first;
                   },
                   dropdownMenuEntries:
                       topics.map((grid) {
