@@ -16,6 +16,7 @@ class PostDetailsPage extends StatefulWidget {
 class PostDetailsPageState extends State<PostDetailsPage> {
   final TextEditingController _commentController = TextEditingController();
   bool _isReplying = false;
+  String? _replyingTo;
 
   Widget _buildComment(
     BuildContext context,
@@ -36,6 +37,7 @@ class PostDetailsPageState extends State<PostDetailsPage> {
           onPressed: () {
             setState(() {
               _isReplying = true;
+              _replyingTo = userName;
             });
           },
           child: Text('Reply', style: TextStyle(color: Colors.blue, fontSize: 12.sp)),
@@ -52,7 +54,8 @@ class PostDetailsPageState extends State<PostDetailsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Post Details')),
+      backgroundColor: Colors.white,
+      appBar: AppBar(backgroundColor: Colors.white, title: Text('Post Details')),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -113,14 +116,6 @@ class PostDetailsPageState extends State<PostDetailsPage> {
               ]),
               _buildComment(context, 'U2', 'User2', 'Great picture!', []),
               // ...additional comments...
-              if (_isReplying)
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextField(
-                    controller: _commentController,
-                    decoration: InputDecoration(hintText: 'Write a reply...', border: OutlineInputBorder()),
-                  ),
-                ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
                 child: Row(
@@ -129,19 +124,22 @@ class PostDetailsPageState extends State<PostDetailsPage> {
                     10.wS,
                     Expanded(
                       child: TextFormField(
+                        onTapOutside: (event) => FocusScope.of(context).unfocus(),
                         controller: _commentController,
                         decoration: InputDecoration(
-                          hintText: 'Add a comment...',
+                          hintText: _isReplying ? 'Replying to $_replyingTo' : 'Add comment',
+                          contentPadding: EdgeInsets.symmetric(horizontal: 20.w),
+                          hintStyle: TextStyle(color: Colors.grey.shade500),
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            borderSide: BorderSide(color: AppColors.borderColor),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(30.0),
                             borderSide: BorderSide(color: AppColors.borderColor),
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(30.0),
+                            borderSide: BorderSide(color: AppColors.borderColor),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30.0),
                             borderSide: BorderSide(color: AppColors.borderColor),
                           ),
                         ),
