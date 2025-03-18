@@ -1,6 +1,7 @@
 import 'package:business_application/core/config/app_colors.dart';
 import 'package:business_application/features/auth/controller/auth_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -68,18 +69,23 @@ class SignInPage extends GetView<AuthController> {
                       textAlign: TextAlign.center,
                       text: TextSpan(
                         text: 'By signing up, you agree to our ',
-                        style: GoogleFonts.lexend(fontSize: 14, color: Color(0xffA1A3AD)),
+                        style: GoogleFonts.lexend(fontSize: 12.sp, color: Color(0xffA1A3AD)),
                         children: [
                           TextSpan(
                             text: 'Terms and Conditions',
-                            style: GoogleFonts.lexend(fontSize: 14, color: AppColors.primaryColor),
+                            style: GoogleFonts.lexend(fontSize: 12.sp, color: AppColors.primaryColor),
+                          ),
+                          const TextSpan(text: ' and ', style: TextStyle(color: Color(0xffA1A3AD))),
+                          TextSpan(
+                            text: 'Privacy Policy',
+                            style: GoogleFonts.lexend(fontSize: 12.sp, color: AppColors.primaryColor),
                           ),
                         ],
                       ),
                     ),
                     const Spacer(),
-                    Text("Step Up Your Game,", style: GoogleFonts.lexend(fontSize: 14)),
-                    Text("Transform your Career!", style: GoogleFonts.lexend(fontSize: 14, color: Colors.grey)),
+                    Text("Step Up Your Game,", style: GoogleFonts.lexend(fontSize: 14.sp)),
+                    Text("Transform your Career!", style: GoogleFonts.lexend(fontSize: 14.sp, color: Colors.grey)),
                   ],
                 ),
               ),
