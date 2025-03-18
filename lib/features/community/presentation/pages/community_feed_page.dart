@@ -200,30 +200,40 @@ class CommunityFeedScreen extends StatelessWidget {
               ),
               12.hS,
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8.w),
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: SizedBox(
-                  height: 35.h,
+                  height: 25.h,
                   child: ListView.separated(
                     scrollDirection: Axis.horizontal,
                     separatorBuilder: (context, index) => SizedBox(width: 5.w),
                     itemCount: topics.length,
                     itemBuilder: (context, index) {
                       final topic = topics[index];
-                      return Container(
-                        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(color: Colors.grey),
-                          borderRadius: BorderRadius.circular(50),
-                        ),
-                        child: Row(
-                          children: [
-                            Text(topic['name'], style: GoogleFonts.plusJakartaSans(color: Colors.black)),
-                            if (topic['count'] != null) ...[
-                              5.wS,
-                              Text('(${topic['count'].toString()})', style: TextStyle(color: Colors.grey.shade400)),
+                      return IntrinsicHeight(
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 12.w),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(color: Colors.grey[200] ?? Colors.grey),
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                          child: Row(
+                            children: [
+                              Text(
+                                topic['name'],
+                                style: GoogleFonts.plusJakartaSans(
+                                  color: Colors.black,
+                                  fontSize: 12.sp,
+                                  fontWeight: FontWeight.w600,
+                                  height: 1.0,
+                                ),
+                              ),
+                              if (topic['count'] != null) ...[
+                                5.wS,
+                                Text('(${topic['count'].toString()})', style: TextStyle(color: Colors.grey.shade400)),
+                              ],
                             ],
-                          ],
+                          ),
                         ),
                       );
                     },

@@ -10,11 +10,17 @@ class SavePostsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Saved Posts')),
+      appBar: AppBar(
+        title: Text(
+          'Saved Posts',
+          style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600, fontSize: 18.sp, color: Colors.black),
+        ),
+        backgroundColor: Colors.white,
+      ),
       body: ListView.builder(
         itemCount: 10,
         itemBuilder: (context, index) {
-          Container(
+          return Container(
             padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 16.h),
             color: Colors.white,
             child: Column(
@@ -50,7 +56,7 @@ class SavePostsPage extends StatelessWidget {
                     5.wS,
                     Text('12', style: GoogleFonts.plusJakartaSans(color: Colors.grey)),
                     const Spacer(),
-                    Icon(Icons.bookmark_outline, color: Colors.amber, size: 24),
+                    Icon(Icons.bookmark, color: Colors.amber, size: 24),
                   ],
                 ),
               ],
