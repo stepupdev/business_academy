@@ -148,7 +148,7 @@ class MenuPage extends StatelessWidget {
                       ),
                       ListTile(
                         leading: Icon(Icons.play_circle_outline),
-                        title: Text('My Courses'),
+                        title: Text('My posts'),
                         trailing: Icon(Icons.arrow_forward_ios),
                         onTap: () {
                           // Handle My Courses action
