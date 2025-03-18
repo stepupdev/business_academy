@@ -10,10 +10,10 @@ class PostDetailsPage extends StatefulWidget {
   const PostDetailsPage({super.key, required this.postIndex});
 
   @override
-  _PostDetailsPageState createState() => _PostDetailsPageState();
+  PostDetailsPageState createState() => PostDetailsPageState();
 }
 
-class _PostDetailsPageState extends State<PostDetailsPage> {
+class PostDetailsPageState extends State<PostDetailsPage> {
   final TextEditingController _commentController = TextEditingController();
   bool _isReplying = false;
 

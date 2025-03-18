@@ -23,6 +23,7 @@ dependencies:
   get_storage:
   flutter_launcher_icons: ^0.14.3
   heroicons: ^0.11.0
+  shimmer: ^3.0.0
 
 dev_dependencies:
   flutter_test:
