@@ -2,7 +2,6 @@
 import 'package:business_application/core/config/app_colors.dart';
 import 'package:business_application/core/config/app_routes.dart';
 import 'package:business_application/core/config/app_size.dart';
-import 'package:business_application/features/auth/controller/auth_controller.dart';
 import 'package:business_application/services/auth_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -21,94 +20,6 @@ class CommunityFeedScreen extends StatelessWidget {
     {'name': 'Education', 'count': 4},
     {'name': 'Courses', 'count': 2},
   ];
-
-  void _showComments(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (context) {
-        return DraggableScrollableSheet(
-          expand: false,
-          builder: (context, scrollController) {
-            return Column(
-              children: [
-                Container(
-                  width: 40.w,
-                  height: 5.h,
-                  margin: EdgeInsets.symmetric(vertical: 10.h),
-                  decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(10)),
-                ),
-                Text("Comments", style: GoogleFonts.plusJakartaSans(fontSize: 15, fontWeight: FontWeight.w700)),
-                40.hS,
-                Expanded(
-                  child: ListView(
-                    controller: scrollController,
-                    children: [
-                      _buildComment(context, 'U1', 'User1', 'Nice post!', [
-                        _buildComment(context, 'U3', 'User3', 'Thanks!', []),
-                      ]),
-                      _buildComment(context, 'U2', 'User2', 'Great picture!', []),
-                      // ...additional comments...
-                    ],
-                  ),
-                ),
-                Divider(height: 1.h),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      CircleAvatar(child: Text('U')),
-                      10.wS,
-                      Expanded(
-                        child: TextField(
-                          decoration: InputDecoration(hintText: 'Add a comment...', border: InputBorder.none),
-                        ),
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.send),
-                        onPressed: () {
-                          // Handle comment submission
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
-  }
-
-  Widget _buildComment(
-    BuildContext context,
-    String avatarText,
-    String userName,
-    String commentText,
-    List<Widget> replies,
-  ) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ListTile(leading: CircleAvatar(child: Text(avatarText)), title: Text(userName), subtitle: Text(commentText)),
-          TextButton(
-            onPressed: () {
-              // Handle reply action
-            },
-            child: Text('Reply', style: TextStyle(color: Colors.blue)),
-          ),
-          if (replies.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.only(left: 40.0),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: replies),
-            ),
-        ],
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -240,7 +151,7 @@ class CommunityFeedScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              12.hS,
+              5.hS,
               const Divider(thickness: 0.5, color: Colors.grey),
               ListView.separated(
                 shrinkWrap: true,

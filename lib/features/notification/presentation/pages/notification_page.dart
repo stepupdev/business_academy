@@ -23,77 +23,41 @@ class NotificationPage extends StatelessWidget {
           IconButton(
             icon: HeroIcon(HeroIcons.cog6Tooth, color: Colors.black87),
             onPressed: () {
-              showDialog(
+              showMenu(
                 context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: Text(
-                      'Notification Settings',
-                      style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600),
-                    ),
-                    content: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        SwitchListTile(
-                          title: Text('Enable Notifications'),
-                          value: true, // Replace with actual state
-                          onChanged: (bool value) {
-                            // Handle enable/disable notifications
-                          },
-                        ),
-                        SwitchListTile(
-                          title: Text('Sound'),
-                          value: true, // Replace with actual state
-                          onChanged: (bool value) {
-                            // Handle sound toggle
-                          },
-                        ),
-                        SwitchListTile(
-                          title: Text('Vibration'),
-                          value: false, // Replace with actual state
-                          onChanged: (bool value) {
-                            // Handle vibration toggle
-                          },
-                        ),
-                      ],
-                    ),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: Text('Cancel'),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          // Save settings logic
-                          Navigator.of(context).pop();
-                        },
-                        child: Text('Save'),
-                      ),
-                    ],
-                  );
-                },
-              );
+                position: RelativeRect.fromLTRB(100.w, 80.h, 0, 0),
+                items: [
+                  PopupMenuItem(child: Text('Settings'), value: 'settings'),
+                  PopupMenuItem(child: Text('Logout'), value: 'logout'),
+                ],
+              ).then((value) {
+                if (value == 'settings') {
+                  // Navigate to settings page
+                } else if (value == 'logout') {
+                  // Logout logic
+                }
+              });
             },
           ),
         ],
       ),
-      body: ListView(
-        padding: EdgeInsets.all(16.0),
-        children: [
-          NotificationCard(
-            time: '10:30 AM',
-            title: 'Welcome to the community!',
-            message: 'We are excited to have you here. Feel free to ask any questions.',
-          ),
-          NotificationCard(
-            time: '9:00 AM',
-            title: 'Task Deadline',
-            message: 'Submit the project report by 5:00 PM today.',
-          ),
-          // Add more NotificationCard widgets as needed
-        ],
+      body: SafeArea(
+        child: ListView(
+          padding: EdgeInsets.symmetric(horizontal: 8.w),
+          children: [
+            NotificationCard(
+              time: '10:30 AM',
+              title: 'Welcome to the community!',
+              message: 'We are excited to have you here. Feel free to ask any questions.',
+            ),
+            NotificationCard(
+              time: '9:00 AM',
+              title: 'Task Deadline',
+              message: 'Submit the project report by 5:00 PM today.',
+            ),
+            // Add more NotificationCard widgets as needed
+          ],
+        ),
       ),
     );
   }
