@@ -28,6 +28,7 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen> {
   ];
 
   bool isLoading = true;
+  String selectedTopic = 'All'; // Track the selected topic
 
   @override
   void initState() {
@@ -147,33 +148,43 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen> {
                             itemCount: topics.length,
                             itemBuilder: (context, index) {
                               final topic = topics[index];
-                              return IntrinsicHeight(
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 12.w),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    border: Border.all(color: Colors.grey[200] ?? Colors.grey),
-                                    borderRadius: BorderRadius.circular(50),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        topic['name'],
-                                        style: GoogleFonts.plusJakartaSans(
-                                          color: Colors.black,
-                                          fontSize: 12.sp,
-                                          fontWeight: FontWeight.w600,
-                                          height: 1.0,
-                                        ),
+                              final isSelected = selectedTopic == topic['name'];
+                              return GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    selectedTopic = topic['name'];
+                                  });
+                                },
+                                child: IntrinsicHeight(
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(horizontal: 12.w),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      border: Border.all(
+                                        color: isSelected ? AppColors.primaryColor : (Colors.grey[200] ?? Colors.grey),
                                       ),
-                                      if (topic['count'] != null) ...[
-                                        5.wS,
+                                      borderRadius: BorderRadius.circular(50),
+                                    ),
+                                    child: Row(
+                                      children: [
                                         Text(
-                                          '(${topic['count'].toString()})',
-                                          style: TextStyle(color: Colors.grey.shade400),
+                                          topic['name'],
+                                          style: GoogleFonts.plusJakartaSans(
+                                            color: Colors.black,
+                                            fontSize: 12.sp,
+                                            fontWeight: FontWeight.w600,
+                                            height: 1.0,
+                                          ),
                                         ),
+                                        if (topic['count'] != null) ...[
+                                          5.wS,
+                                          Text(
+                                            '(${topic['count'].toString()})',
+                                            style: TextStyle(color: Colors.grey.shade400),
+                                          ),
+                                        ],
                                       ],
-                                    ],
+                                    ),
                                   ),
                                 ),
                               );
@@ -189,6 +200,10 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen> {
                         separatorBuilder: (context, index) => Container(height: 5.h, color: Colors.grey[200]),
                         itemCount: 11, // Increased by 1 to include the create post section
                         itemBuilder: (context, index) {
+                          // Filter posts based on the selected topic
+                          if (selectedTopic != 'All' && selectedTopic != topics[index % topics.length]['name']) {
+                            return SizedBox.shrink();
+                          }
                           return GestureDetector(
                             onTap: () {
                               context.push('/post-details', extra: index); // Navigate to post details page
@@ -216,7 +231,12 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen> {
                                         ],
                                       ),
                                       10.wS,
-                                      Text('Social Media', style: GoogleFonts.plusJakartaSans(color: Colors.grey)),
+                                      Text(
+                                        selectedTopic == "All"
+                                            ? "Social"
+                                            : selectedTopic, // Replace with the selected topic
+                                        style: GoogleFonts.plusJakartaSans(color: Colors.grey),
+                                      ),
                                     ],
                                   ),
                                   15.hS,
