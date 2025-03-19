@@ -6,8 +6,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class PostDetailsPage extends StatefulWidget {
-  final int postIndex;
-  const PostDetailsPage({super.key, required this.postIndex});
+  const PostDetailsPage({super.key});
 
   @override
   PostDetailsPageState createState() => PostDetailsPageState();

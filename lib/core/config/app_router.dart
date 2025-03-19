@@ -39,9 +39,8 @@ class AppRouter {
       ),
       GoRoute(
         path: AppRoutes.postDetails,
-        builder: (context, state) => PostDetailsPage(postIndex: state.extra as int),
-        pageBuilder:
-            (context, state) => MaterialPage(key: state.pageKey, child: PostDetailsPage(postIndex: state.extra as int)),
+        builder: (context, state) => PostDetailsPage(),
+        pageBuilder: (context, state) => MaterialPage(key: state.pageKey, child: PostDetailsPage()),
       ),
       GoRoute(
         path: AppRoutes.onboarding,
