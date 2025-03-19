@@ -3,6 +3,7 @@ import 'package:business_application/core/config/app_colors.dart';
 import 'package:business_application/core/config/app_routes.dart';
 import 'package:business_application/core/config/app_size.dart';
 import 'package:business_application/core/services/auth_services.dart';
+import 'package:business_application/widgets/custom_post_cart_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -193,74 +194,22 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen> {
                         ),
                       ),
                       5.hS,
-                      const Divider(thickness: 0.5, color: Colors.grey),
+                      Divider(thickness: 0.5, color: Colors.grey[200]),
                       ListView.separated(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         separatorBuilder: (context, index) => Container(height: 5.h, color: Colors.grey[200]),
                         itemCount: 11, // Increased by 1 to include the create post section
                         itemBuilder: (context, index) {
-                          // Filter posts based on the selected topic
-                          if (selectedTopic != 'All' && selectedTopic != topics[index % topics.length]['name']) {
-                            return SizedBox.shrink();
-                          }
-                          return GestureDetector(
-                            onTap: () {
-                              context.push('/post-details', extra: index); // Navigate to post details page
-                            },
-                            child: Container(
-                              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 16.h),
-                              color: Colors.white,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      CircleAvatar(child: Text('U$index')),
-                                      10.wS,
-                                      Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            'Fahmid Al Nayem',
-                                            style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600),
-                                          ),
-                                          Text('2 hours ago', style: GoogleFonts.plusJakartaSans(color: Colors.grey)),
-                                        ],
-                                      ),
-                                      10.wS,
-                                      Text(
-                                        selectedTopic == "All"
-                                            ? "Social"
-                                            : selectedTopic, // Replace with the selected topic
-                                        style: GoogleFonts.plusJakartaSans(color: Colors.grey),
-                                      ),
-                                    ],
-                                  ),
-                                  15.hS,
-                                  Text('This is the caption for post $index'),
-                                  15.hS,
-                                  SizedBox(
-                                    height: 200.h,
-                                    child: Image.asset("assets/images/stepup_image.png", fit: BoxFit.cover),
-                                  ),
-                                  15.hS,
-                                  Row(
-                                    children: [
-                                      Icon(Icons.favorite_border),
-                                      15.wS,
-                                      SvgPicture.asset("assets/icons/comment.svg"),
-                                      5.wS,
-                                      Text('12', style: GoogleFonts.plusJakartaSans(color: Colors.grey)),
-                                      const Spacer(),
-                                      Icon(Icons.bookmark_outline, color: Colors.amber, size: 24),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
+                          return UserPostWidget(
+                            name: 'Fahmid Al Nayem',
+                            rank: 'Rank $index',
+                            topic: selectedTopic == "All" ? topics[index % topics.length]['name'] : selectedTopic,
+                            time: '2 hours ago',
+                            postImage: 'assets/images/stepup_image.png',
+                            dp: Get.find<AuthService>().currentUser.value.result?.user?.avatar ?? "",
+                            caption: 'This is the caption for post $index',
+                            commentCount: '12',
                           );
                         },
                       ),
@@ -271,3 +220,5 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen> {
     );
   }
 }
+
+

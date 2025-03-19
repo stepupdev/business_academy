@@ -1,3 +1,4 @@
+import 'package:business_application/core/config/app_colors.dart';
 import 'package:business_application/core/config/app_size.dart';
 import 'package:business_application/core/services/auth_services.dart';
 import 'package:flutter/material.dart';
@@ -7,11 +8,24 @@ import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class GroupDetailsPage extends StatelessWidget {
+class GroupDetailsPage extends StatefulWidget {
   const GroupDetailsPage({super.key});
 
   @override
+  State<GroupDetailsPage> createState() => _GroupDetailsPageState();
+}
+
+class _GroupDetailsPageState extends State<GroupDetailsPage> {
+  @override
   Widget build(BuildContext context) {
+    final List<Map<String, dynamic>> topics = [
+      {'name': 'All', 'count': null},
+      {'name': 'Social Media', 'count': 5},
+      {'name': 'StepUp', 'count': 3},
+      {'name': 'Education', 'count': 4},
+      {'name': 'Courses', 'count': 2},
+    ];
+    String selectedTopic = 'All'; // Track the selected topic
     return Scaffold(
       appBar: AppBar(title: Text('Group Details')),
       body: SingleChildScrollView(
@@ -61,19 +75,73 @@ class GroupDetailsPage extends StatelessWidget {
                       ],
                     ),
                   ),
-                  const Divider(),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: SizedBox(
+                      height: 25.h,
+                      child: ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        separatorBuilder: (context, index) => SizedBox(width: 5.w),
+                        itemCount: topics.length,
+                        itemBuilder: (context, index) {
+                          final topic = topics[index];
+                          final isSelected = selectedTopic == topic['name'];
+                          return GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                selectedTopic = topic['name'];
+                              });
+                            },
+                            child: IntrinsicHeight(
+                              child: Container(
+                                padding: EdgeInsets.symmetric(horizontal: 12.w),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  border: Border.all(
+                                    color: isSelected ? AppColors.primaryColor : (Colors.grey[200] ?? Colors.grey),
+                                  ),
+                                  borderRadius: BorderRadius.circular(50),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      topic['name'],
+                                      style: GoogleFonts.plusJakartaSans(
+                                        color: Colors.black,
+                                        fontSize: 12.sp,
+                                        fontWeight: FontWeight.w600,
+                                        height: 1.0,
+                                      ),
+                                    ),
+                                    if (topic['count'] != null) ...[
+                                      5.wS,
+                                      Text(
+                                        '(${topic['count'].toString()})',
+                                        style: TextStyle(color: Colors.grey.shade400),
+                                      ),
+                                    ],
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                  Divider(thickness: 0.5, color: Colors.grey[300]),
                   ListView.separated(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     separatorBuilder: (context, index) => Container(height: 5.h, color: Colors.grey[200]),
-                    itemCount: 11, // Increased by 1 to include the create post section
+                    itemCount: 10,
                     itemBuilder: (context, index) {
                       return GestureDetector(
                         onTap: () {
                           context.push('/post-details', extra: index); // Navigate to post details page
                         },
                         child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 16.h),
+                          padding: EdgeInsets.all(8.sp),
                           color: Colors.white,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
