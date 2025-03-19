@@ -8,4 +8,6 @@ class AppRoutes {
   static const String notification = '/notification';
   static const String savedPosts = '/saved-posts';
   static const String search = '/search';
+  static const String groupDetails = '/group-details';
+  static const String myPosts = '/my-posts';
 }

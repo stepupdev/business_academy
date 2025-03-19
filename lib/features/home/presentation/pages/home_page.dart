@@ -12,24 +12,93 @@ class HomePage extends StatelessWidget {
     return GetBuilder<HomeController>(
       init: HomeController(),
       builder: (controller) {
-        return Scaffold(
-          body: controller.currentScreen,
-          bottomNavigationBar: BottomNavigationBar(
-            backgroundColor: Colors.white,
-            currentIndex: controller.currentIndex,
-            type: BottomNavigationBarType.fixed,
-            unselectedItemColor: Colors.grey,
-            selectedItemColor: AppColors.primaryColor,
-            showUnselectedLabels: true,
-            onTap: controller.changeTabIndex,
-            items: const [
-              BottomNavigationBarItem(icon: HeroIcon(HeroIcons.home), label: 'Home'),
-              BottomNavigationBarItem(icon: HeroIcon(HeroIcons.users), label: 'Groups'),
-              BottomNavigationBarItem(icon: HeroIcon(HeroIcons.bars3), label: 'Menu'),
-            ],
+        return PopScope(
+          canPop: controller.currentIndex != 0, // Allow back press if not on home tab
+          onPopInvoked: (didPop) async {
+            if (!didPop && controller.currentIndex == 0) {
+              bool exitApp = await _showExitDialog(context);
+              if (exitApp) {
+                Get.back(); // Close the app
+              }
+            }
+          },
+          child: Scaffold(
+            body: controller.currentScreen,
+            bottomNavigationBar: BottomNavigationBar(
+              backgroundColor: Colors.white,
+              currentIndex: controller.currentIndex,
+              type: BottomNavigationBarType.fixed,
+              unselectedItemColor: Colors.grey,
+              selectedItemColor: AppColors.primaryColor,
+              showUnselectedLabels: true,
+              onTap: controller.changeTabIndex,
+              items: const [
+                BottomNavigationBarItem(icon: HeroIcon(HeroIcons.home), label: 'Home'),
+                BottomNavigationBarItem(icon: HeroIcon(HeroIcons.users), label: 'Groups'),
+                BottomNavigationBarItem(icon: HeroIcon(HeroIcons.bars3), label: 'Menu'),
+              ],
+            ),
           ),
         );
       },
     );
+  }
+
+  Future<bool> _showExitDialog(BuildContext context) async {
+    bool exit = false;
+    await showDialog(
+      context: context,
+      builder:
+          (context) => Dialog(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.warning_amber_rounded, color: AppColors.primaryColor, size: 50),
+                  const SizedBox(height: 20),
+                  const Text('Close App', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 10),
+                  const Text(
+                    'Are you sure you want to close the app?',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 16, color: Colors.grey),
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.grey[300],
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        ),
+                        onPressed: () {
+                          exit = false;
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('No', style: TextStyle(color: Colors.black)),
+                      ),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primaryColor,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        ),
+                        onPressed: () {
+                          exit = true;
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('Yes', style: TextStyle(color: Colors.white)),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+    );
+    return exit;
   }
 }

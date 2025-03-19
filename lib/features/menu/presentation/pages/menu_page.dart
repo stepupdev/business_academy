@@ -151,7 +151,7 @@ class MenuPage extends StatelessWidget {
                         title: Text('My posts'),
                         trailing: Icon(Icons.arrow_forward_ios),
                         onTap: () {
-                          // Handle My Courses action
+                          context.push(AppRoutes.myPosts);
                         },
                       ),
                       ListTile(

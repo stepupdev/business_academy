@@ -1,5 +1,5 @@
-import 'package:business_application/core/config/app_colors.dart';
 import 'package:business_application/core/config/app_router.dart';
+import 'package:business_application/core/config/app_themes.dart';
 import 'package:business_application/core/config/dependency_injection.dart';
 import 'package:business_application/core/services/auth_services.dart';
 import 'package:flutter/material.dart';
@@ -39,7 +39,8 @@ class MyApp extends StatelessWidget {
           routerDelegate: AppRouter.router.routerDelegate,
           routeInformationProvider: AppRouter.router.routeInformationProvider,
           title: 'Business Academy',
-          theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primaryColor)),
+          theme: AppThemes.lightTheme,
+          darkTheme: AppThemes.darkTheme,
           initialBinding: DependencyInjection(),
         );
       },
