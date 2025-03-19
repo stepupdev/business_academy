@@ -1,12 +1,14 @@
 import 'package:business_application/core/config/app_colors.dart';
 import 'package:business_application/core/config/app_size.dart';
+import 'package:business_application/features/video_player/presentation/page/yt_video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class PostDetailsPage extends StatefulWidget {
-  const PostDetailsPage({super.key});
+  final bool isVideo;
+  const PostDetailsPage({super.key, this.isVideo = true});
 
   @override
   PostDetailsPageState createState() => PostDetailsPageState();
@@ -86,7 +88,34 @@ class PostDetailsPageState extends State<PostDetailsPage> {
                     15.hS,
                     Text('This is the caption for post index'),
                     15.hS,
-                    SizedBox(height: 200.h, child: Image.asset("assets/images/stepup_image.png", fit: BoxFit.cover)),
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return YouTubeVideoPlayer(videoUrl: "https://www.youtube.com/watch?v=lqQjZOTuVBY");
+                            },
+                          ),
+                        );
+                      },
+                      child: SizedBox(
+                        height: 200.h,
+                        width: double.infinity,
+                        child:
+                            widget.isVideo
+                                ? Stack(
+                                  children: [
+                                    Image.network(
+                                      "https://i.ytimg.com/vi/lqQjZOTuVBY/hqdefault.jpg",
+                                      fit: BoxFit.cover,
+                                      width: double.infinity,
+                                    ),
+                                    Center(child: Icon(Icons.play_circle_fill, color: Colors.white, size: 50.r)),
+                                  ],
+                                )
+                                : Image.asset("assets/images/stepup_image.png", fit: BoxFit.cover),
+                      ),
+                    ),
                     15.hS,
                     Row(
                       children: [
