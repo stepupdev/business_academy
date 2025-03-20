@@ -56,10 +56,7 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen> {
             ),
           ),
         ),
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(24.h),
-          child: Container(color: Colors.grey[300], height: 1.h),
-        ),
+        bottom: PreferredSize(preferredSize: Size.fromHeight(24.h), child: SizedBox()),
         titleSpacing: 10.w,
         title: Row(
           children: [
@@ -126,7 +123,7 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen> {
                                     alignment: Alignment.centerLeft,
                                     backgroundColor: dark ? AppColors.dark : Colors.white,
                                     padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-                                    side: BorderSide(color: Colors.blue.shade100),
+                                    side: BorderSide(color: Colors.blue.shade100, width: 0.5),
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
                                   ),
                                   child: Text(
@@ -142,6 +139,7 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen> {
                           ),
                         ),
                       ),
+                      Divider(color: AppColors.darkerGrey, thickness: 0.3),
                       12.hS,
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -167,6 +165,7 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen> {
                                       color: dark ? AppColors.dark : Colors.white,
                                       border: Border.all(
                                         color: isSelected ? AppColors.primaryColor : (Colors.grey[200] ?? Colors.grey),
+                                        width: 0.5,
                                       ),
                                       borderRadius: BorderRadius.circular(50),
                                     ),
@@ -198,13 +197,12 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen> {
                         ),
                       ),
                       5.hS,
-                      Divider(thickness: 0.5, color: Colors.grey[200]),
+                      Divider(color: AppColors.darkerGrey, thickness: 0.3),
                       ListView.separated(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         separatorBuilder:
-                            (context, index) =>
-                                Container(height: 5.h, color: dark ? AppColors.darkerGrey : Colors.grey[200]),
+                            (context, index) => Container(height: 3.h, color: dark ? Colors.black : Colors.grey[200]),
                         itemCount: 11, // Increased by 1 to include the create post section
                         itemBuilder: (context, index) {
                           return UserPostWidget(

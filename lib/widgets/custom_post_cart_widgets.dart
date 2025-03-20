@@ -84,7 +84,7 @@ class UserPostWidget extends StatelessWidget {
             15.hS,
             Row(
               children: [
-                Icon(Icons.favorite_border),
+                Icon(Icons.favorite_border, color: dark ? AppColors.grey : AppColors.dark),
                 15.wS,
                 SvgPicture.asset("assets/icons/comment.svg", color: dark ? AppColors.light : AppColors.dark),
                 5.wS,

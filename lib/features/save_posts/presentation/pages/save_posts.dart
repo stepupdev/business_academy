@@ -1,4 +1,6 @@
+import 'package:business_application/core/config/app_colors.dart';
 import 'package:business_application/core/config/app_size.dart';
+import 'package:business_application/core/utils/ui_support.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -9,20 +11,17 @@ class SavePostsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final dark = Ui.isDarkMode(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Saved Posts',
-          style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600, fontSize: 18.sp, color: Colors.black),
-        ),
-        backgroundColor: Colors.white,
+        title: Text('Saved Posts', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600, fontSize: 18.sp)),
       ),
       body: ListView.builder(
         itemCount: 10,
         itemBuilder: (context, index) {
           return Container(
             padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 16.h),
-            color: Colors.white,
+            color: dark ? AppColors.dark : Colors.white,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -52,7 +51,7 @@ class SavePostsPage extends StatelessWidget {
                   children: [
                     Icon(Icons.favorite_border),
                     15.wS,
-                    SvgPicture.asset("assets/icons/comment.svg"),
+                    SvgPicture.asset("assets/icons/comment.svg", color: dark ? Colors.white : Colors.black),
                     5.wS,
                     Text('12', style: GoogleFonts.plusJakartaSans(color: Colors.grey)),
                     const Spacer(),

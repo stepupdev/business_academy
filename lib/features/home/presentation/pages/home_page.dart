@@ -15,17 +15,19 @@ class HomePage extends StatelessWidget {
     return GetBuilder<HomeController>(
       init: HomeController(),
       builder: (controller) {
-        return PopScope(
-          canPop: controller.currentIndex != 0, // Allow back press if not on home tab
-          onPopInvoked: (didPop) async {
-            if (!didPop && controller.currentIndex == 0) {
+        return WillPopScope(
+          onWillPop: () async {
+            if (controller.currentIndex != 0) {
+              // Navigate to the first tab instead of exiting
+              controller.changeTabIndex(0);
+              return false; // Prevent default back action
+            } else {
+              // Show exit confirmation dialog
               bool exitApp = await _showExitDialog(context);
               if (exitApp) {
-                SystemNavigator.pop(); // Properly closes the app
+                SystemNavigator.pop(); // Properly close the app
               }
-            }
-            if (controller.currentIndex == 1 || controller.currentIndex == 2 || controller.currentIndex == 3) {
-              controller.changeTabIndex(0);
+              return false; // Prevent default back action
             }
           },
           child: Scaffold(
@@ -34,7 +36,7 @@ class HomePage extends StatelessWidget {
               backgroundColor: dark ? AppColors.dark : Colors.white,
               currentIndex: controller.currentIndex,
               type: BottomNavigationBarType.fixed,
-              unselectedItemColor: Colors.grey,
+              unselectedItemColor: dark ? Colors.white : Colors.grey,
               selectedItemColor: AppColors.primaryColor,
               showUnselectedLabels: true,
               onTap: controller.changeTabIndex,
@@ -78,7 +80,7 @@ class HomePage extends StatelessWidget {
                       ),
                       const SizedBox(height: 20),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
