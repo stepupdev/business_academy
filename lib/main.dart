@@ -1,5 +1,4 @@
 import 'package:business_application/core/config/app_router.dart';
-import 'package:business_application/core/config/app_themes.dart';
 import 'package:business_application/core/config/dependency_injection.dart';
 import 'package:business_application/core/services/auth_services.dart';
 import 'package:business_application/core/utils/theme/theme.dart';
