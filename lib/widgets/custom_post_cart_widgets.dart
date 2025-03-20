@@ -83,13 +83,16 @@ class UserPostWidget extends StatelessWidget {
             SizedBox(height: 200.h, child: Image.asset(postImage, fit: BoxFit.cover)),
             15.hS,
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Icon(Icons.favorite_border, color: dark ? AppColors.grey : AppColors.dark),
-                15.wS,
-                SvgPicture.asset("assets/icons/comment.svg", color: dark ? AppColors.light : AppColors.dark),
-                5.wS,
-                Text(commentCount, style: GoogleFonts.plusJakartaSans(color: Colors.grey)),
-                const Spacer(),
+                Icon(Icons.favorite_border, color: dark ? AppColors.darkGrey : AppColors.dark),
+                Row(
+                  children: [
+                    SvgPicture.asset("assets/icons/comment.svg", color: dark ? AppColors.darkGrey : AppColors.dark),
+                    5.wS,
+                    Text(commentCount, style: GoogleFonts.plusJakartaSans(color: Colors.grey)),
+                  ],
+                ),
                 Icon(Icons.bookmark_outline, color: Colors.amber, size: 24),
               ],
             ),
