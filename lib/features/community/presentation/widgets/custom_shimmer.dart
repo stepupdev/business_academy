@@ -47,7 +47,7 @@ class CustomShimmer extends StatelessWidget {
                 itemCount: topics.length,
                 itemBuilder: (context, index) {
                   return Shimmer.fromColors(
-                    baseColor: dark ? AppColors.grey : Colors.grey[300]!,
+                    baseColor: dark ? AppColors.dark : Colors.grey[300]!,
                     highlightColor: dark ? AppColors.grey : Colors.grey[100]!,
                     child: Container(
                       width: 80.w,
@@ -67,11 +67,11 @@ class CustomShimmer extends StatelessWidget {
             itemCount: 5,
             itemBuilder: (context, index) {
               return Shimmer.fromColors(
-                baseColor: dark ? AppColors.grey : Colors.grey[300]!,
+                baseColor: dark ? AppColors.dark : Colors.grey[300]!,
                 highlightColor: dark ? AppColors.grey : Colors.grey[100]!,
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 16.h),
-                  color: Colors.white,
+                  color: dark ? AppColors.dark : Color(0xffE9F0FF),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
