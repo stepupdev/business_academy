@@ -66,7 +66,10 @@ class Ui {
       duration: const Duration(seconds: 5),
     );
   }
-  //
+
+  static bool isDarkMode (BuildContext context){
+    return Theme.of(context).brightness == Brightness.dark;
+  }
   // static GetSnackBar defaultSnackBar({String title = 'Alert', required String message}) {
   //   Get.log("[$title] $message", isError: false);
   //   return GetSnackBar(

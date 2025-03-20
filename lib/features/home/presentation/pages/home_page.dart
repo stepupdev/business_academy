@@ -1,4 +1,5 @@
 import 'package:business_application/core/config/app_colors.dart';
+import 'package:business_application/core/utils/ui_support.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:business_application/features/home/controller/home_controller.dart';
@@ -10,6 +11,7 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final dark = Ui.isDarkMode(context);
     return GetBuilder<HomeController>(
       init: HomeController(),
       builder: (controller) {
@@ -22,11 +24,14 @@ class HomePage extends StatelessWidget {
                 SystemNavigator.pop(); // Properly closes the app
               }
             }
+            if (controller.currentIndex == 1 || controller.currentIndex == 2 || controller.currentIndex == 3) {
+              controller.changeTabIndex(0);
+            }
           },
           child: Scaffold(
             body: controller.currentScreen,
             bottomNavigationBar: BottomNavigationBar(
-              backgroundColor: Colors.white,
+              backgroundColor: dark ? AppColors.dark : Colors.white,
               currentIndex: controller.currentIndex,
               type: BottomNavigationBarType.fixed,
               unselectedItemColor: Colors.grey,
@@ -36,6 +41,7 @@ class HomePage extends StatelessWidget {
               items: const [
                 BottomNavigationBarItem(icon: HeroIcon(HeroIcons.home), label: 'Home'),
                 BottomNavigationBarItem(icon: HeroIcon(HeroIcons.users), label: 'Groups'),
+                BottomNavigationBarItem(icon: HeroIcon(HeroIcons.megaphone), label: 'Announcements'),
                 BottomNavigationBarItem(icon: HeroIcon(HeroIcons.bars3), label: 'Menu'),
               ],
             ),
@@ -46,6 +52,7 @@ class HomePage extends StatelessWidget {
   }
 
   Future<bool> _showExitDialog(BuildContext context) async {
+    final dark = Ui.isDarkMode(context);
     return await showDialog<bool>(
           context: context,
           builder:
@@ -53,7 +60,10 @@ class HomePage extends StatelessWidget {
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                 child: Container(
                   padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
+                  decoration: BoxDecoration(
+                    color: dark ? AppColors.dark : AppColors.light,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [

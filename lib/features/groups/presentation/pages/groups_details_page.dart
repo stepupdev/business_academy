@@ -1,6 +1,7 @@
 import 'package:business_application/core/config/app_colors.dart';
 import 'package:business_application/core/config/app_size.dart';
 import 'package:business_application/core/services/auth_services.dart';
+import 'package:business_application/core/utils/ui_support.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -25,6 +26,7 @@ class _GroupDetailsPageState extends State<GroupDetailsPage> {
       {'name': 'Education', 'count': 4},
       {'name': 'Courses', 'count': 2},
     ];
+    final dark = Ui.isDarkMode(context);
     String selectedTopic = 'All'; // Track the selected topic
     return Scaffold(
       appBar: AppBar(title: Text('Group Details')),
@@ -41,7 +43,11 @@ class _GroupDetailsPageState extends State<GroupDetailsPage> {
                 children: [
                   Text(
                     'StepUp Gropus (SG)', // Replace with dynamic member count
-                    style: TextStyle(fontSize: 16.sp, color: Colors.black, fontWeight: FontWeight.w700),
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      color: dark ? AppColors.white : Colors.black,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
 
                   Padding(
@@ -61,7 +67,7 @@ class _GroupDetailsPageState extends State<GroupDetailsPage> {
                             },
                             style: TextButton.styleFrom(
                               alignment: Alignment.centerLeft,
-                              backgroundColor: Colors.white,
+                              backgroundColor: dark ? AppColors.dark : Colors.white,
                               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
                               side: BorderSide(color: Colors.blue.shade100),
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
@@ -96,7 +102,7 @@ class _GroupDetailsPageState extends State<GroupDetailsPage> {
                               child: Container(
                                 padding: EdgeInsets.symmetric(horizontal: 12.w),
                                 decoration: BoxDecoration(
-                                  color: Colors.white,
+                                  color: dark ? AppColors.dark : Colors.white,
                                   border: Border.all(
                                     color: isSelected ? AppColors.primaryColor : (Colors.grey[200] ?? Colors.grey),
                                   ),
@@ -107,7 +113,7 @@ class _GroupDetailsPageState extends State<GroupDetailsPage> {
                                     Text(
                                       topic['name'],
                                       style: GoogleFonts.plusJakartaSans(
-                                        color: Colors.black,
+                                        color: dark ? AppColors.light : Colors.black,
                                         fontSize: 12.sp,
                                         fontWeight: FontWeight.w600,
                                         height: 1.0,
@@ -129,11 +135,13 @@ class _GroupDetailsPageState extends State<GroupDetailsPage> {
                       ),
                     ),
                   ),
-                  Divider(thickness: 0.5, color: Colors.grey[300]),
+                  Divider(thickness: 0.5, color: dark ? AppColors.darkerGrey : Colors.grey[300]),
                   ListView.separated(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    separatorBuilder: (context, index) => Container(height: 5.h, color: Colors.grey[200]),
+                    separatorBuilder:
+                        (context, index) =>
+                            Container(height: 5.h, color: dark ? AppColors.darkerGrey : Colors.grey[300]),
                     itemCount: 10,
                     itemBuilder: (context, index) {
                       return GestureDetector(
@@ -142,7 +150,7 @@ class _GroupDetailsPageState extends State<GroupDetailsPage> {
                         },
                         child: Container(
                           padding: EdgeInsets.all(8.sp),
-                          color: Colors.white,
+                          color: dark ? AppColors.dark : Colors.white,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [

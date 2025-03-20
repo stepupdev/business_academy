@@ -1,4 +1,6 @@
+import 'package:business_application/core/config/app_colors.dart';
 import 'package:business_application/core/config/app_size.dart';
+import 'package:business_application/core/utils/ui_support.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -9,6 +11,7 @@ class MyPostsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final dark = Ui.isDarkMode(context);
     return Scaffold(
       appBar: AppBar(title: Text('My Posts')),
       body: ListView.builder(
@@ -16,7 +19,7 @@ class MyPostsPage extends StatelessWidget {
         itemBuilder: (context, index) {
           return Container(
             padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 16.h),
-            color: Colors.white,
+            color: dark ? AppColors.dark : Colors.white,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -46,7 +49,7 @@ class MyPostsPage extends StatelessWidget {
                   children: [
                     Icon(Icons.favorite_border),
                     15.wS,
-                    SvgPicture.asset("assets/icons/comment.svg"),
+                    SvgPicture.asset("assets/icons/comment.svg", color: dark ? AppColors.light : Colors.black),
                     5.wS,
                     Text('12', style: GoogleFonts.plusJakartaSans(color: Colors.grey)),
                     const Spacer(),

@@ -1,9 +1,11 @@
 import 'package:business_application/core/config/app_colors.dart';
 import 'package:business_application/core/config/app_size.dart';
+import 'package:business_application/core/utils/ui_support.dart';
 import 'package:business_application/features/video_player/presentation/page/yt_video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class PostDetailsPage extends StatefulWidget {
@@ -54,9 +56,16 @@ class PostDetailsPageState extends State<PostDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final dark = Ui.isDarkMode(context);
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(backgroundColor: Colors.white, title: Text('Post Details')),
+      appBar: AppBar(
+        backgroundColor: dark ? AppColors.dark : AppColors.light,
+        title: Text('Post Details'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: dark ? Colors.white : Colors.black),
+          onPressed: () => context.pop(),
+        ),
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -64,7 +73,7 @@ class PostDetailsPageState extends State<PostDetailsPage> {
             children: [
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 16.h),
-                color: Colors.white,
+                color: dark ? AppColors.dark : Colors.white,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -121,7 +130,7 @@ class PostDetailsPageState extends State<PostDetailsPage> {
                       children: [
                         Icon(Icons.favorite_border),
                         15.wS,
-                        SvgPicture.asset("assets/icons/comment.svg"),
+                        SvgPicture.asset("assets/icons/comment.svg", color: dark ? AppColors.light : AppColors.dark),
                         5.wS,
                         Text('12', style: GoogleFonts.plusJakartaSans(color: Colors.grey)),
                         const Spacer(),

@@ -1,6 +1,7 @@
 import 'package:business_application/core/config/app_colors.dart';
 import 'package:business_application/core/config/app_routes.dart';
 import 'package:business_application/core/config/app_size.dart';
+import 'package:business_application/core/utils/ui_support.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -31,13 +32,14 @@ class UserPostWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final dark = Ui.isDarkMode(context);
     return GestureDetector(
       onTap: () {
         context.push(AppRoutes.postDetails); // Navigate to post details page
       },
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 16.h),
-        color: Colors.white,
+        color: dark ? AppColors.dark : Colors.white,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -84,7 +86,7 @@ class UserPostWidget extends StatelessWidget {
               children: [
                 Icon(Icons.favorite_border),
                 15.wS,
-                SvgPicture.asset("assets/icons/comment.svg"),
+                SvgPicture.asset("assets/icons/comment.svg", color: dark ? AppColors.light : AppColors.dark),
                 5.wS,
                 Text(commentCount, style: GoogleFonts.plusJakartaSans(color: Colors.grey)),
                 const Spacer(),

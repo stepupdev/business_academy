@@ -2,6 +2,7 @@ import 'package:business_application/core/config/app_router.dart';
 import 'package:business_application/core/config/app_themes.dart';
 import 'package:business_application/core/config/dependency_injection.dart';
 import 'package:business_application/core/services/auth_services.dart';
+import 'package:business_application/core/utils/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -39,8 +40,9 @@ class MyApp extends StatelessWidget {
           routerDelegate: AppRouter.router.routerDelegate,
           routeInformationProvider: AppRouter.router.routeInformationProvider,
           title: 'Business Academy',
-          theme: AppThemes.lightTheme,
-          darkTheme: AppThemes.darkTheme,
+          theme: TAppTheme.lightTheme,
+          themeMode: ThemeMode.system,
+          darkTheme: TAppTheme.darkTheme,
           initialBinding: DependencyInjection(),
         );
       },

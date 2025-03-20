@@ -1,7 +1,9 @@
 import 'package:business_application/core/config/app_size.dart';
+import 'package:business_application/core/utils/ui_support.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:business_application/core/config/app_colors.dart';
 
 class CustomShimmer extends StatelessWidget {
   final List<Map<String, dynamic>> topics;
@@ -10,14 +12,15 @@ class CustomShimmer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final dark = Ui.isDarkMode(context);
     return SingleChildScrollView(
       child: Column(
         children: [
           Shimmer.fromColors(
-            baseColor: Colors.grey[300]!,
-            highlightColor: Colors.grey[100]!,
+            baseColor: dark ? AppColors.dark : Colors.grey[300]!,
+            highlightColor: dark ? AppColors.grey : Colors.grey[100]!,
             child: Container(
-              color: Color(0xffE9F0FF),
+              color: dark ? AppColors.grey : Color(0xffE9F0FF),
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 children: [
@@ -44,8 +47,8 @@ class CustomShimmer extends StatelessWidget {
                 itemCount: topics.length,
                 itemBuilder: (context, index) {
                   return Shimmer.fromColors(
-                    baseColor: Colors.grey[300]!,
-                    highlightColor: Colors.grey[100]!,
+                    baseColor: dark ? AppColors.grey : Colors.grey[300]!,
+                    highlightColor: dark ? AppColors.grey : Colors.grey[100]!,
                     child: Container(
                       width: 80.w,
                       decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(50)),
@@ -56,7 +59,7 @@ class CustomShimmer extends StatelessWidget {
             ),
           ),
           5.hS,
-          const Divider(thickness: 0.5, color: Colors.grey),
+          Divider(thickness: 0.5, color: Colors.grey[200]),
           ListView.separated(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
@@ -64,8 +67,8 @@ class CustomShimmer extends StatelessWidget {
             itemCount: 5,
             itemBuilder: (context, index) {
               return Shimmer.fromColors(
-                baseColor: Colors.grey[300]!,
-                highlightColor: Colors.grey[100]!,
+                baseColor: dark ? AppColors.grey : Colors.grey[300]!,
+                highlightColor: dark ? AppColors.grey : Colors.grey[100]!,
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 16.h),
                   color: Colors.white,

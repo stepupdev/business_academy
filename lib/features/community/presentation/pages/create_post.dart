@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:business_application/core/config/app_colors.dart';
 import 'package:business_application/core/config/app_size.dart';
+import 'package:business_application/core/utils/ui_support.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -27,18 +28,10 @@ class CreatePostPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final dark = Ui.isDarkMode(context);
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
         title: Text("Create Post"),
-        automaticallyImplyLeading: true,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios),
-          onPressed: () {
-            context.pop();
-          },
-        ),
         actionsPadding: EdgeInsets.symmetric(horizontal: 10),
         actions: [
           FilledButton(
@@ -141,7 +134,7 @@ class CreatePostPage extends StatelessWidget {
                                     fixedSize: Size(165.w, 48.h),
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
                                   ),
-                                  label: Text("Camera"),
+                                  label: Text("Camera", style: TextStyle(color: dark ? Colors.black : Colors.white)),
                                   icon: Icon(Icons.photo_camera, size: 24, color: AppColors.primaryColor),
                                 ),
                               ),
@@ -154,7 +147,10 @@ class CreatePostPage extends StatelessWidget {
                                     fixedSize: Size(165.w, 48.h),
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
                                   ),
-                                  label: Text("Add Photos"),
+                                  label: Text(
+                                    "Add Photos",
+                                    style: TextStyle(color: dark ? Colors.black : Colors.white),
+                                  ),
                                   icon: Icon(
                                     Icons.photo_size_select_actual_rounded,
                                     size: 24,

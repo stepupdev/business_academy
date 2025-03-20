@@ -1,6 +1,7 @@
 import 'package:business_application/core/config/app_colors.dart';
 import 'package:business_application/core/config/app_routes.dart';
 import 'package:business_application/core/config/app_size.dart';
+import 'package:business_application/core/utils/ui_support.dart';
 import 'package:business_application/features/auth/controller/auth_controller.dart';
 import 'package:business_application/features/community/controller/community_controller.dart';
 import 'package:business_application/core/services/auth_services.dart';
@@ -18,15 +19,20 @@ class MenuPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final authService = Get.find<AuthService>();
     final communityController = Get.put(CommunityController());
+    final dark = Ui.isDarkMode(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Profile'), automaticallyImplyLeading: true, backgroundColor: Colors.white),
+      appBar: AppBar(
+        title: const Text('Profile'),
+        automaticallyImplyLeading: true,
+        backgroundColor: dark ? AppColors.dark : Colors.white,
+      ),
       body: Obx(() {
         return Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [Color(0xFFFFFFFF), Color(0xFFDEF3FF)],
+              colors: dark ? [AppColors.dark, AppColors.darkerGrey] : [Color(0xFFFFFFFF), Color(0xffffdef3ff)],
             ),
           ),
           child: Padding(
@@ -50,7 +56,10 @@ class MenuPage extends StatelessWidget {
                 ),
                 SizedBox(height: 20),
                 Container(
-                  decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10)),
+                  decoration: BoxDecoration(
+                    color: dark ? AppColors.dark : Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -166,7 +175,7 @@ class MenuPage extends StatelessWidget {
                     ],
                   ),
                 ),
-                SizedBox(height: 50),
+                SizedBox(height: 30.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -174,10 +183,13 @@ class MenuPage extends StatelessWidget {
                       onPressed: () {
                         Get.find<AuthController>().signOut(context);
                       },
-                      icon: Icon(Icons.logout, color: Colors.black, size: 20),
+                      icon: Icon(Icons.logout, color: dark ? AppColors.light : Colors.black, size: 20),
                       label: Text(
                         'Logout',
-                        style: GoogleFonts.plusJakartaSans(color: Colors.black, fontWeight: FontWeight.w600),
+                        style: GoogleFonts.plusJakartaSans(
+                          color: dark ? AppColors.light : Colors.black,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ],

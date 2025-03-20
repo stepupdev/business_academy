@@ -3,6 +3,7 @@ import 'package:business_application/core/config/app_colors.dart';
 import 'package:business_application/core/config/app_routes.dart';
 import 'package:business_application/core/config/app_size.dart';
 import 'package:business_application/core/services/auth_services.dart';
+import 'package:business_application/core/utils/ui_support.dart';
 import 'package:business_application/widgets/custom_post_cart_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -43,8 +44,8 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final dark = Ui.isDarkMode(context);
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
         flexibleSpace: Container(
           decoration: BoxDecoration(
@@ -105,9 +106,9 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen> {
                   child: Column(
                     children: [
                       Container(
-                        color: Color(0xffE9F0FF),
+                        color: dark ? AppColors.dark : Color(0xffE9F0FF),
                         child: Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: EdgeInsets.symmetric(horizontal: 16.h, vertical: 8.h),
                           child: Row(
                             children: [
                               CircleAvatar(
@@ -123,14 +124,17 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen> {
                                   },
                                   style: TextButton.styleFrom(
                                     alignment: Alignment.centerLeft,
-                                    backgroundColor: Colors.white,
+                                    backgroundColor: dark ? AppColors.dark : Colors.white,
                                     padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
                                     side: BorderSide(color: Colors.blue.shade100),
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
                                   ),
                                   child: Text(
                                     'Creatre a Post!',
-                                    style: GoogleFonts.plusJakartaSans(color: Colors.grey, fontWeight: FontWeight.w600),
+                                    style: GoogleFonts.plusJakartaSans(
+                                      color: dark ? AppColors.light : Colors.grey,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -160,7 +164,7 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen> {
                                   child: Container(
                                     padding: EdgeInsets.symmetric(horizontal: 12.w),
                                     decoration: BoxDecoration(
-                                      color: Colors.white,
+                                      color: dark ? AppColors.dark : Colors.white,
                                       border: Border.all(
                                         color: isSelected ? AppColors.primaryColor : (Colors.grey[200] ?? Colors.grey),
                                       ),
@@ -171,7 +175,7 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen> {
                                         Text(
                                           topic['name'],
                                           style: GoogleFonts.plusJakartaSans(
-                                            color: Colors.black,
+                                            color: dark ? AppColors.light : Colors.black,
                                             fontSize: 12.sp,
                                             fontWeight: FontWeight.w600,
                                             height: 1.0,
@@ -198,7 +202,9 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen> {
                       ListView.separated(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
-                        separatorBuilder: (context, index) => Container(height: 5.h, color: Colors.grey[200]),
+                        separatorBuilder:
+                            (context, index) =>
+                                Container(height: 5.h, color: dark ? AppColors.darkerGrey : Colors.grey[200]),
                         itemCount: 11, // Increased by 1 to include the create post section
                         itemBuilder: (context, index) {
                           return UserPostWidget(
@@ -220,5 +226,3 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen> {
     );
   }
 }
-
-

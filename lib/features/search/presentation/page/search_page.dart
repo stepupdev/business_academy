@@ -1,5 +1,6 @@
 import 'package:business_application/core/config/app_colors.dart';
 import 'package:business_application/core/config/app_size.dart';
+import 'package:business_application/core/utils/ui_support.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -20,8 +21,8 @@ class SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
+    final dark = Ui.isDarkMode(context);
     return Scaffold(
-      backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -80,7 +81,7 @@ class SearchPageState extends State<SearchPage> {
                         child: Container(
                           padding: EdgeInsets.symmetric(horizontal: 12.w),
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: dark ? AppColors.dark : Colors.white,
                             border: Border.all(color: Colors.grey[200] ?? Colors.grey),
                             borderRadius: BorderRadius.circular(50),
                           ),
@@ -89,7 +90,7 @@ class SearchPageState extends State<SearchPage> {
                               Text(
                                 topic,
                                 style: GoogleFonts.plusJakartaSans(
-                                  color: Colors.black,
+                                  color: dark ? AppColors.light : Colors.black,
                                   fontSize: 12.sp,
                                   fontWeight: FontWeight.w600,
                                   height: 1.0,

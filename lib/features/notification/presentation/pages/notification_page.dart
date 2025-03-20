@@ -11,24 +11,19 @@ class NotificationPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: Text(
-          'Notifications',
-          style: GoogleFonts.plusJakartaSans(color: Colors.black87, fontWeight: FontWeight.w600, fontSize: 18.sp),
-        ),
+        title: Text('Notifications', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600, fontSize: 18.sp)),
         centerTitle: true,
         actions: [
           IconButton(
-            icon: HeroIcon(HeroIcons.cog6Tooth, color: Colors.black87),
+            icon: HeroIcon(HeroIcons.cog6Tooth),
             onPressed: () {
               showMenu(
                 context: context,
                 position: RelativeRect.fromLTRB(100.w, 80.h, 0, 0),
                 items: [
-                  PopupMenuItem(child: Text('Settings'), value: 'settings'),
-                  PopupMenuItem(child: Text('Logout'), value: 'logout'),
+                  PopupMenuItem(value: 'mark_all_read', child: Text('Mark all read')),
+                  PopupMenuItem(value: 'settings', child: Text('Settings')),
                 ],
               ).then((value) {
                 if (value == 'settings') {
@@ -97,7 +92,7 @@ class NotificationCard extends StatelessWidget {
                 SizedBox(height: 8.0),
                 Text(title, style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold)),
                 SizedBox(height: 8.0),
-                Text(message, style: TextStyle(fontSize: 14.0, color: Colors.black87)),
+                Text(message, style: TextStyle(fontSize: 14.0)),
               ],
             ),
           ),
