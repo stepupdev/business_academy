@@ -139,7 +139,7 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen> {
                           ),
                         ),
                       ),
-                      Divider(color: AppColors.darkerGrey, thickness: 0.3),
+                      // Divider(color: AppColors.darkerGrey, thickness: 0.3),
                       12.hS,
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
