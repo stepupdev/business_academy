@@ -1,4 +1,5 @@
 import 'package:business_application/core/config/app_colors.dart';
+import 'package:business_application/core/utils/ui_support.dart';
 import 'package:business_application/features/auth/controller/auth_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -11,6 +12,7 @@ class SignInPage extends GetView<AuthController> {
 
   @override
   Widget build(BuildContext context) {
+    final dark = Ui.isDarkMode(context);
     return Scaffold(
       body: SafeArea(
         child: Obx(() {
@@ -18,9 +20,9 @@ class SignInPage extends GetView<AuthController> {
             children: [
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [Color(0xFFFFFFFF), Color(0xFFDEF3FF)],
+                    colors: dark ? [AppColors.dark, AppColors.darkerGrey] : [Color(0xFFFFFFFF), Color(0xFFDEF3FF)],
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                   ),
@@ -28,7 +30,13 @@ class SignInPage extends GetView<AuthController> {
                 child: Column(
                   children: [
                     const SizedBox(height: 75),
-                    Image.asset('assets/logo/logoname.png', height: 24),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: dark ? Colors.white : Colors.transparent,
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: Image.asset('assets/logo/logoname.png', height: 24),
+                    ),
                     const SizedBox(height: 75),
                     Text(
                       "Sign up Now and start your",
@@ -48,7 +56,7 @@ class SignInPage extends GetView<AuthController> {
                         controller.signInWithGoogle(context);
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
+                        backgroundColor: dark ? AppColors.dark : Colors.white,
                         elevation: 0,
                         minimumSize: const Size(double.infinity, 50),
                         padding: const EdgeInsets.symmetric(vertical: 16),
@@ -59,7 +67,7 @@ class SignInPage extends GetView<AuthController> {
                         children: [
                           SvgPicture.asset('assets/images/google.svg', height: 24),
                           const SizedBox(width: 10),
-                          const Text('Continue with Google'),
+                          Text('Continue with Google', style: TextStyle(color: dark ? Colors.white : Colors.black)),
                         ],
                       ),
                     ),
