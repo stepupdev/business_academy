@@ -33,14 +33,14 @@ class TopicsResponseModel {
 }
 
 class Result {
-    List<Datum>? data;
+    List<Topic>? data;
 
     Result({
         this.data,
     });
 
     factory Result.fromJson(Map<String, dynamic> json) => Result(
-        data: json["data"] == null ? [] : List<Datum>.from(json["data"]!.map((x) => Datum.fromJson(x))),
+        data: json["data"] == null ? [] : List<Topic>.from(json["data"]!.map((x) => Topic.fromJson(x))),
     );
 
     Map<String, dynamic> toJson() => {
@@ -48,7 +48,7 @@ class Result {
     };
 }
 
-class Datum {
+class Topic {
     int? id;
     String? name;
     dynamic icon;
@@ -56,7 +56,7 @@ class Datum {
     DateTime? updatedAt;
     int? postsCount;
 
-    Datum({
+    Topic({
         this.id,
         this.name,
         this.icon,
@@ -65,7 +65,7 @@ class Datum {
         this.postsCount,
     });
 
-    factory Datum.fromJson(Map<String, dynamic> json) => Datum(
+    factory Topic.fromJson(Map<String, dynamic> json) => Topic(
         id: json["id"],
         name: json["name"],
         icon: json["icon"],

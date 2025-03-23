@@ -1,34 +1,21 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:io';
 
-import 'package:business_application/core/config/app_colors.dart';
-import 'package:business_application/core/config/app_size.dart';
-import 'package:business_application/core/utils/ui_support.dart';
+import 'package:business_application/features/community/data/topics_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
-class CreatePostPage extends StatelessWidget {
-  final List<String> topics = ["Topics 1", "Topics 2", "Topics 3"];
-  final RxString selectedTopic = "Topics 1".obs;
-  final TextEditingController postController = TextEditingController();
-  final Rx<File?> selectedImage = Rx<File?>(null);
-  final RxInt selectedTabIndex = 0.obs; // 0 for Image, 1 for Video
-  final TextEditingController videoLinkController = TextEditingController();
+import 'package:business_application/core/config/app_colors.dart';
+import 'package:business_application/core/config/app_size.dart';
+import 'package:business_application/features/community/controller/community_controller.dart';
 
+class CreatePostPage extends GetView<CommunityController> {
   CreatePostPage({super.key});
-
-  Future<void> _pickImage(ImageSource source) async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: source);
-    if (pickedFile != null) {
-      selectedImage.value = File(pickedFile.path);
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
-    final dark = Ui.isDarkMode(context);
     return Scaffold(
       appBar: AppBar(
         title: Text("Create Post"),
@@ -36,11 +23,7 @@ class CreatePostPage extends StatelessWidget {
         actions: [
           FilledButton(
             onPressed: () {
-              // Handle post submission
-              final postContent = postController.text;
-              final category = selectedTopic.value;
-              // Save the post content and category
-              print("Category: $category, Post: $postContent");
+              controller.createNewPosts();
             },
             style: FilledButton.styleFrom(
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -62,7 +45,7 @@ class CreatePostPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   TextFormField(
-                    controller: postController,
+                    controller: controller.postController,
                     maxLines: 5,
                     decoration: InputDecoration(
                       hintText: "Write something...",
@@ -82,17 +65,17 @@ class CreatePostPage extends StatelessWidget {
                     () => Column(
                       children: [
                         TabBar(
-                          onTap: (index) => selectedTabIndex.value = index,
+                          onTap: (index) => controller.selectedTabIndex.value = index,
                           indicatorColor: AppColors.primaryColor,
                           labelColor: AppColors.primaryColor,
                           unselectedLabelColor: Colors.grey,
                           tabs: [Tab(text: "Image"), Tab(text: "Video")],
                         ),
                         14.hS,
-                        if (selectedTabIndex.value == 0) ...[
+                        if (controller.selectedTabIndex.value == 0) ...[
                           Obx(
                             () =>
-                                selectedImage.value != null
+                                controller.selectedImage.value != null
                                     ? Stack(
                                       children: [
                                         Container(
@@ -100,7 +83,7 @@ class CreatePostPage extends StatelessWidget {
                                           decoration: BoxDecoration(
                                             borderRadius: BorderRadius.circular(12),
                                             image: DecorationImage(
-                                              image: FileImage(selectedImage.value!),
+                                              image: FileImage(controller.selectedImage.value!),
                                               fit: BoxFit.cover,
                                             ),
                                           ),
@@ -109,7 +92,7 @@ class CreatePostPage extends StatelessWidget {
                                           top: 8,
                                           right: 8,
                                           child: GestureDetector(
-                                            onTap: () => selectedImage.value = null,
+                                            onTap: () => controller.selectedImage.value = null,
                                             child: Container(
                                               decoration: BoxDecoration(
                                                 color: Colors.grey.shade600,
@@ -128,29 +111,26 @@ class CreatePostPage extends StatelessWidget {
                             children: [
                               Flexible(
                                 child: ElevatedButton.icon(
-                                  onPressed: () => _pickImage(ImageSource.camera),
+                                  onPressed: () => controller.pickImage(ImageSource.camera),
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Color(0xFFE9F0FF),
                                     fixedSize: Size(165.w, 48.h),
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
                                   ),
-                                  label: Text("Camera", style: TextStyle(color: dark ? Colors.black : Colors.white)),
+                                  label: Text("Camera", style: TextStyle(color: Colors.black)),
                                   icon: Icon(Icons.photo_camera, size: 24, color: AppColors.primaryColor),
                                 ),
                               ),
                               10.wS,
                               Flexible(
                                 child: ElevatedButton.icon(
-                                  onPressed: () => _pickImage(ImageSource.gallery),
+                                  onPressed: () => controller.pickImage(ImageSource.gallery),
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Color(0xFFE9F0FF),
                                     fixedSize: Size(165.w, 48.h),
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
                                   ),
-                                  label: Text(
-                                    "Add Photos",
-                                    style: TextStyle(color: dark ? Colors.black : Colors.white),
-                                  ),
+                                  label: Text("Add Photos", style: TextStyle(color: Colors.black)),
                                   icon: Icon(
                                     Icons.photo_size_select_actual_rounded,
                                     size: 24,
@@ -160,9 +140,9 @@ class CreatePostPage extends StatelessWidget {
                               ),
                             ],
                           ),
-                        ] else if (selectedTabIndex.value == 1) ...[
+                        ] else if (controller.selectedTabIndex.value == 1) ...[
                           TextFormField(
-                            controller: videoLinkController,
+                            controller: controller.videoLinkController,
                             decoration: InputDecoration(
                               hintText: "Enter video link...",
                               enabledBorder: OutlineInputBorder(
@@ -181,8 +161,9 @@ class CreatePostPage extends StatelessWidget {
                     ),
                   ),
                   20.hS,
-                  DropdownMenu<String>(
-                    initialSelection: topics.first,
+                  DropdownMenu(
+                    hintText: "Select a topic",
+                    initialSelection: controller.selectedTopicValue?.result?.data?.first.name ?? '',
                     inputDecorationTheme: InputDecorationTheme(
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -202,12 +183,18 @@ class CreatePostPage extends StatelessWidget {
                     enableFilter: true,
                     trailingIcon: Icon(Icons.keyboard_arrow_down_sharp),
                     onSelected: (val) {
-                      val = topics.first;
+                      controller.selectedTopic.value = val as String;
+                      final selectedTopic = controller.topics.value.result?.data?.firstWhere(
+                        (topic) => topic.name == val,
+                        orElse: () => Topic(),
+                      );
+                      controller.selectedTopicId.value = selectedTopic?.id?.toString() ?? '';
                     },
                     dropdownMenuEntries:
-                        topics.map((grid) {
-                          return DropdownMenuEntry<String>(value: grid, label: grid);
-                        }).toList(),
+                        controller.topics.value.result?.data!.map((topic) {
+                          return DropdownMenuEntry<Object>(value: topic.name ?? '', label: topic.name ?? '');
+                        }).toList() ??
+                        [],
                   ),
                 ],
               ),

@@ -22,6 +22,17 @@ class CommunityRep {
     return response;
   }
 
+  Future communityPosts(Map<String, dynamic> body) async {
+    APIManager _manager = APIManager();
+    final response = await _manager.postAPICallWithHeader(ApiUrl.createPost, body, {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
+    });
+    print("response: $response");
+    return response;
+  }
+
   Future getTopics() async {
     APIManager _manager = APIManager();
     final response = await _manager.getWithHeader(ApiUrl.topics, {

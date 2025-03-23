@@ -1,10 +1,15 @@
+import 'dart:io';
+
+import 'package:business_application/core/utils/ui_support.dart';
 import 'package:business_application/features/community/data/community_model.dart';
 import 'package:business_application/core/services/auth_services.dart';
 import 'package:business_application/features/community/data/community_posts_model.dart';
 import 'package:business_application/features/community/data/posts_by_id_model.dart';
 import 'package:business_application/features/community/data/topics_model.dart';
 import 'package:business_application/repository/community/community_rep.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 
 class CommunityController extends GetxController {
   var isLoading = false.obs;
@@ -13,11 +18,29 @@ class CommunityController extends GetxController {
   var communityPostsById = PostByIdResponseModel().obs;
   var topics = TopicsResponseModel().obs;
   var selectedTopic = ''.obs;
+  TopicsResponseModel? selectedTopicValue;
+  var selectedTopicId = ''.obs; // Initialize as an empty observable list
+  final TextEditingController postController = TextEditingController();
+  final Rx<File?> selectedImage = Rx<File?>(null);
+  final RxInt selectedTabIndex = 0.obs; // 0 for Image, 1 for Video
+  final TextEditingController videoLinkController = TextEditingController();
+
+  Future<void> pickImage(ImageSource source) async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: source);
+    if (pickedFile != null) {
+      selectedImage.value = File(pickedFile.path);
+    }
+  }
+
   @override
   void onInit() {
     Get.find<AuthService>().getCurrentUser();
     getCommunityPosts();
     getTopic();
+    selectedTopic.listen((value) {
+      // selectedTopicId.value = topics.value.result.data.where((st) => st.name == value).toList();
+    });
     super.onInit();
   }
 
@@ -46,6 +69,28 @@ class CommunityController extends GetxController {
       print(e);
     } finally {
       isLoading(false);
+    }
+  }
+
+  createNewPosts() async {
+    Map<String, dynamic> data = {
+      "content": postController.text,
+      "topic_id": selectedTopicId.value, // Pass the selected topic ID
+      "image": selectedImage.value,
+      "video_url": videoLinkController.text,
+    };
+    final response = await CommunityRep().communityPosts(data);
+    if (response['success'] == true) {
+      getCommunityPosts();
+      postController.clear();
+      selectedImage.value = null;
+      videoLinkController.clear();
+      selectedTopicId.value = '';
+      selectedTopic.value = '';
+      selectedTabIndex.value = 0;
+      Ui.successSnackBar(message: response['message']);
+    } else {
+      Ui.errorSnackBar(message: response['message']);
     }
   }
 
