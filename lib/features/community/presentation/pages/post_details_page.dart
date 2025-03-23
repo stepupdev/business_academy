@@ -78,9 +78,6 @@ class PostDetailsPageState extends State<PostDetailsPage> {
   @override
   Widget build(BuildContext context) {
     final dark = Ui.isDarkMode(context);
-    Datum posts = Get.find<CommunityController>().communityPosts.value.result?.data?.where((element) {
-      return element.id == widget.postId;
-    });
     final String? imageUrl = Get.find<CommunityController>().communityPostsById.value.result?.image;
     final String? videoUrl = Get.find<CommunityController>().communityPostsById.value.result?.videoUrl;
     final String? videoThumbnail = getVideoThumbnail(videoUrl);

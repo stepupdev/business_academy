@@ -214,7 +214,7 @@ class CommunityFeedScreen extends GetView<CommunityController> {
                           onTap: () {
                             Get.find<CommunityController>().getCommunityPostsById(posts?.id.toString() ?? "0");
                             controller.selectedPostId.value = posts?.id ?? 0;
-                            context.push('/post-details:${posts?.id}');
+                            context.push(AppRoutes.postDetails, extra: {'postId': posts?.id});
                           },
                           name: posts?.user?.name ?? "",
                           postId: posts?.id ?? 0,
