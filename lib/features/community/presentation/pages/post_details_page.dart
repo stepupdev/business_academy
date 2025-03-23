@@ -1,16 +1,21 @@
 import 'package:business_application/core/config/app_colors.dart';
 import 'package:business_application/core/config/app_size.dart';
 import 'package:business_application/core/utils/ui_support.dart';
-import 'package:business_application/features/video_player/presentation/page/yt_video_player.dart';
+import 'package:business_application/features/community/controller/community_controller.dart';
+import 'package:business_application/features/community/data/community_posts_model.dart';
+import 'package:business_application/widgets/custom_post_cart_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class PostDetailsPage extends StatefulWidget {
+  final String postId;
   final bool isVideo;
-  const PostDetailsPage({super.key, this.isVideo = true});
+  const PostDetailsPage({super.key, this.isVideo = true, required this.postId});
 
   @override
   PostDetailsPageState createState() => PostDetailsPageState();
@@ -20,6 +25,22 @@ class PostDetailsPageState extends State<PostDetailsPage> {
   final TextEditingController _commentController = TextEditingController();
   bool _isReplying = false;
   String? _replyingTo;
+  String? getVideoThumbnail(String? videoUrl) {
+    if (videoUrl == null || videoUrl.isEmpty) return null;
+    Uri uri = Uri.parse(videoUrl);
+    String videoId = uri.queryParameters['v'] ?? uri.pathSegments.last;
+    return "https://i.ytimg.com/vi/$videoId/hqdefault.jpg";
+  }
+
+  String formatTime(DateTime time) {
+    final dateTime = DateTime.now().subtract(DateTime.now().difference(time));
+    return timeago.format(dateTime, locale: 'en');
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   Widget _buildComment(
     BuildContext context,
@@ -57,6 +78,13 @@ class PostDetailsPageState extends State<PostDetailsPage> {
   @override
   Widget build(BuildContext context) {
     final dark = Ui.isDarkMode(context);
+    Datum posts = Get.find<CommunityController>().communityPosts.value.result?.data?.where((element) {
+      return element.id == widget.postId;
+    });
+    final String? imageUrl = Get.find<CommunityController>().communityPostsById.value.result?.image;
+    final String? videoUrl = Get.find<CommunityController>().communityPostsById.value.result?.videoUrl;
+    final String? videoThumbnail = getVideoThumbnail(videoUrl);
+    final String? postImage = imageUrl ?? videoThumbnail; // Use image if available, otherwise use video thumbnail
     return Scaffold(
       appBar: AppBar(
         backgroundColor: dark ? AppColors.dark : AppColors.light,
@@ -66,131 +94,84 @@ class PostDetailsPageState extends State<PostDetailsPage> {
           onPressed: () => context.pop(),
         ),
       ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 16.h),
-                color: dark ? AppColors.dark : Colors.white,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        CircleAvatar(child: Text('FN')),
-                        10.wS,
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Fahmid Al Nayem', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600)),
-                            Text('2 hours ago', style: GoogleFonts.plusJakartaSans(color: Colors.grey)),
-                          ],
-                        ),
-                        10.wS,
-                        Text('Social Media', style: GoogleFonts.plusJakartaSans(color: Colors.grey)),
-                      ],
-                    ),
-                    15.hS,
-                    Text('This is the caption for post index'),
-                    15.hS,
-                    InkWell(
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) {
-                              return YouTubeVideoPlayer(videoUrl: "https://www.youtube.com/watch?v=lqQjZOTuVBY");
-                            },
-                          ),
-                        );
-                      },
-                      child: SizedBox(
-                        height: 200.h,
-                        width: double.infinity,
-                        child:
-                            widget.isVideo
-                                ? Stack(
-                                  children: [
-                                    Image.network(
-                                      "https://i.ytimg.com/vi/lqQjZOTuVBY/hqdefault.jpg",
-                                      fit: BoxFit.cover,
-                                      width: double.infinity,
-                                    ),
-                                    Center(child: Icon(Icons.play_circle_fill, color: Colors.white, size: 50.r)),
-                                  ],
-                                )
-                                : Image.asset("assets/images/stepup_image.png", fit: BoxFit.cover),
-                      ),
-                    ),
-                    15.hS,
-                    Row(
-                      children: [
-                        Icon(Icons.favorite_border),
-                        15.wS,
-                        SvgPicture.asset("assets/icons/comment.svg", color: dark ? AppColors.light : AppColors.dark),
-                        5.wS,
-                        Text('12', style: GoogleFonts.plusJakartaSans(color: Colors.grey)),
-                        const Spacer(),
-                        Icon(Icons.bookmark_outline, color: Colors.amber, size: 24),
-                      ],
-                    ),
-                  ],
+
+      body: Obx(() {
+        if (Get.find<CommunityController>().isLoading.value) {
+          return Center(child: CircularProgressIndicator());
+        }
+        return SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                UserPostWidget(
+                  onTap: () {},
+                  name: Get.find<CommunityController>().communityPostsById.value.result?.user?.name ?? "",
+                  rank: Get.find<CommunityController>().communityPostsById.value.result?.user?.rank?.name ?? "",
+                  topic: Get.find<CommunityController>().communityPostsById.value.result?.topic?.name ?? "",
+
+                  time: formatTime(
+                    Get.find<CommunityController>().communityPostsById.value.result?.createdAt ?? DateTime.now(),
+                  ),
+                  postImage: postImage ?? "",
+                  dp: Get.find<CommunityController>().communityPostsById.value.result?.user?.avatar ?? "",
+                  caption: Get.find<CommunityController>().communityPostsById.value.result?.content ?? "",
+                  commentCount:
+                      Get.find<CommunityController>().communityPostsById.value.result?.commentsCount?.toString() ?? "",
+                  isLiked: Get.find<CommunityController>().communityPostsById.value.result?.isLiked ?? false,
                 ),
-              ),
-              Divider(height: 1.h),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  "Comments",
-                  style: GoogleFonts.plusJakartaSans(fontSize: 15.sp, fontWeight: FontWeight.w700),
+                Divider(height: 1.h),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    "Comments",
+                    style: GoogleFonts.plusJakartaSans(fontSize: 15.sp, fontWeight: FontWeight.w700),
+                  ),
                 ),
-              ),
-              _buildComment(context, 'U1', 'User1', 'Nice post!', [
-                _buildComment(context, 'U3', 'User3', 'Thanks!', []),
-              ]),
-              _buildComment(context, 'U2', 'User2', 'Great picture!', []),
-              // ...additional comments...
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
-                child: Row(
-                  children: [
-                    CircleAvatar(radius: 25.r, child: Text('FN')),
-                    10.wS,
-                    Expanded(
-                      child: TextFormField(
-                        onTapOutside: (event) => FocusScope.of(context).unfocus(),
-                        controller: _commentController,
-                        decoration: InputDecoration(
-                          hintText: _isReplying ? 'Replying to $_replyingTo' : 'Add comment',
-                          contentPadding: EdgeInsets.symmetric(horizontal: 20.w),
-                          hintStyle: TextStyle(color: Colors.grey.shade500),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30.0),
-                            borderSide: BorderSide(color: AppColors.borderColor),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30.0),
-                            borderSide: BorderSide(color: AppColors.borderColor),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30.0),
-                            borderSide: BorderSide(color: AppColors.borderColor),
+                _buildComment(context, 'U1', 'User1', 'Nice post!', [
+                  _buildComment(context, 'U3', 'User3', 'Thanks!', []),
+                ]),
+                _buildComment(context, 'U2', 'User2', 'Great picture!', []),
+                // ...additional comments...
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+                  child: Row(
+                    children: [
+                      CircleAvatar(radius: 25.r, child: Text('FN')),
+                      10.wS,
+                      Expanded(
+                        child: TextFormField(
+                          onTapOutside: (event) => FocusScope.of(context).unfocus(),
+                          controller: _commentController,
+                          decoration: InputDecoration(
+                            hintText: _isReplying ? 'Replying to $_replyingTo' : 'Add comment',
+                            contentPadding: EdgeInsets.symmetric(horizontal: 20.w),
+                            hintStyle: TextStyle(color: Colors.grey.shade500),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30.0),
+                              borderSide: BorderSide(color: AppColors.borderColor),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30.0),
+                              borderSide: BorderSide(color: AppColors.borderColor),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30.0),
+                              borderSide: BorderSide(color: AppColors.borderColor),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    10.wS,
-                    SvgPicture.asset("assets/icons/share.svg", height: 24.h),
-                  ],
+                      10.wS,
+                      SvgPicture.asset("assets/icons/share.svg", height: 24.h),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ),
+        );
+      }),
     );
   }
 }

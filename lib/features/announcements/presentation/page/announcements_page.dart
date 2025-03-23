@@ -18,6 +18,7 @@ class AnnouncementsPage extends StatelessWidget {
         itemCount: 11, // Increased by 1 to include the create post section
         itemBuilder: (context, index) {
           return UserPostWidget(
+            onTap: () {},
             name: 'Fahmid Al Nayem',
             rank: 'Rank $index',
             topic: "Social Media",
@@ -26,6 +27,7 @@ class AnnouncementsPage extends StatelessWidget {
             dp: Get.find<AuthService>().currentUser.value.result?.user?.avatar ?? "",
             caption: 'This is the caption for post $index',
             commentCount: '12',
+            isLiked: true,
           );
         },
       ),

@@ -6,9 +6,7 @@ import 'package:shimmer/shimmer.dart';
 import 'package:business_application/core/config/app_colors.dart';
 
 class CustomShimmer extends StatelessWidget {
-  final List<Map<String, dynamic>> topics;
-
-  const CustomShimmer({super.key, required this.topics});
+  const CustomShimmer({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +42,7 @@ class CustomShimmer extends StatelessWidget {
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 separatorBuilder: (context, index) => SizedBox(width: 5.w),
-                itemCount: topics.length,
+                itemCount: 10,
                 itemBuilder: (context, index) {
                   return Shimmer.fromColors(
                     baseColor: dark ? AppColors.dark : Colors.grey[300]!,
