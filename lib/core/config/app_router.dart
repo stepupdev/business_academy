@@ -19,59 +19,49 @@ class AppRouter {
     routes: [
       GoRoute(
         path: AppRoutes.splash,
-        builder: (context, state) => const SplashPage(),
         pageBuilder: (context, state) => MaterialPage(key: state.pageKey, child: const SplashPage()),
       ),
       GoRoute(
         path: AppRoutes.signIn,
-        builder: (context, state) => const SignInPage(),
         pageBuilder: (context, state) => MaterialPage(key: state.pageKey, child: const SignInPage()),
       ),
       GoRoute(
         path: AppRoutes.home,
-        builder: (context, state) => const HomePage(),
         pageBuilder: (context, state) => MaterialPage(key: state.pageKey, child: const HomePage()),
       ),
       GoRoute(
         path: AppRoutes.createPost,
-        builder: (context, state) => CreatePostPage(),
         pageBuilder: (context, state) => MaterialPage(key: state.pageKey, child: CreatePostPage()),
       ),
       GoRoute(
         path: AppRoutes.postDetails,
-        builder: (context, state) => PostDetailsPage(postId: state.params['postId'].toString()),
-        pageBuilder:
-            (context, state) =>
-                MaterialPage(key: state.pageKey, child: PostDetailsPage(postId: state.params['postId'].toString())),
+        pageBuilder: (context, state) {
+          final String? postId = state.queryParams['postId'];
+          return MaterialPage(key: state.pageKey, child: PostDetailsPage(postId: postId ?? ''));
+        },
       ),
       GoRoute(
         path: AppRoutes.onboarding,
-        builder: (context, state) => const OnboardingPage(),
         pageBuilder: (context, state) => MaterialPage(key: state.pageKey, child: const OnboardingPage()),
       ),
       GoRoute(
         path: AppRoutes.notification,
-        builder: (context, state) => NotificationPage(),
         pageBuilder: (context, state) => MaterialPage(key: state.pageKey, child: NotificationPage()),
       ),
       GoRoute(
         path: AppRoutes.savedPosts,
-        builder: (context, state) => SavePostsPage(),
         pageBuilder: (context, state) => MaterialPage(key: state.pageKey, child: SavePostsPage()),
       ),
       GoRoute(
         path: AppRoutes.search,
-        builder: (context, state) => SearchPage(),
         pageBuilder: (context, state) => MaterialPage(key: state.pageKey, child: SearchPage()),
       ),
       GoRoute(
         path: AppRoutes.groupDetails,
-        builder: (context, state) => GroupDetailsPage(),
         pageBuilder: (context, state) => MaterialPage(key: state.pageKey, child: GroupDetailsPage()),
       ),
       GoRoute(
         path: AppRoutes.myPosts,
-        builder: (context, state) => MyPostsPage(),
         pageBuilder: (context, state) => MaterialPage(key: state.pageKey, child: MyPostsPage()),
       ),
     ],

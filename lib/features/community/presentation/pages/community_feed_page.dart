@@ -204,8 +204,9 @@ class CommunityFeedScreen extends GetView<CommunityController> {
                         return UserPostWidget(
                           onTap: () {
                             Get.find<CommunityController>().getCommunityPostsById(posts.id.toString());
+                            Get.find<CommunityController>().getComments(posts.id.toString());
                             controller.selectedPostId.value = posts.id ?? 0;
-                            context.push(AppRoutes.postDetails, extra: {'postId': posts.id});
+                            GoRouter.of(context).push('/post-details/${posts.id}');
                           },
                           name: posts.user?.name ?? "",
                           postId: posts.id ?? 0,

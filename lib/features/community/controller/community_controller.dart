@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:business_application/core/utils/ui_support.dart';
+import 'package:business_application/features/community/data/comments_response_model.dart';
 import 'package:business_application/features/community/data/community_model.dart';
 import 'package:business_application/core/services/auth_services.dart';
 import 'package:business_application/features/community/data/community_posts_model.dart';
@@ -14,6 +15,7 @@ import 'package:image_picker/image_picker.dart';
 class CommunityController extends GetxController {
   var isLoading = false.obs;
   var communityPosts = PostsResponseModel().obs;
+  var comments = CommentsResponseModel().obs;
   var selectedPostId = 0.obs;
   var communityPostsById = PostByIdResponseModel().obs;
   var topics = topics_model.TopicsResponseModel().obs;
@@ -188,6 +190,19 @@ class CommunityController extends GetxController {
     }
   }
 
+  getComments(String id) async {
+    try {
+      isLoading(true);
+      final response = await CommunityRep().getCommentsByPostId(id);
+      comments(CommentsResponseModel.fromJson(response));
+    } catch (e) {
+      isLoading(false);
+      print(e);
+    } finally {
+      isLoading(false);
+    }
+  }
+
   createNewPosts() async {
     Map<String, dynamic> data = {
       "content": postController.text,
@@ -215,6 +230,7 @@ class CommunityController extends GetxController {
       isLoading(true);
       final response = await CommunityRep().getCommunityPostsById(id);
       communityPostsById(PostByIdResponseModel.fromJson(response));
+      getComments(id);
     } catch (e) {
       isLoading(false);
       print(e);

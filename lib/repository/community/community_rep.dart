@@ -35,6 +35,15 @@ class CommunityRep {
     return response;
   }
 
+  Future getCommentsByPostId(String id) async {
+    APIManager _manager = APIManager();
+    final response = await _manager.getWithHeader("${ApiUrl.communityPosts}/$id/comments", {
+      "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
+    });
+    print("response: $response");
+    return response;
+  }
+
   Future getCommunityPostsById(String id) async {
     APIManager _manager = APIManager();
     final response = await _manager.getWithHeader("${ApiUrl.communityPosts}/$id", {
