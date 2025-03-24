@@ -1,15 +1,10 @@
-import 'package:business_application/core/config/app_colors.dart';
 import 'package:business_application/core/config/app_routes.dart';
-import 'package:business_application/core/config/app_size.dart';
-import 'package:business_application/core/utils/ui_support.dart';
 import 'package:business_application/features/community/controller/community_controller.dart';
 import 'package:business_application/features/save_posts/controller/save_post_controller.dart';
 import 'package:business_application/widgets/custom_post_cart_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:get/state_manager.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
