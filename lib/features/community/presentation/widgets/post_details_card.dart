@@ -1,12 +1,10 @@
 import 'package:business_application/core/config/app_colors.dart';
 import 'package:business_application/core/config/app_size.dart';
 import 'package:business_application/core/utils/ui_support.dart';
-import 'package:business_application/features/community/controller/community_controller.dart';
 import 'package:business_application/features/video_player/presentation/page/yt_video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class PostDetailsCard extends StatefulWidget {
@@ -25,9 +23,13 @@ class PostDetailsCard extends StatefulWidget {
     required this.commentCount,
     required this.isLiked,
     required this.isSaved,
+    this.onLike,
+    this.onSave,
   });
 
   final VoidCallback onTap;
+  final VoidCallback? onLike;
+  final VoidCallback? onSave;
   final String name;
   final int? postId;
   final String rank;
@@ -197,12 +199,9 @@ class _PostDetailsState extends State<PostDetailsCard> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                InkWell(
-                  onTap: () {
-                    Get.find<CommunityController>().selectedPostId.value = widget.postId ?? 0;
-                    Get.find<CommunityController>().likePosts(); // Call likePosts
-                  },
-                  child: Icon(
+                IconButton(
+                  onPressed: widget.onLike,
+                  icon: Icon(
                     widget.isLiked ? Icons.favorite : Icons.favorite_border,
                     color:
                         widget.isLiked
@@ -220,10 +219,7 @@ class _PostDetailsState extends State<PostDetailsCard> {
                   ],
                 ),
                 InkWell(
-                  onTap: () {
-                    Get.find<CommunityController>().selectedPostId.value = widget.postId ?? 0;
-                    Get.find<CommunityController>().savePost(); // Call savePost
-                  },
+                  onTap: widget.onSave,
                   child: Icon(
                     widget.isSaved ? Icons.bookmark : Icons.bookmark_border,
                     color:

@@ -107,6 +107,13 @@ class CommunityController extends GetxController {
       filteredPosts.refresh(); // Trigger UI update
     }
 
+    // Update communityPostsById to reflect the change
+    if (communityPostsById.value.result?.id == selectedPostId.value) {
+      communityPostsById.update((post) {
+        post?.result?.isLiked = !previousState;
+      });
+    }
+
     Map<String, dynamic> data = {"type": "App\\Models\\Post", "id": selectedPostId.value};
 
     final response = await CommunityRep().likePosts(data);
@@ -119,6 +126,12 @@ class CommunityController extends GetxController {
       if (filteredIndex != -1) {
         filteredPosts[filteredIndex].isLiked = previousState;
         filteredPosts.refresh(); // Trigger UI update
+      }
+
+      if (communityPostsById.value.result?.id == selectedPostId.value) {
+        communityPostsById.update((post) {
+          post?.result?.isLiked = previousState;
+        });
       }
 
       Ui.errorSnackBar(message: response['message']);
@@ -144,6 +157,13 @@ class CommunityController extends GetxController {
       filteredPosts.refresh(); // Trigger UI update
     }
 
+    // Update communityPostsById to reflect the change
+    if (communityPostsById.value.result?.id == selectedPostId.value) {
+      communityPostsById.update((post) {
+        post?.result?.isSaved = !previousState;
+      });
+    }
+
     Map<String, dynamic> data = {"post_id": selectedPostId.value};
 
     final response = await CommunityRep().savePost(data);
@@ -156,6 +176,12 @@ class CommunityController extends GetxController {
       if (filteredIndex != -1) {
         filteredPosts[filteredIndex].isSaved = previousState;
         filteredPosts.refresh(); // Trigger UI update
+      }
+
+      if (communityPostsById.value.result?.id == selectedPostId.value) {
+        communityPostsById.update((post) {
+          post?.result?.isSaved = previousState;
+        });
       }
 
       Ui.errorSnackBar(message: response['message']);

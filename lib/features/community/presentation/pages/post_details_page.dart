@@ -91,24 +91,33 @@ class PostDetailsPageState extends State<PostDetailsPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Obx(() {
+                  final controller = Get.find<CommunityController>();
+                  final post = controller.communityPostsById.value.result;
+
                   return PostDetailsCard(
                     onTap: () {},
-                    name: Get.find<CommunityController>().communityPostsById.value.result?.user?.name ?? "",
-                    rank: Get.find<CommunityController>().communityPostsById.value.result?.user?.rank?.name ?? "",
-                    topic: Get.find<CommunityController>().communityPostsById.value.result?.topic?.name ?? "",
+                    name: post?.user?.name ?? "",
+                    rank: post?.user?.rank?.name ?? "",
+                    topic: post?.topic?.name ?? "",
                     postId: int.tryParse(widget.postId),
-                    time: formatTime(
-                      Get.find<CommunityController>().communityPostsById.value.result?.createdAt ?? DateTime.now(),
-                    ),
-                    postImage: Get.find<CommunityController>().communityPostsById.value.result?.image ?? "",
-                    videoUrl: Get.find<CommunityController>().communityPostsById.value.result?.videoUrl ?? "",
-                    dp: Get.find<CommunityController>().communityPostsById.value.result?.user?.avatar ?? "",
-                    caption: Get.find<CommunityController>().communityPostsById.value.result?.content ?? "",
-                    commentCount:
-                        Get.find<CommunityController>().communityPostsById.value.result?.commentsCount?.toString() ??
-                        "",
-                    isLiked: Get.find<CommunityController>().communityPostsById.value.result?.isLiked ?? false,
-                    isSaved: Get.find<CommunityController>().communityPostsById.value.result?.isSaved ?? false,
+                    time: formatTime(post?.createdAt ?? DateTime.now()),
+                    postImage: post?.image ?? "",
+                    videoUrl: post?.videoUrl ?? "",
+                    dp: post?.user?.avatar ?? "",
+                    caption: post?.content ?? "",
+                    commentCount: post?.commentsCount?.toString() ?? "",
+                    isLiked: post?.isLiked ?? false,
+                    isSaved: post?.isSaved ?? false,
+                    onLike: () {
+                      controller.selectedPostId.value = post?.id ?? 0;
+                      controller.likePosts();
+                      controller.communityPostsById.refresh(); // Trigger UI update
+                    },
+                    onSave: () {
+                      controller.selectedPostId.value = post?.id ?? 0;
+                      controller.savePost();
+                      controller.communityPostsById.refresh(); // Trigger UI update
+                    },
                   );
                 }),
                 Divider(height: 1.h),
