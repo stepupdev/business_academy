@@ -194,21 +194,7 @@ class CommunityFeedScreen extends GetView<CommunityController> {
                           (context, index) => Container(height: 3.h, color: dark ? Colors.black : Colors.grey[200]),
                       itemCount: controller.communityPosts.value.result?.data?.length ?? 0,
                       itemBuilder: (context, index) {
-                        String? getVideoThumbnail(String? videoUrl) {
-                          if (videoUrl == null || videoUrl.isEmpty) return null;
-                          Uri uri = Uri.parse(videoUrl);
-                          String videoId = uri.queryParameters['v'] ?? uri.pathSegments.last;
-                          return "https://i.ytimg.com/vi/$videoId/hqdefault.jpg";
-                        }
-
                         final posts = controller.communityPosts.value.result?.data?[index];
-                        final String? imageUrl = posts?.image;
-                        final String? videoUrl = posts?.videoUrl;
-                        final String? videoThumbnail = getVideoThumbnail(videoUrl);
-                        final String? postImage =
-                            imageUrl ?? videoThumbnail; // Use image if available, otherwise use video thumbnail
-                        final bool isVideo = imageUrl == null && videoUrl != null;
-                        var time = formatTime(posts?.createdAt ?? DateTime.now());
 
                         return UserPostWidget(
                           onTap: () {
@@ -220,12 +206,12 @@ class CommunityFeedScreen extends GetView<CommunityController> {
                           postId: posts?.id ?? 0,
                           rank: posts?.user?.rank?.name ?? "",
                           topic: posts?.topic?.name ?? "",
-                          time: time,
-                          postImage: postImage ?? "", // Ensure it's never null to prevent errors
+                          time: posts?.createdAt ?? DateTime.now(),
+                          postImage: posts?.image ?? "",
+                          videoUrl: posts?.videoUrl ?? "",
                           dp: posts?.user?.avatar ?? "",
                           caption: posts?.content ?? "",
                           commentCount: posts?.commentsCount?.toString() ?? "0",
-                          isVideo: isVideo,
                           isLiked: posts?.isLiked ?? false,
                         );
                       },

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class UserPostWidget extends StatefulWidget {
   const UserPostWidget({
@@ -17,11 +18,11 @@ class UserPostWidget extends StatefulWidget {
     required this.topic,
     required this.time,
     required this.postImage,
+    required this.videoUrl,
     required this.dp,
     required this.caption,
     required this.commentCount,
     required this.isLiked,
-    this.isVideo = false, // New flag to determine if it's a video
   });
 
   final VoidCallback onTap;
@@ -29,13 +30,13 @@ class UserPostWidget extends StatefulWidget {
   final int? postId;
   final String rank;
   final String topic;
-  final String time;
+  final DateTime time;
   final String postImage;
+  final String videoUrl;
   final String dp;
   final String caption;
   final String commentCount;
   final bool isLiked;
-  final bool isVideo;
   @override
   State<UserPostWidget> createState() => _UserPostWidgetState();
 }
@@ -43,6 +44,19 @@ class UserPostWidget extends StatefulWidget {
 class _UserPostWidgetState extends State<UserPostWidget> {
   bool _isExpanded = false;
   bool _isOverflowing = false;
+  String? videoThumbnail;
+  String? dateTime;
+  String formatTime(DateTime time) {
+    final dateTime = DateTime.now().subtract(DateTime.now().difference(time));
+    return timeago.format(dateTime, locale: 'en');
+  }
+
+  String? getVideoThumbnail(String? videoUrl) {
+    if (videoUrl == null || videoUrl.isEmpty) return null;
+    Uri uri = Uri.parse(videoUrl);
+    String videoId = uri.queryParameters['v'] ?? uri.pathSegments.last;
+    return "https://i.ytimg.com/vi/$videoId/hqdefault.jpg";
+  }
 
   @override
   void initState() {
@@ -50,6 +64,8 @@ class _UserPostWidgetState extends State<UserPostWidget> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkOverflow();
     });
+    videoThumbnail = getVideoThumbnail(widget.videoUrl);
+    dateTime = formatTime(widget.time);
   }
 
   void _checkOverflow() {
@@ -102,7 +118,7 @@ class _UserPostWidgetState extends State<UserPostWidget> {
                         ),
                       ],
                     ),
-                    Text(widget.time, style: GoogleFonts.plusJakartaSans(color: Colors.grey)),
+                    Text(dateTime!, style: GoogleFonts.plusJakartaSans(color: Colors.grey)),
                   ],
                 ),
                 10.wS,
@@ -138,34 +154,44 @@ class _UserPostWidgetState extends State<UserPostWidget> {
             10.hS,
 
             /// Post Image/Video Thumbnail with Play Icon
-            Visibility(
-              visible: widget.postImage.isNotEmpty || widget.isVideo,
-              child: Stack(
-                alignment: Alignment.center,
+            if (widget.postImage.isNotEmpty && widget.videoUrl.isNotEmpty)
+              ClipRRect(
+                borderRadius: BorderRadius.circular(10.r),
+                child: CachedNetworkImage(
+                  imageUrl: widget.postImage,
+                  width: 1.sw,
+                  height: 200.h,
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                  errorWidget: (context, url, error) => Icon(Icons.error),
+                ),
+              ),
+            if (widget.videoUrl.isNotEmpty && widget.postImage.isEmpty)
+              Stack(
                 children: [
-                  if (widget.postImage.isNotEmpty)
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(10.r),
-                      child: CachedNetworkImage(
-                        imageUrl: widget.postImage,
-                        fit: BoxFit.contain,
-                        width: double.infinity,
-                        height: 200.h,
-                        placeholder:
-                            (context, url) => Container(color: Colors.grey[300], width: double.infinity, height: 200.h),
-                        errorWidget: (context, url, error) => Icon(Icons.error, color: Colors.red),
-                      ),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10.r),
+                    child: CachedNetworkImage(
+                      imageUrl: videoThumbnail!,
+                      width: 1.sw,
+                      height: 200.h,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                      errorWidget: (context, url, error) => Icon(Icons.error),
                     ),
-                  if (widget.isVideo) // Show play icon overlay if it's a video
-                    Container(
+                  ),
+                  Positioned(
+                    top: 70.h,
+                    left: 150.w,
+                    child: Container(
                       width: 60.w,
                       height: 60.w,
                       decoration: BoxDecoration(color: Colors.black54, shape: BoxShape.circle),
                       child: Icon(Icons.play_arrow, color: Colors.white, size: 40.w),
                     ),
+                  ),
                 ],
               ),
-            ),
 
             /// Actions (Like, Comment, Bookmark)
             15.hS,

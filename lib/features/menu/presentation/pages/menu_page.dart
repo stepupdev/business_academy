@@ -156,7 +156,7 @@ class MenuPage extends StatelessWidget {
                         },
                       ),
                       ListTile(
-                        leading: Icon(Icons.play_circle_outline),
+                        leading: HeroIcon(HeroIcons.pencilSquare),
                         title: Text('My posts'),
                         trailing: Icon(Icons.arrow_forward_ios),
                         onTap: () {

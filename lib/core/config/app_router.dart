@@ -4,7 +4,7 @@ import 'package:business_application/features/community/presentation/pages/creat
 import 'package:business_application/features/community/presentation/pages/post_details_page.dart';
 import 'package:business_application/features/groups/presentation/pages/groups_details_page.dart';
 import 'package:business_application/features/home/presentation/pages/home_page.dart';
-import 'package:business_application/features/my_posts/presentation/page/my_posts.dart';
+import 'package:business_application/features/my_posts/presentation/page/my_posts_page.dart';
 import 'package:business_application/features/notification/presentation/pages/notification_page.dart';
 import 'package:business_application/features/onboarding/presentation/pages/onboarding_page.dart';
 import 'package:business_application/features/onboarding/presentation/pages/splash_page.dart';

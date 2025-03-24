@@ -41,4 +41,13 @@ class CommunityRep {
     print("response: $response");
     return response;
   }
+
+  Future getMyPosts() async {
+    APIManager _manager = APIManager();
+    final response = await _manager.getWithHeader(ApiUrl.myPosts, {
+      "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
+    });
+    print("response: $response");
+    return response;
+  }
 }
