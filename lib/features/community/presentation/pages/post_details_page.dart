@@ -2,7 +2,7 @@ import 'package:business_application/core/config/app_colors.dart';
 import 'package:business_application/core/config/app_size.dart';
 import 'package:business_application/core/utils/ui_support.dart';
 import 'package:business_application/features/community/controller/community_controller.dart';
-import 'package:business_application/widgets/custom_post_cart_widgets.dart';
+import 'package:business_application/features/community/presentation/widgets/post_details_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -24,12 +24,6 @@ class PostDetailsPageState extends State<PostDetailsPage> {
   final TextEditingController _commentController = TextEditingController();
   bool _isReplying = false;
   String? _replyingTo;
-  String? getVideoThumbnail(String? videoUrl) {
-    if (videoUrl == null || videoUrl.isEmpty) return null;
-    Uri uri = Uri.parse(videoUrl);
-    String videoId = uri.queryParameters['v'] ?? uri.pathSegments.last;
-    return "https://i.ytimg.com/vi/$videoId/hqdefault.jpg";
-  }
 
   String formatTime(DateTime time) {
     final dateTime = DateTime.now().subtract(DateTime.now().difference(time));
@@ -77,10 +71,6 @@ class PostDetailsPageState extends State<PostDetailsPage> {
   @override
   Widget build(BuildContext context) {
     final dark = Ui.isDarkMode(context);
-    final String? imageUrl = Get.find<CommunityController>().communityPostsById.value.result?.image;
-    final String? videoUrl = Get.find<CommunityController>().communityPostsById.value.result?.videoUrl;
-    final String? videoThumbnail = getVideoThumbnail(videoUrl);
-    final String? postImage = imageUrl ?? videoThumbnail; // Use image if available, otherwise use video thumbnail
     return Scaffold(
       appBar: AppBar(
         backgroundColor: dark ? AppColors.dark : AppColors.light,
@@ -100,7 +90,7 @@ class PostDetailsPageState extends State<PostDetailsPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                UserPostWidget(
+                PostDetailsCard(
                   onTap: () {},
                   name: Get.find<CommunityController>().communityPostsById.value.result?.user?.name ?? "",
                   rank: Get.find<CommunityController>().communityPostsById.value.result?.user?.rank?.name ?? "",
@@ -109,7 +99,8 @@ class PostDetailsPageState extends State<PostDetailsPage> {
                   time: formatTime(
                     Get.find<CommunityController>().communityPostsById.value.result?.createdAt ?? DateTime.now(),
                   ),
-                  postImage: postImage ?? "",
+                  postImage: Get.find<CommunityController>().communityPostsById.value.result?.image ?? "",
+                  videoUrl: Get.find<CommunityController>().communityPostsById.value.result?.videoUrl ?? "",
                   dp: Get.find<CommunityController>().communityPostsById.value.result?.user?.avatar ?? "",
                   caption: Get.find<CommunityController>().communityPostsById.value.result?.content ?? "",
                   commentCount:

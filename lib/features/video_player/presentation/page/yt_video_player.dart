@@ -20,7 +20,13 @@ class YouTubeVideoPlayerState extends State<YouTubeVideoPlayer> {
     if (videoId != null) {
       _controller = YoutubePlayerController(
         initialVideoId: videoId,
-        flags: const YoutubePlayerFlags(autoPlay: false, mute: false),
+        flags: const YoutubePlayerFlags(
+          autoPlay: true,
+          mute: false,
+          showLiveFullscreenButton: true,
+          forceHD: true,
+          controlsVisibleAtStart: true,
+        ),
       );
     }
   }
