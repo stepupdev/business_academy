@@ -29,6 +29,7 @@ class AnnouncementsPage extends StatelessWidget {
             caption: 'This is the caption for post $index',
             commentCount: '12',
             isLiked: true,
+            isSaved: true,
           );
         },
       ),

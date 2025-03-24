@@ -40,6 +40,7 @@ class MyPostsPage extends GetView<MyPostsController> {
               caption: post?.content ?? "",
               commentCount: post?.commentsCount.toString() ?? "",
               isLiked: post?.isLiked ?? false,
+              isSaved: post?.isSaved ?? false,
             );
           },
         );

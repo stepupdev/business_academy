@@ -1,68 +1,58 @@
 import 'package:business_application/core/config/app_colors.dart';
+import 'package:business_application/core/config/app_routes.dart';
 import 'package:business_application/core/config/app_size.dart';
 import 'package:business_application/core/utils/ui_support.dart';
+import 'package:business_application/features/community/controller/community_controller.dart';
+import 'package:business_application/features/save_posts/controller/save_post_controller.dart';
+import 'package:business_application/widgets/custom_post_cart_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
+import 'package:get/state_manager.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class SavePostsPage extends StatelessWidget {
+class SavePostsPage extends GetView<SavePostController> {
   const SavePostsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final dark = Ui.isDarkMode(context);
     return Scaffold(
       appBar: AppBar(
         title: Text('Saved Posts', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600, fontSize: 18.sp)),
       ),
-      body: ListView.builder(
-        itemCount: 10,
-        itemBuilder: (context, index) {
-          return Container(
-            padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 16.h),
-            color: dark ? AppColors.dark : Colors.white,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    CircleAvatar(child: Text('U$index')),
-                    10.wS,
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Fahmid Al Nayem', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600)),
-                        Text('2 hours ago', style: GoogleFonts.plusJakartaSans(color: Colors.grey)),
-                      ],
-                    ),
-                    10.wS,
-                    Text('Social Media', style: GoogleFonts.plusJakartaSans(color: Colors.grey)),
-                  ],
-                ),
-                15.hS,
-                Text('This is the caption for post $index'),
-                15.hS,
-                SizedBox(height: 200.h, child: Image.asset("assets/images/stepup_image.png", fit: BoxFit.cover)),
-                15.hS,
-                Row(
-                  children: [
-                    Icon(Icons.favorite_border),
-                    15.wS,
-                    SvgPicture.asset("assets/icons/comment.svg", color: dark ? Colors.white : Colors.black),
-                    5.wS,
-                    Text('12', style: GoogleFonts.plusJakartaSans(color: Colors.grey)),
-                    const Spacer(),
-                    Icon(Icons.bookmark, color: Colors.amber, size: 24),
-                  ],
-                ),
-              ],
-            ),
-          );
-        },
-      ),
+      body: Obx(() {
+        if (controller.isLoading.value) {
+          return Center(child: CircularProgressIndicator());
+        }
+        if (controller.savePosts.value.result?.data?.isEmpty ?? true) {
+          return Center(child: Text('No posts found'));
+        }
+        return ListView.builder(
+          itemCount: controller.savePosts.value.result?.data?.length,
+          itemBuilder: (context, index) {
+            final post = controller.savePosts.value.result?.data?[index];
+            return UserPostWidget(
+              onTap: () {
+                Get.find<CommunityController>().getCommunityPostsById(post?.id.toString() ?? "0");
+                context.push(AppRoutes.postDetails, extra: {'postId': post?.id});
+              },
+              name: post?.user?.name ?? "",
+              rank: post?.user?.rank?.name ?? "",
+              topic: post?.topic?.name ?? "",
+              time: post?.createdAt ?? DateTime.now(),
+              postImage: post?.image ?? "",
+              videoUrl: post?.videoUrl ?? "",
+              dp: post?.user?.avatar ?? "",
+              caption: post?.content ?? "",
+              commentCount: post?.commentsCount.toString() ?? "",
+              isLiked: post?.isLiked ?? false,
+              isSaved: post?.isSaved ?? false,
+            );
+          },
+        );
+      }),
     );
   }
 }

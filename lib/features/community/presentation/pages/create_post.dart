@@ -1,15 +1,12 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'dart:io';
-
+import 'package:business_application/core/config/app_colors.dart';
+import 'package:business_application/core/config/app_size.dart';
+import 'package:business_application/features/community/controller/community_controller.dart';
 import 'package:business_application/features/community/data/topics_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-
-import 'package:business_application/core/config/app_colors.dart';
-import 'package:business_application/core/config/app_size.dart';
-import 'package:business_application/features/community/controller/community_controller.dart';
 
 class CreatePostPage extends GetView<CommunityController> {
   CreatePostPage({super.key});

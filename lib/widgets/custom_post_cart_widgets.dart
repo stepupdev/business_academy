@@ -23,6 +23,7 @@ class UserPostWidget extends StatefulWidget {
     required this.caption,
     required this.commentCount,
     required this.isLiked,
+    required this.isSaved,
   });
 
   final VoidCallback onTap;
@@ -37,6 +38,7 @@ class UserPostWidget extends StatefulWidget {
   final String caption;
   final String commentCount;
   final bool isLiked;
+  final bool isSaved;
   @override
   State<UserPostWidget> createState() => _UserPostWidgetState();
 }
@@ -214,7 +216,15 @@ class _UserPostWidgetState extends State<UserPostWidget> {
                     Text(widget.commentCount, style: GoogleFonts.plusJakartaSans(color: Colors.grey)),
                   ],
                 ),
-                Icon(Icons.bookmark_outline, color: Colors.amber, size: 24),
+                Icon(
+                  widget.isSaved ? Icons.bookmark : Icons.bookmark_border,
+                  color:
+                      widget.isSaved
+                          ? Colors.amber
+                          : dark
+                          ? AppColors.darkGrey
+                          : AppColors.dark,
+                ),
               ],
             ),
           ],
