@@ -3,6 +3,7 @@ import 'package:business_application/core/config/app_size.dart';
 import 'package:business_application/core/utils/ui_support.dart';
 import 'package:business_application/features/community/controller/community_controller.dart';
 import 'package:business_application/features/community/presentation/widgets/post_details_card.dart';
+import 'package:business_application/features/community/presentation/widgets/post_details_shimmer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -83,7 +84,7 @@ class PostDetailsPageState extends State<PostDetailsPage> {
 
       body: Obx(() {
         if (Get.find<CommunityController>().isLoading.value) {
-          return Center(child: CircularProgressIndicator());
+          return PostDetailsShimmer();
         }
         return SafeArea(
           child: SingleChildScrollView(
