@@ -1,10 +1,12 @@
 import 'package:business_application/core/config/app_colors.dart';
 import 'package:business_application/core/config/app_size.dart';
 import 'package:business_application/core/utils/ui_support.dart';
+import 'package:business_application/features/community/controller/community_controller.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
@@ -200,14 +202,20 @@ class _UserPostWidgetState extends State<UserPostWidget> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Icon(
-                  widget.isLiked ? Icons.favorite : Icons.favorite_border,
-                  color:
-                      widget.isLiked
-                          ? Colors.red
-                          : dark
-                          ? AppColors.darkGrey
-                          : AppColors.dark,
+                InkWell(
+                  onTap: () {
+                    Get.find<CommunityController>().selectedPostId.value = widget.postId!;
+                    Get.find<CommunityController>().likePosts(); // Call likePosts
+                  },
+                  child: Icon(
+                    widget.isLiked ? Icons.favorite : Icons.favorite_border,
+                    color:
+                        widget.isLiked
+                            ? Colors.red
+                            : dark
+                            ? AppColors.darkGrey
+                            : AppColors.dark,
+                  ),
                 ),
                 Row(
                   children: [
@@ -216,14 +224,20 @@ class _UserPostWidgetState extends State<UserPostWidget> {
                     Text(widget.commentCount, style: GoogleFonts.plusJakartaSans(color: Colors.grey)),
                   ],
                 ),
-                Icon(
-                  widget.isSaved ? Icons.bookmark : Icons.bookmark_border,
-                  color:
-                      widget.isSaved
-                          ? Colors.amber
-                          : dark
-                          ? AppColors.darkGrey
-                          : AppColors.dark,
+                InkWell(
+                  onTap: () {
+                    Get.find<CommunityController>().selectedPostId.value = widget.postId!;
+                    Get.find<CommunityController>().savePost(); // Call savePost
+                  },
+                  child: Icon(
+                    widget.isSaved ? Icons.bookmark : Icons.bookmark_border,
+                    color:
+                        widget.isSaved
+                            ? Colors.amber
+                            : dark
+                            ? AppColors.darkGrey
+                            : AppColors.dark,
+                  ),
                 ),
               ],
             ),

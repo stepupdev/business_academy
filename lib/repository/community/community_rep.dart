@@ -13,6 +13,28 @@ class CommunityRep {
     return response;
   }
 
+  Future likePosts(Map<String, dynamic> body) async {
+    APIManager _manager = APIManager();
+    final response = await _manager.postAPICallWithHeader(ApiUrl.likePost, body, {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
+    });
+    print("response: $response");
+    return response;
+  }
+
+  Future savePost(Map<String, dynamic> body) async {
+    APIManager _manager = APIManager();
+    final response = await _manager.postAPICallWithHeader(ApiUrl.savePost, body, {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
+    });
+    print("response: $response");
+    return response;
+  }
+
   Future getCommunityPostsById(String id) async {
     APIManager _manager = APIManager();
     final response = await _manager.getWithHeader("${ApiUrl.communityPosts}/$id", {

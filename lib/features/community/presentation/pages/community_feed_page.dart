@@ -19,7 +19,6 @@ class CommunityFeedScreen extends GetView<CommunityController> {
 
   @override
   Widget build(BuildContext context) {
-
     final dark = Ui.isDarkMode(context);
     return Scaffold(
       appBar: AppBar(
@@ -161,7 +160,7 @@ class CommunityFeedScreen extends GetView<CommunityController> {
                                             height: 1.0,
                                           ),
                                         ),
-                                        if (topic?.postsCount != null) ...[
+                                        if (topic?.postsCount != null && topic?.name != "All") ...[
                                           5.wS,
                                           Text(
                                             '(${topic?.postsCount.toString()})',
@@ -182,33 +181,44 @@ class CommunityFeedScreen extends GetView<CommunityController> {
                   5.hS,
                   Divider(color: AppColors.darkerGrey, thickness: 0.3),
                   Obx(() {
+                    if (controller.filteredPosts.isEmpty) {
+                      return Center(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(vertical: 20.h),
+                          child: Text(
+                            'No posts available for the selected topic.',
+                            style: TextStyle(color: Colors.grey, fontSize: 14.sp, fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                      );
+                    }
                     return ListView.separated(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       separatorBuilder:
                           (context, index) => Container(height: 3.h, color: dark ? Colors.black : Colors.grey[200]),
-                      itemCount: controller.communityPosts.value.result?.data?.length ?? 0,
+                      itemCount: controller.filteredPosts.length,
                       itemBuilder: (context, index) {
-                        final posts = controller.communityPosts.value.result?.data?[index];
+                        final posts = controller.filteredPosts[index];
 
                         return UserPostWidget(
                           onTap: () {
-                            Get.find<CommunityController>().getCommunityPostsById(posts?.id.toString() ?? "0");
-                            controller.selectedPostId.value = posts?.id ?? 0;
-                            context.push(AppRoutes.postDetails, extra: {'postId': posts?.id});
+                            Get.find<CommunityController>().getCommunityPostsById(posts.id.toString());
+                            controller.selectedPostId.value = posts.id ?? 0;
+                            context.push(AppRoutes.postDetails, extra: {'postId': posts.id});
                           },
-                          name: posts?.user?.name ?? "",
-                          postId: posts?.id ?? 0,
-                          rank: posts?.user?.rank?.name ?? "",
-                          topic: posts?.topic?.name ?? "",
-                          time: posts?.createdAt ?? DateTime.now(),
-                          postImage: posts?.image ?? "",
-                          videoUrl: posts?.videoUrl ?? "",
-                          dp: posts?.user?.avatar ?? "",
-                          caption: posts?.content ?? "",
-                          commentCount: posts?.commentsCount?.toString() ?? "0",
-                          isLiked: posts?.isLiked ?? false,
-                          isSaved: posts?.isSaved ?? false,
+                          name: posts.user?.name ?? "",
+                          postId: posts.id ?? 0,
+                          rank: posts.user?.rank?.name ?? "",
+                          topic: posts.topic?.name ?? "",
+                          time: posts.createdAt ?? DateTime.now(),
+                          postImage: posts.image ?? "",
+                          videoUrl: posts.videoUrl ?? "",
+                          dp: posts.user?.avatar ?? "",
+                          caption: posts.content ?? "",
+                          commentCount: posts.commentsCount?.toString() ?? "0",
+                          isLiked: posts.isLiked ?? false,
+                          isSaved: posts.isSaved ?? false,
                         );
                       },
                     );

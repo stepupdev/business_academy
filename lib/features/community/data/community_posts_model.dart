@@ -33,7 +33,7 @@ class PostsResponseModel {
 }
 
 class Result {
-    List<Datum>? data;
+    List<Posts>? data;
     Links? links;
     Meta? meta;
 
@@ -44,7 +44,7 @@ class Result {
     });
 
     factory Result.fromJson(Map<String, dynamic> json) => Result(
-        data: json["data"] == null ? [] : List<Datum>.from(json["data"]!.map((x) => Datum.fromJson(x))),
+        data: json["data"] == null ? [] : List<Posts>.from(json["data"]!.map((x) => Posts.fromJson(x))),
         links: json["links"] == null ? null : Links.fromJson(json["links"]),
         meta: json["meta"] == null ? null : Meta.fromJson(json["meta"]),
     );
@@ -56,7 +56,7 @@ class Result {
     };
 }
 
-class Datum {
+class Posts {
     int? id;
     String? content;
     String? image;
@@ -69,7 +69,7 @@ class Datum {
     DateTime? createdAt;
     DateTime? updatedAt;
 
-    Datum({
+    Posts({
         this.id,
         this.content,
         this.image,
@@ -83,7 +83,7 @@ class Datum {
         this.updatedAt,
     });
 
-    factory Datum.fromJson(Map<String, dynamic> json) => Datum(
+    factory Posts.fromJson(Map<String, dynamic> json) => Posts(
         id: json["id"],
         content: json["content"],
         image: json["image"],

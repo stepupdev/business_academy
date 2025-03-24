@@ -6,4 +6,6 @@ class ApiUrl {
   static const String topics = '$baseUrl/topics';
   static const String myPosts = '$baseUrl/user/posts';
   static const String savePosts = '$baseUrl/user/saved-posts';
+  static const String likePost = '$baseUrl/like';
+  static const String savePost = '$baseUrl/save';
 }
