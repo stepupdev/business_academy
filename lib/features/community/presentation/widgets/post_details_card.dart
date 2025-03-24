@@ -1,10 +1,12 @@
 import 'package:business_application/core/config/app_colors.dart';
 import 'package:business_application/core/config/app_size.dart';
 import 'package:business_application/core/utils/ui_support.dart';
+import 'package:business_application/features/community/controller/community_controller.dart';
 import 'package:business_application/features/video_player/presentation/page/yt_video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class PostDetailsCard extends StatefulWidget {
@@ -22,6 +24,7 @@ class PostDetailsCard extends StatefulWidget {
     required this.caption,
     required this.commentCount,
     required this.isLiked,
+    required this.isSaved,
   });
 
   final VoidCallback onTap;
@@ -36,6 +39,7 @@ class PostDetailsCard extends StatefulWidget {
   final String caption;
   final String commentCount;
   final bool isLiked;
+  final bool isSaved;
   @override
   State<PostDetailsCard> createState() => _PostDetailsState();
 }
@@ -193,14 +197,20 @@ class _PostDetailsState extends State<PostDetailsCard> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Icon(
-                  widget.isLiked ? Icons.favorite : Icons.favorite_border,
-                  color:
-                      widget.isLiked
-                          ? Colors.red
-                          : dark
-                          ? AppColors.darkGrey
-                          : AppColors.dark,
+                InkWell(
+                  onTap: () {
+                    Get.find<CommunityController>().selectedPostId.value = widget.postId ?? 0;
+                    Get.find<CommunityController>().likePosts(); // Call likePosts
+                  },
+                  child: Icon(
+                    widget.isLiked ? Icons.favorite : Icons.favorite_border,
+                    color:
+                        widget.isLiked
+                            ? Colors.red
+                            : dark
+                            ? AppColors.darkGrey
+                            : AppColors.dark,
+                  ),
                 ),
                 Row(
                   children: [
@@ -209,7 +219,21 @@ class _PostDetailsState extends State<PostDetailsCard> {
                     Text(widget.commentCount, style: GoogleFonts.plusJakartaSans(color: Colors.grey)),
                   ],
                 ),
-                Icon(Icons.bookmark_outline, color: Colors.amber, size: 24),
+                InkWell(
+                  onTap: () {
+                    Get.find<CommunityController>().selectedPostId.value = widget.postId ?? 0;
+                    Get.find<CommunityController>().savePost(); // Call savePost
+                  },
+                  child: Icon(
+                    widget.isSaved ? Icons.bookmark : Icons.bookmark_border,
+                    color:
+                        widget.isSaved
+                            ? Colors.amber
+                            : dark
+                            ? AppColors.darkGrey
+                            : AppColors.dark,
+                  ),
+                ),
               ],
             ),
           ],

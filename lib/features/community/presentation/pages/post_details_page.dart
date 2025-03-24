@@ -90,23 +90,27 @@ class PostDetailsPageState extends State<PostDetailsPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                PostDetailsCard(
-                  onTap: () {},
-                  name: Get.find<CommunityController>().communityPostsById.value.result?.user?.name ?? "",
-                  rank: Get.find<CommunityController>().communityPostsById.value.result?.user?.rank?.name ?? "",
-                  topic: Get.find<CommunityController>().communityPostsById.value.result?.topic?.name ?? "",
-
-                  time: formatTime(
-                    Get.find<CommunityController>().communityPostsById.value.result?.createdAt ?? DateTime.now(),
-                  ),
-                  postImage: Get.find<CommunityController>().communityPostsById.value.result?.image ?? "",
-                  videoUrl: Get.find<CommunityController>().communityPostsById.value.result?.videoUrl ?? "",
-                  dp: Get.find<CommunityController>().communityPostsById.value.result?.user?.avatar ?? "",
-                  caption: Get.find<CommunityController>().communityPostsById.value.result?.content ?? "",
-                  commentCount:
-                      Get.find<CommunityController>().communityPostsById.value.result?.commentsCount?.toString() ?? "",
-                  isLiked: Get.find<CommunityController>().communityPostsById.value.result?.isLiked ?? false,
-                ),
+                Obx(() {
+                  return PostDetailsCard(
+                    onTap: () {},
+                    name: Get.find<CommunityController>().communityPostsById.value.result?.user?.name ?? "",
+                    rank: Get.find<CommunityController>().communityPostsById.value.result?.user?.rank?.name ?? "",
+                    topic: Get.find<CommunityController>().communityPostsById.value.result?.topic?.name ?? "",
+                    postId: int.tryParse(widget.postId),
+                    time: formatTime(
+                      Get.find<CommunityController>().communityPostsById.value.result?.createdAt ?? DateTime.now(),
+                    ),
+                    postImage: Get.find<CommunityController>().communityPostsById.value.result?.image ?? "",
+                    videoUrl: Get.find<CommunityController>().communityPostsById.value.result?.videoUrl ?? "",
+                    dp: Get.find<CommunityController>().communityPostsById.value.result?.user?.avatar ?? "",
+                    caption: Get.find<CommunityController>().communityPostsById.value.result?.content ?? "",
+                    commentCount:
+                        Get.find<CommunityController>().communityPostsById.value.result?.commentsCount?.toString() ??
+                        "",
+                    isLiked: Get.find<CommunityController>().communityPostsById.value.result?.isLiked ?? false,
+                    isSaved: Get.find<CommunityController>().communityPostsById.value.result?.isSaved ?? false,
+                  );
+                }),
                 Divider(height: 1.h),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
