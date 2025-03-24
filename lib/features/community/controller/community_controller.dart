@@ -69,6 +69,8 @@ class CommunityController extends GetxController {
       isLoading(true);
       final response = await CommunityRep().getCommunityPosts();
       communityPosts(PostsResponseModel.fromJson(response));
+      // Initialize filteredPosts with all posts after fetching
+      filteredPosts.assignAll(communityPosts.value.result?.data ?? []);
     } catch (e) {
       isLoading(false);
       print(e);
