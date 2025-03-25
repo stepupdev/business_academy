@@ -9,4 +9,5 @@ class ApiUrl {
   static const String likePost = '$baseUrl/like';
   static const String savePost = '$baseUrl/save';
   static const String groups = '$baseUrl/groups';
+  static const String notification = '$baseUrl/notifications';
 }

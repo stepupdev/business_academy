@@ -6,6 +6,7 @@ import 'package:business_application/core/services/auth_services.dart';
 import 'package:business_application/core/utils/ui_support.dart';
 import 'package:business_application/features/community/controller/community_controller.dart';
 import 'package:business_application/features/community/presentation/widgets/custom_shimmer.dart';
+import 'package:business_application/features/notification/controller/notification_controller.dart';
 import 'package:business_application/widgets/custom_post_cart_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -60,16 +61,19 @@ class CommunityFeedScreen extends GetView<CommunityController> {
                   },
                 ),
               ),
-              Positioned(
-                right: 0,
-                top: 1,
-                child: CircleAvatar(
-                  radius: 7,
-                  backgroundColor: AppColors.primaryColor,
+              Visibility(
+                visible: Get.find<NotificationController>().notificationCheck.value.result?.hasNotifications ?? true,
+                child: Positioned(
+                  right: 0,
+                  top: 1,
                   child: CircleAvatar(
-                    radius: 6,
-                    backgroundColor: Colors.red,
-                    child: Text('', style: TextStyle(color: Colors.white, fontSize: 10.sp)),
+                    radius: 7,
+                    backgroundColor: AppColors.primaryColor,
+                    child: CircleAvatar(
+                      radius: 6,
+                      backgroundColor: Colors.red,
+                      child: Text('', style: TextStyle(color: Colors.white, fontSize: 10.sp)),
+                    ),
                   ),
                 ),
               ),
@@ -225,7 +229,7 @@ class CommunityFeedScreen extends GetView<CommunityController> {
                             controller.selectedPostId.value = posts.id ?? 0;
                             GoRouter.of(context).push('/post-details/${posts.id}');
                           },
-                          
+
                           name: posts.user?.name ?? "",
                           postId: posts.id ?? 0,
                           rank: posts.user?.rank?.name ?? "",
