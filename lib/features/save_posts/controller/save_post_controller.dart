@@ -1,5 +1,5 @@
 import 'package:business_application/features/save_posts/data/save_posts_res_model.dart';
-import 'package:business_application/repository/community/community_rep.dart';
+import 'package:business_application/repository/community_rep.dart';
 import 'package:get/get.dart';
 
 class SavePostController extends GetxController {

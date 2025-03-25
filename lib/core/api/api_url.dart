@@ -8,4 +8,5 @@ class ApiUrl {
   static const String savePosts = '$baseUrl/user/saved-posts';
   static const String likePost = '$baseUrl/like';
   static const String savePost = '$baseUrl/save';
+  static const String groups = '$baseUrl/groups';
 }

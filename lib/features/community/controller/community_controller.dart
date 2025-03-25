@@ -7,7 +7,7 @@ import 'package:business_application/core/services/auth_services.dart';
 import 'package:business_application/features/community/data/community_posts_model.dart';
 import 'package:business_application/features/community/data/posts_by_id_model.dart';
 import 'package:business_application/features/community/data/topics_model.dart' as topics_model;
-import 'package:business_application/repository/community/community_rep.dart';
+import 'package:business_application/repository/community_rep.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -23,7 +23,7 @@ class CommunityController extends GetxController {
   topics_model.TopicsResponseModel? selectedTopicValue;
   var selectedTopicId = ''.obs; // Initialize as an empty observable list
   final TextEditingController postController = TextEditingController();
-  final Rx<File?> selectedImage = Rx<File?>(null);
+  var selectedImage = "".obs;
   final RxInt selectedTabIndex = 0.obs; // 0 for Image, 1 for Video
   final TextEditingController videoLinkController = TextEditingController();
   var filteredPosts = <Posts>[].obs; // Observable for filtered posts
@@ -32,7 +32,7 @@ class CommunityController extends GetxController {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: source);
     if (pickedFile != null) {
-      selectedImage.value = File(pickedFile.path);
+      selectedImage.value = pickedFile.path;
     }
   }
 
@@ -204,17 +204,19 @@ class CommunityController extends GetxController {
   }
 
   createNewPosts() async {
-    Map<String, dynamic> data = {
-      "content": postController.text,
-      "topic_id": selectedTopicId.value, // Pass the selected topic ID
-      "image": selectedImage.value,
-      "video_url": videoLinkController.text,
-    };
-    final response = await CommunityRep().communityPosts(data);
+    File? selectedFile = selectedImage.value.isNotEmpty ? File(selectedImage.value) : null;
+
+    final response = await CommunityRep().communityPosts(
+      content: postController.text,
+      topicId: selectedTopicId.value,
+      imageFile: selectedFile, // Pass image if selected
+      videoUrl: videoLinkController.text.isNotEmpty ? videoLinkController.text : null, // Pass video URL if provided
+    );
+
     if (response['success'] == true) {
       getCommunityPosts();
       postController.clear();
-      selectedImage.value = null;
+      selectedImage.value = "";
       videoLinkController.clear();
       selectedTopicId.value = '';
       selectedTopic.value = '';

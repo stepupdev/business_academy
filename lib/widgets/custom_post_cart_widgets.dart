@@ -126,7 +126,11 @@ class _UserPostWidgetState extends State<UserPostWidget> {
                   ],
                 ),
                 10.wS,
-                Text(widget.topic, style: GoogleFonts.plusJakartaSans(color: Colors.grey)),
+                Text(
+                  widget.topic,
+                  style: GoogleFonts.plusJakartaSans(color: Colors.grey, fontSize: 12.sp),
+                  overflow: TextOverflow.ellipsis,
+                ),
               ],
             ),
 
@@ -158,7 +162,7 @@ class _UserPostWidgetState extends State<UserPostWidget> {
             10.hS,
 
             /// Post Image/Video Thumbnail with Play Icon
-            if (widget.postImage.isNotEmpty && widget.videoUrl.isNotEmpty)
+            if (widget.postImage.isNotEmpty)
               ClipRRect(
                 borderRadius: BorderRadius.circular(10.r),
                 child: CachedNetworkImage(

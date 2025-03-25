@@ -127,7 +127,11 @@ class _PostDetailsState extends State<PostDetailsCard> {
                   ],
                 ),
                 10.wS,
-                Text(widget.topic, style: GoogleFonts.plusJakartaSans(color: Colors.grey)),
+                Text(
+                  widget.topic,
+                  style: GoogleFonts.plusJakartaSans(color: Colors.grey, fontSize: 12.sp),
+                  overflow: TextOverflow.ellipsis,
+                ),
               ],
             ),
 
@@ -159,7 +163,7 @@ class _PostDetailsState extends State<PostDetailsCard> {
             10.hS,
 
             /// Post Image/Video Thumbnail with Play Icon
-            if (widget.postImage!.isNotEmpty && widget.videoUrl!.isNotEmpty)
+            if (widget.postImage!.isNotEmpty)
               ClipRRect(
                 borderRadius: BorderRadius.circular(10.r),
                 child: Image.network(widget.postImage!, width: 1.sw, height: 200.h, fit: BoxFit.cover),

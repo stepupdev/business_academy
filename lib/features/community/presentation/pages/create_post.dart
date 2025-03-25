@@ -1,4 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:io';
+
 import 'package:business_application/core/config/app_colors.dart';
 import 'package:business_application/core/config/app_size.dart';
 import 'package:business_application/features/community/controller/community_controller.dart';
@@ -72,7 +74,10 @@ class CreatePostPage extends GetView<CommunityController> {
                         if (controller.selectedTabIndex.value == 0) ...[
                           Obx(
                             () =>
-                                controller.selectedImage.value != null
+                                controller
+                                        .selectedImage
+                                        .value
+                                        .isNotEmpty // Updated condition
                                     ? Stack(
                                       children: [
                                         Container(
@@ -80,7 +85,7 @@ class CreatePostPage extends GetView<CommunityController> {
                                           decoration: BoxDecoration(
                                             borderRadius: BorderRadius.circular(12),
                                             image: DecorationImage(
-                                              image: FileImage(controller.selectedImage.value!),
+                                              image: FileImage(File(controller.selectedImage.value)),
                                               fit: BoxFit.cover,
                                             ),
                                           ),
@@ -89,7 +94,7 @@ class CreatePostPage extends GetView<CommunityController> {
                                           top: 8,
                                           right: 8,
                                           child: GestureDetector(
-                                            onTap: () => controller.selectedImage.value = null,
+                                            onTap: () => controller.selectedImage.value = '',
                                             child: Container(
                                               decoration: BoxDecoration(
                                                 color: Colors.grey.shade600,
@@ -101,7 +106,7 @@ class CreatePostPage extends GetView<CommunityController> {
                                         ),
                                       ],
                                     )
-                                    : Container(),
+                                    : Container(), // Empty container when no image is selected
                           ),
                           14.hS,
                           Row(

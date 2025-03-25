@@ -1,12 +1,15 @@
 import 'package:business_application/core/config/app_routes.dart';
 import 'package:business_application/core/config/app_size.dart';
+import 'package:business_application/features/groups/controller/groups_controller.dart';
 import 'package:business_application/features/groups/presentation/pages/groups_details_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get_state_manager/get_state_manager.dart';
+import 'package:get/get_state_manager/src/simple/get_view.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class GroupsPage extends StatelessWidget {
+class GroupsPage extends GetView<GroupsController> {
   const GroupsPage({super.key});
 
   @override
@@ -26,77 +29,33 @@ class GroupsPage extends StatelessWidget {
                 child: Text("My Groups", style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w700)),
               ),
               20.hS,
-              ListView.builder(
-                itemCount: 5, // Replace with dynamic group count
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    leading: CircleAvatar(radius: 25, child: Image.asset("assets/logo/icon.png", fit: BoxFit.contain)),
-                    title: Text(
-                      'Group ${index + 1}', // Replace with group name
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    subtitle: Text(
-                      'Description of Group ${index + 1}', // Replace with group description
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    onTap: () {
-                      context.push(AppRoutes.groupDetails);
-                    },
-                  );
-                },
-              ),
-              const Divider(),
-              20.hS,
-              Padding(
-                padding: EdgeInsets.only(left: 8.w),
-                child: Text("Suggested Groups for you", style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w700)),
-              ),
-              20.hS,
-              ListView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: 10, // Replace with dynamic group count
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    leading: CircleAvatar(radius: 25, child: Image.asset("assets/logo/icon.png", fit: BoxFit.contain)),
-                    title: Text(
-                      'Group ${index + 1}', // Replace with group name
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    subtitle: Text(
-                      'Description of Group ${index + 1}', // Replace with group description
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    trailing: Container(
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFFAC8EFF), Color(0xFF6027FF)],
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                        ),
-                        borderRadius: BorderRadius.circular(20.0),
+              Obx(() {
+                if (controller.isLoading.value) {
+                  return Center(child: CircularProgressIndicator());
+                }
+                return ListView.builder(
+                  itemCount: controller.groups.value.result?.data?.length,
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      leading: CircleAvatar(
+                        radius: 20,
+                        child: Image.asset("assets/logo/icon.png", fit: BoxFit.contain),
                       ),
-                      child: InkWell(
-                        onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => const GroupDetailsPage()));
-                        },
-                        borderRadius: BorderRadius.circular(20.0), // Ensure ripple effect follows shape
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                          child: const Text(
-                            'Join', // Change dynamically to 'Leave' if already joined
-                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
-                          ),
-                        ),
+                      title: Text(
+                        controller.groups.value.result?.data?[index].name ?? "",
+                        style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.bold, fontSize: 16.sp),
                       ),
-                    ),
-                  );
-                },
-              ),
+                      onTap: () {
+                        controller.fetchGroupsTopic(controller.groups.value.result?.data?[index].id.toString() ?? "");
+                        controller.fetchGroupsDetails(controller.groups.value.result?.data?[index].id.toString() ?? "");
+                        context.push(AppRoutes.groupDetails);
+                      },
+                    );
+                  },
+                );
+              }),
             ],
           ),
         ),

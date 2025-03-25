@@ -1,5 +1,5 @@
 import 'package:business_application/features/my_posts/data/my_posts_model.dart';
-import 'package:business_application/repository/community/community_rep.dart';
+import 'package:business_application/repository/community_rep.dart';
 import 'package:get/get.dart';
 
 class MyPostsController extends GetxController {

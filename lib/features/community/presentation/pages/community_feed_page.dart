@@ -49,14 +49,31 @@ class CommunityFeedScreen extends GetView<CommunityController> {
         actionsPadding: EdgeInsets.only(right: 10.w),
 
         actions: [
-          CircleAvatar(
-            backgroundColor: AppColors.primaryColor,
-            child: IconButton(
-              icon: Icon(Icons.notifications_outlined, color: Colors.white),
-              onPressed: () {
-                context.push(AppRoutes.notification);
-              },
-            ),
+          Stack(
+            children: [
+              CircleAvatar(
+                backgroundColor: AppColors.primaryColor,
+                child: IconButton(
+                  icon: Icon(Icons.notifications_outlined, color: Colors.white),
+                  onPressed: () {
+                    context.push(AppRoutes.notification);
+                  },
+                ),
+              ),
+              Positioned(
+                right: 0,
+                top: 1,
+                child: CircleAvatar(
+                  radius: 7,
+                  backgroundColor: AppColors.primaryColor,
+                  child: CircleAvatar(
+                    radius: 6,
+                    backgroundColor: Colors.red,
+                    child: Text('', style: TextStyle(color: Colors.white, fontSize: 10.sp)),
+                  ),
+                ),
+              ),
+            ],
           ),
           10.wS,
           CircleAvatar(
