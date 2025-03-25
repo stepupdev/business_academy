@@ -61,22 +61,24 @@ class CommunityFeedScreen extends GetView<CommunityController> {
                   },
                 ),
               ),
-              Visibility(
-                visible: Get.find<NotificationController>().notificationCheck.value.result?.hasNotifications ?? true,
-                child: Positioned(
-                  right: 0,
-                  top: 1,
-                  child: CircleAvatar(
-                    radius: 7,
-                    backgroundColor: AppColors.primaryColor,
+              Obx(() {
+                return Visibility(
+                  visible: Get.find<NotificationController>().notificationCheck.value.result?.hasNotifications ?? true,
+                  child: Positioned(
+                    right: 0,
+                    top: 1,
                     child: CircleAvatar(
-                      radius: 6,
-                      backgroundColor: Colors.red,
-                      child: Text('', style: TextStyle(color: Colors.white, fontSize: 10.sp)),
+                      radius: 7,
+                      backgroundColor: AppColors.primaryColor,
+                      child: CircleAvatar(
+                        radius: 6,
+                        backgroundColor: Colors.red,
+                        child: Text('', style: TextStyle(color: Colors.white, fontSize: 10.sp)),
+                      ),
                     ),
                   ),
-                ),
-              ),
+                );
+              }),
             ],
           ),
           10.wS,
