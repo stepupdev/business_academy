@@ -17,37 +17,50 @@ class SavePostsPage extends GetView<SavePostController> {
       appBar: AppBar(
         title: Text('Saved Posts', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600, fontSize: 18.sp)),
       ),
-      body: Obx(() {
-        if (controller.isLoading.value) {
-          return Center(child: CircularProgressIndicator());
-        }
-        if (controller.savePosts.value.result?.data?.isEmpty ?? true) {
-          return Center(child: Text('No posts found'));
-        }
-        return ListView.builder(
-          itemCount: controller.savePosts.value.result?.data?.length,
-          itemBuilder: (context, index) {
-            final post = controller.savePosts.value.result?.data?[index];
-            return UserPostWidget(
-              onTap: () {
-                Get.find<CommunityController>().getCommunityPostsById(post?.id.toString() ?? "0");
-                context.push(AppRoutes.postDetails, extra: {'postId': post?.id});
-              },
-              name: post?.user?.name ?? "",
-              rank: post?.user?.rank?.name ?? "",
-              topic: post?.topic?.name ?? "",
-              time: post?.createdAt ?? DateTime.now(),
-              postImage: post?.image ?? "",
-              videoUrl: post?.videoUrl ?? "",
-              dp: post?.user?.avatar ?? "",
-              caption: post?.content ?? "",
-              commentCount: post?.commentsCount.toString() ?? "",
-              isLiked: post?.isLiked ?? false,
-              isSaved: post?.isSaved ?? false,
-            );
-          },
-        );
-      }),
+      body: RefreshIndicator(
+        onRefresh: () => controller.getSavePosts(),
+        child: Obx(() {
+          if (controller.isLoading.value) {
+            return Center(child: CircularProgressIndicator());
+          }
+          if (controller.savePosts.value.result?.data?.isEmpty ?? true) {
+            return Center(child: Text('No posts found'));
+          }
+          return ListView.builder(
+            itemCount: controller.savePosts.value.result?.data?.length,
+            itemBuilder: (context, index) {
+              final post = controller.savePosts.value.result?.data?[index];
+              return UserPostWidget(
+                onTap: () {
+                  Get.find<CommunityController>().getCommunityPostsById(post?.id.toString() ?? "0");
+                  context.push(AppRoutes.postDetails, extra: {'postId': post?.id});
+                },
+                name: post?.user?.name ?? "",
+                rank: post?.user?.rank?.name ?? "",
+                topic: post?.topic?.name ?? "",
+                time: post?.createdAt ?? DateTime.now(),
+                postImage: post?.image ?? "",
+                videoUrl: post?.videoUrl ?? "",
+                dp: post?.user?.avatar ?? "",
+                caption: post?.content ?? "",
+                commentCount: post?.commentsCount.toString() ?? "",
+                isLiked: post?.isLiked ?? false,
+                isSaved: post?.isSaved ?? false,
+                onSave: () {
+                  Get.find<CommunityController>().selectedPostId.value = post?.id ?? 0;
+                  Get.find<CommunityController>().savePost();
+                  controller.getSavePosts(); // Refresh saved posts
+                },
+                onLike: () {
+                  Get.find<CommunityController>().selectedPostId.value = post?.id ?? 0;
+                  Get.find<CommunityController>().likePosts();
+                  controller.getSavePosts(); // Refresh saved posts
+                },
+              );
+            },
+          );
+        }),
+      ),
     );
   }
 }

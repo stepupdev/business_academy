@@ -225,6 +225,7 @@ class CommunityFeedScreen extends GetView<CommunityController> {
                             controller.selectedPostId.value = posts.id ?? 0;
                             GoRouter.of(context).push('/post-details/${posts.id}');
                           },
+                          
                           name: posts.user?.name ?? "",
                           postId: posts.id ?? 0,
                           rank: posts.user?.rank?.name ?? "",

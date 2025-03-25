@@ -2,7 +2,9 @@ import 'package:business_application/core/config/app_colors.dart';
 import 'package:business_application/core/config/app_size.dart';
 import 'package:business_application/core/services/auth_services.dart';
 import 'package:business_application/core/utils/ui_support.dart';
+import 'package:business_application/features/community/controller/community_controller.dart';
 import 'package:business_application/features/groups/controller/groups_controller.dart';
+import 'package:business_application/widgets/custom_post_cart_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -133,85 +135,55 @@ class GroupDetailsPage extends GetView<GroupsController> {
                     }),
                     Divider(thickness: 0.5, color: dark ? AppColors.darkerGrey : Colors.grey[300]),
                     Obx(() {
-                      if (controller.filteredPosts.isEmpty) {
-                        return Center(
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(vertical: 20.h),
-                            child: Text(
-                              'No posts available for the selected topic.',
-                              style: TextStyle(color: Colors.grey, fontSize: 14.sp, fontWeight: FontWeight.w500),
-                            ),
-                          ),
-                        );
-                      }
+                      // if (controller.filteredPosts.isEmpty) {
+                      //   return Center(
+                      //     child: Padding(
+                      //       padding: EdgeInsets.symmetric(vertical: 20.h),
+                      //       child: Text(
+                      //         'No posts available for the selected topic.',
+                      //         style: TextStyle(color: Colors.grey, fontSize: 14.sp, fontWeight: FontWeight.w500),
+                      //       ),
+                      //     ),
+                      //   );
+                      // }
                       return ListView.separated(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         separatorBuilder:
-                            (context, index) =>
-                                Container(height: 5.h, color: dark ? AppColors.darkerGrey : Colors.grey[300]),
+                            (context, index) => Container(height: 3.h, color: dark ? Colors.black : Colors.grey[200]),
                         itemCount: controller.filteredPosts.length,
                         itemBuilder: (context, index) {
-                          final post = controller.filteredPosts[index];
-                          return GestureDetector(
+                          final posts = controller.filteredPosts[index];
+
+                          return UserPostWidget(
                             onTap: () {
-                              context.push('/post-details', extra: post.id); // Navigate to post details page
+                              Get.find<CommunityController>().getCommunityPostsById(posts.id.toString());
+                              Get.find<CommunityController>().getComments(posts.id.toString());
+                              // controller.selectedPostId.value = posts.id ?? 0;
+                              GoRouter.of(context).push('/post-details/${posts.id}');
                             },
-                            child: Container(
-                              padding: EdgeInsets.all(8.sp),
-                              color: dark ? AppColors.dark : Colors.white,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      CircleAvatar(backgroundImage: NetworkImage(post.user?.avatar ?? "")),
-                                      10.wS,
-                                      Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            post.user?.name ?? "",
-                                            style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600),
-                                          ),
-                                          Text(
-                                            post.createdAt ?? "",
-                                            style: GoogleFonts.plusJakartaSans(color: Colors.grey),
-                                          ),
-                                        ],
-                                      ),
-                                      10.wS,
-                                      Text(
-                                        post.topic?.name ?? "",
-                                        style: GoogleFonts.plusJakartaSans(color: Colors.grey),
-                                      ),
-                                    ],
-                                  ),
-                                  15.hS,
-                                  Text(post.content ?? ""),
-                                  15.hS,
-                                  if (post.image != null)
-                                    SizedBox(height: 200.h, child: Image.network(post.image!, fit: BoxFit.cover)),
-                                  15.hS,
-                                  Row(
-                                    children: [
-                                      Icon(Icons.favorite_border),
-                                      15.wS,
-                                      SvgPicture.asset("assets/icons/comment.svg"),
-                                      5.wS,
-                                      Text(
-                                        post.commentsCount?.toString() ?? "0",
-                                        style: GoogleFonts.plusJakartaSans(color: Colors.grey),
-                                      ),
-                                      const Spacer(),
-                                      Icon(Icons.bookmark_outline, color: Colors.amber, size: 24),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
+                            // onLike: () {
+                            //   Get.find<CommunityController>().selectedPostId.value = posts.id;
+                            //   Get.find<CommunityController>().likePosts();
+                            //   Get.find<CommunityController>().communityPostsById.refresh(); // Trigger UI update
+                            // },
+                            // onSave: () {
+                            //   Get.find<CommunityController>().selectedPostId.value = posts.id;
+                            //   Get.find<CommunityController>().savePost();
+                            //   Get.find<CommunityController>().communityPostsById.refresh(); // Trigger UI update
+                            // },
+                            name: posts.user?.name ?? "",
+                            postId: posts.id,
+                            rank: posts.user?.rank?.name ?? "",
+                            topic: posts.topic?.name ?? "",
+                            time: DateTime.parse(posts.createdAt),
+                            postImage: posts.image ?? "",
+                            videoUrl: posts.videoUrl ?? "",
+                            dp: posts.user?.avatar ?? "",
+                            caption: posts.content,
+                            commentCount: posts.commentsCount?.toString() ?? "0",
+                            isLiked: posts.isLiked,
+                            isSaved: posts.isSaved,
                           );
                         },
                       );

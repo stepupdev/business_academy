@@ -25,4 +25,16 @@ class SavePostController extends GetxController {
       isLoading(false);
     }
   }
+
+  // void getSavedPosts() async {
+  //   try {
+  //     isLoading(true);
+  //     final response = await CommunityRep().getSavedPosts();
+  //     savePosts(SavePostsResponseModel.fromJson(response));
+  //   } catch (e) {
+  //     print(e);
+  //   } finally {
+  //     isLoading(false);
+  //   }
+  // }
 }

@@ -14,6 +14,8 @@ class UserPostWidget extends StatefulWidget {
   const UserPostWidget({
     super.key,
     required this.onTap,
+    this.onLike,
+    this.onSave,
     required this.name,
     this.postId,
     required this.rank,
@@ -29,6 +31,8 @@ class UserPostWidget extends StatefulWidget {
   });
 
   final VoidCallback onTap;
+  final VoidCallback? onLike;
+  final VoidCallback? onSave;
   final String name;
   final int? postId;
   final String rank;
@@ -207,10 +211,13 @@ class _UserPostWidgetState extends State<UserPostWidget> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 InkWell(
-                  onTap: () {
-                    Get.find<CommunityController>().selectedPostId.value = widget.postId!;
-                    Get.find<CommunityController>().likePosts(); // Call likePosts
-                  },
+                  onTap:
+                      widget.onLike ??
+                      () {
+                        Get.find<CommunityController>().selectedPostId.value = widget.postId ?? 0;
+                        Get.find<CommunityController>().likePosts();
+                        Get.find<CommunityController>().communityPostsById.refresh();
+                      },
                   child: Icon(
                     widget.isLiked ? Icons.favorite : Icons.favorite_border,
                     color:
@@ -229,10 +236,13 @@ class _UserPostWidgetState extends State<UserPostWidget> {
                   ],
                 ),
                 InkWell(
-                  onTap: () {
-                    Get.find<CommunityController>().selectedPostId.value = widget.postId!;
-                    Get.find<CommunityController>().savePost(); // Call savePost
-                  },
+                  onTap:
+                      widget.onSave ??
+                      () {
+                        Get.find<CommunityController>().selectedPostId.value = widget.postId ?? 0;
+                        Get.find<CommunityController>().savePost();
+                        Get.find<CommunityController>().communityPostsById.refresh();
+                      },
                   child: Icon(
                     widget.isSaved ? Icons.bookmark : Icons.bookmark_border,
                     color:
