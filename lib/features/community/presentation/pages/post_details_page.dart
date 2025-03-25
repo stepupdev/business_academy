@@ -26,7 +26,7 @@ class PostDetailsPage extends StatefulWidget {
 class PostDetailsPageState extends State<PostDetailsPage> {
   final TextEditingController _commentController = TextEditingController();
   bool _isReplying = false;
-  String? _replyingTo;
+  int? _replyingTo;
 
   String formatTime(DateTime time) {
     final dateTime = DateTime.now().subtract(DateTime.now().difference(time));
@@ -129,7 +129,7 @@ class PostDetailsPageState extends State<PostDetailsPage> {
                               onReply: () {
                                 setState(() {
                                   _isReplying = true;
-                                  _replyingTo = comment.user?.name;
+                                  _replyingTo = comment.id;
                                 });
                               },
                             );
@@ -156,9 +156,16 @@ class PostDetailsPageState extends State<PostDetailsPage> {
                         onTapOutside: (event) => FocusScope.of(context).unfocus(),
                         controller: _commentController,
                         decoration: InputDecoration(
-                          hintText: _isReplying ? 'Replying to $_replyingTo' : 'Add comment',
+                          hintText:
+                              _isReplying
+                                  ? 'Replying to ${controller.comments.value.result?.data?.firstWhere((element) => element.id == _replyingTo)?.user?.name ?? ''}'
+                                  : 'Add comment',
                           contentPadding: EdgeInsets.symmetric(horizontal: 20.w),
-                          hintStyle: TextStyle(color: Colors.grey.shade500),
+                          hintStyle: TextStyle(
+                            color: Colors.grey.shade500,
+                            fontSize: 12.sp,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(30.0),
                             borderSide: BorderSide(color: AppColors.borderColor),
@@ -175,10 +182,29 @@ class PostDetailsPageState extends State<PostDetailsPage> {
                       ),
                     ),
                     10.wS,
-                    SvgPicture.asset(
-                      "assets/icons/share.svg",
-                      height: 24.h,
-                      color: dark ? Colors.grey[300] : Colors.black,
+                    InkWell(
+                      onTap: () {
+                        print("here is the _replyto: $_replyingTo");
+                        controller.selectedPostId.value = post?.id ?? 0;
+                        controller.addComments(
+                          postId: controller.selectedPostId.value.toString(),
+                          comments: _commentController.text.trim(),
+                          parentId: _isReplying ? _replyingTo.toString() : "",
+                        );
+                        _commentController.clear();
+                        setState(() {
+                          _isReplying = false;
+                          _replyingTo = null;
+                        });
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Comment added successfully'), duration: Duration(seconds: 2)),
+                        );
+                      },
+                      child: SvgPicture.asset(
+                        "assets/icons/share.svg",
+                        height: 24.h,
+                        color: dark ? Colors.grey[300] : Colors.black,
+                      ),
                     ),
                   ],
                 ),

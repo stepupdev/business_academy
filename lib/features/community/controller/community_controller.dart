@@ -90,6 +90,25 @@ class CommunityController extends GetxController {
     }
   }
 
+  addComments({required String postId, required String comments, required String parentId}) async {
+    try {
+      final response = await CommunityRep().createComments({
+        "post_id": postId,
+        "content": comments,
+        "parent_id": parentId,
+      });
+      print("comments response $response");
+      getComments(postId);
+      if (response['success'] != true) {
+        ScaffoldMessenger.of(
+          Get.context!,
+        ).showSnackBar(SnackBar(content: Text(response['message']), backgroundColor: Colors.red));
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
   likePosts() async {
     int postIndex = communityPosts.value.result?.data?.indexWhere((post) => post.id == selectedPostId.value) ?? -1;
 
