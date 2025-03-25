@@ -1,11 +1,10 @@
 import 'package:business_application/core/config/app_routes.dart';
 import 'package:business_application/core/config/app_size.dart';
+import 'package:business_application/core/utils/ui_support.dart';
 import 'package:business_application/features/groups/controller/groups_controller.dart';
-import 'package:business_application/features/groups/presentation/pages/groups_details_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
-import 'package:get/get_state_manager/src/simple/get_view.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -47,10 +46,26 @@ class GroupsPage extends GetView<GroupsController> {
                         controller.groups.value.result?.data?[index].name ?? "",
                         style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.bold, fontSize: 16.sp),
                       ),
-                      onTap: () {
-                        controller.fetchGroupsTopic(controller.groups.value.result?.data?[index].id.toString() ?? "");
-                        controller.fetchGroupsDetails(controller.groups.value.result?.data?[index].id.toString() ?? "");
-                        context.push(AppRoutes.groupDetails);
+                      onTap: () async {
+                        try {
+                          controller.isLoading(true);
+                          final groupId = controller.groups.value.result?.data?[index].id.toString() ?? "";
+
+                          // Store the groupId in the controller for use in GroupDetailsPage
+                          controller.currentGroupId.value = groupId;
+
+                          controller.fetchGroupsTopic(groupId);
+                          controller.fetchGroupsDetails(groupId);
+                          controller.fetchGroupPosts(groupId);
+
+                          // Use GoRouter for navigation to match your app's routing system
+                          context.push(AppRoutes.groupDetails);
+                        } catch (e) {
+                          print("Error navigating to group details: $e");
+                          Ui.errorSnackBar(message: 'Failed to load group details. Please try again.');
+                        } finally {
+                          controller.isLoading(false);
+                        }
                       },
                     );
                   },

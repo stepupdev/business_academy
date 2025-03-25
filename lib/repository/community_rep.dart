@@ -8,12 +8,14 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
 class CommunityRep {
-  Future getCommunityPosts() async {
+  Future getCommunityPosts({Map<String, dynamic>? params}) async {
     APIManager _manager = APIManager();
-    final response = await _manager.getWithHeader(ApiUrl.communityPosts, {
+    final uri = Uri.parse(ApiUrl.communityPosts).replace(queryParameters: params);
+    print("Fetching posts with URI: ${uri.toString()}");
+    final response = await _manager.getWithHeader(uri.toString(), {
       "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
     });
-    print("response: $response");
+    print("Posts response: $response");
     return response;
   }
 
@@ -57,51 +59,40 @@ class CommunityRep {
     return response;
   }
 
-  Future communityPosts({
-  required String content,
-  required String topicId,
-  File? imageFile,
-  String? videoUrl,
-}) async {
-  var uri = Uri.parse(ApiUrl.createPost);
-  var request = http.MultipartRequest("POST", uri);
+  Future communityPosts({required String content, required String topicId, File? imageFile, String? videoUrl}) async {
+    var uri = Uri.parse(ApiUrl.createPost);
+    var request = http.MultipartRequest("POST", uri);
 
-  // Add text fields
-  request.fields['content'] = content;
-  request.fields['topic_id'] = topicId;
-  if (videoUrl != null && videoUrl.isNotEmpty) {
-    request.fields['video_url'] = videoUrl;
+    // Add text fields
+    request.fields['content'] = content;
+    request.fields['topic_id'] = topicId;
+    if (videoUrl != null && videoUrl.isNotEmpty) {
+      request.fields['video_url'] = videoUrl;
+    }
+
+    // Add image if provided
+    if (imageFile != null) {
+      var stream = http.ByteStream(imageFile.openRead());
+      var length = await imageFile.length();
+      var multipartFile = http.MultipartFile('image', stream, length, filename: imageFile.path.split("/").last);
+      request.files.add(multipartFile);
+    }
+
+    // Add headers (including Authorization)
+    request.headers.addAll({
+      'Accept': 'application/json',
+      "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
+    });
+
+    // Send request and get response
+    http.StreamedResponse streamedResponse = await request.send();
+    final response = await http.Response.fromStream(streamedResponse);
+
+    print("Response: ${response.statusCode}");
+    print("Body: ${response.body}");
+
+    return jsonDecode(response.body);
   }
-
-  // Add image if provided
-  if (imageFile != null) {
-    var stream = http.ByteStream(imageFile.openRead());
-    var length = await imageFile.length();
-    var multipartFile = http.MultipartFile(
-      'image',
-      stream,
-      length,
-      filename: imageFile.path.split("/").last,
-    );
-    request.files.add(multipartFile);
-  }
-
-  // Add headers (including Authorization)
-  request.headers.addAll({
-    'Accept': 'application/json',
-    "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
-  });
-
-  // Send request and get response
-  http.StreamedResponse streamedResponse = await request.send();
-  final response = await http.Response.fromStream(streamedResponse);
-
-  print("Response: ${response.statusCode}");
-  print("Body: ${response.body}");
-
-  return jsonDecode(response.body);
-}
-
 
   Future getTopics() async {
     APIManager _manager = APIManager();

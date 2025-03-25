@@ -130,10 +130,13 @@ class _UserPostWidgetState extends State<UserPostWidget> {
                   ],
                 ),
                 10.wS,
-                Text(
-                  widget.topic,
-                  style: GoogleFonts.plusJakartaSans(color: Colors.grey, fontSize: 12.sp),
-                  overflow: TextOverflow.ellipsis,
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.2.w,
+                  child: Text(
+                    widget.topic,
+                    style: GoogleFonts.plusJakartaSans(color: Colors.grey, fontSize: 12.sp),
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
               ],
             ),

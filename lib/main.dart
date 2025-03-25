@@ -9,14 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:workmanager/workmanager.dart';
-
-void callbackDispatcher() {
-  Workmanager().executeTask((task, inputData) async {
-    Get.find<NotificationController>().checkNotification();
-    return Future.value(true);
-  });
-}
 
 void checkNotifications(SendPort sendPort) async {
   while (true) {
@@ -42,8 +34,6 @@ void startNotificationChecker() async {
 }
 
 void main() async {
-  Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
-  Workmanager().registerPeriodicTask("checkNotifications", "fetchNotifications", frequency: Duration(minutes: 2));
   await Get.putAsync(() async => AuthService());
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
