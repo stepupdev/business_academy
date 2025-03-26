@@ -5,13 +5,17 @@ import 'package:business_application/core/config/app_colors.dart';
 import 'package:business_application/core/config/app_size.dart';
 import 'package:business_application/features/community/controller/community_controller.dart';
 import 'package:business_application/features/community/data/topics_model.dart';
+import 'package:business_application/features/groups/controller/groups_controller.dart';
+import 'package:business_application/features/groups/data/groups_topic_response_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
 class CreatePostPage extends GetView<CommunityController> {
-  CreatePostPage({super.key});
+  final bool isGroupTopics; // New argument to determine the source of topics
+
+  CreatePostPage({super.key, required this.isGroupTopics});
 
   @override
   Widget build(BuildContext context) {
@@ -186,16 +190,38 @@ class CreatePostPage extends GetView<CommunityController> {
                     trailingIcon: Icon(Icons.keyboard_arrow_down_sharp),
                     onSelected: (val) {
                       controller.selectedTopic.value = val as String;
-                      final selectedTopic = controller.topics.value.result?.data?.firstWhere(
-                        (topic) => topic.name == val,
-                        orElse: () => Topic(),
-                      );
-                      controller.selectedTopicId.value = selectedTopic?.id?.toString() ?? '';
+                      if (isGroupTopics) {
+                        final selectedTopic = Get.find<GroupsController>().groupsTopicResponse.value.result?.data
+                            ?.firstWhere((topic) => topic.name == val, orElse: () => GroupTopics());
+                        controller.selectedTopicId.value = selectedTopic?.id?.toString() ?? '';
+                      } else {
+                        final selectedTopic = controller.topics.value.result?.data?.firstWhere(
+                          (topic) => topic.name == val,
+                          orElse: () => Topic(),
+                        );
+                        controller.selectedTopicId.value = selectedTopic?.id?.toString() ?? '';
+                      }
                     },
                     dropdownMenuEntries:
-                        controller.topics.value.result?.data!.map((topic) {
-                          return DropdownMenuEntry<Object>(value: topic.name ?? '', label: topic.name ?? '');
-                        }).toList() ??
+                        (isGroupTopics
+                                ? Get.find<GroupsController>().groupsTopicResponse.value.result?.data
+                                : controller.topics.value.result?.data)
+                            ?.map((topic) {
+                              if (isGroupTopics) {
+                                final groupTopic = topic as GroupTopics;
+                                return DropdownMenuEntry<Object>(
+                                  value: groupTopic.name ?? '',
+                                  label: groupTopic.name ?? '',
+                                );
+                              } else {
+                                final communityTopic = topic as Topic;
+                                return DropdownMenuEntry<Object>(
+                                  value: communityTopic.name ?? '',
+                                  label: communityTopic.name ?? '',
+                                );
+                              }
+                            })
+                            .toList() ??
                         [],
                   ),
                 ],
