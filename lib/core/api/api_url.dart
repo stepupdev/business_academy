@@ -1,6 +1,8 @@
 class ApiUrl {
   static const String baseUrl = 'http://165.22.253.163/api/v1';
   static const String login = '$baseUrl/auth/oauth/login';
+  static const String user = '$baseUrl/user';
+  static const String communities = '$baseUrl/communities';
   static const String communityPosts = '$baseUrl/posts';
   static const String createPost = '$baseUrl/posts/create';
   static const String postUpdate = '$baseUrl/posts/update';

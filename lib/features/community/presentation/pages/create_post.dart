@@ -188,7 +188,7 @@ class CreatePostPage extends GetView<CommunityController> {
                   20.hS,
                   DropdownMenu(
                     hintText: "Select a topic",
-                    initialSelection: controller.selectedTopicValue?.result?.data?.first.name ?? '',
+                    initialSelection: controller.selectedTopic.value,
                     inputDecorationTheme: InputDecorationTheme(
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),

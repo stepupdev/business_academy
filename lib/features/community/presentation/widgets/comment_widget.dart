@@ -1,3 +1,4 @@
+import 'package:business_application/core/config/app_colors.dart';
 import 'package:business_application/core/config/app_size.dart';
 import 'package:business_application/core/utils/helper_utils.dart';
 import 'package:business_application/features/community/data/comments_response_model.dart';
@@ -8,6 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 class CommentWidget extends StatelessWidget {
   final String avatarUrl;
   final String userName;
+  final String rank;
   final String time;
   final String content;
   final List<CommentsResult> replies;
@@ -19,6 +21,7 @@ class CommentWidget extends StatelessWidget {
     required this.avatarUrl,
     required this.userName,
     required this.time,
+    required this.rank,
     required this.content,
     required this.replies,
     required this.onDelete,
@@ -48,12 +51,14 @@ class CommentWidget extends StatelessWidget {
                           style: GoogleFonts.plusJakartaSans(fontSize: 14.sp, fontWeight: FontWeight.w700),
                         ),
                         10.wS,
-                        Expanded(
-                          child: Text(
-                            time,
-                            style: GoogleFonts.plusJakartaSans(fontSize: 10.sp, color: Colors.grey),
-                            overflow: TextOverflow.ellipsis,
+                        Container(
+                          margin: EdgeInsets.only(left: 5.w),
+                          padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
+                          decoration: BoxDecoration(
+                            color: AppColors.primaryColor.withAlpha(200),
+                            borderRadius: BorderRadius.circular(50),
                           ),
+                          child: Text(rank, style: GoogleFonts.plusJakartaSans(color: Colors.white, fontSize: 10.sp)),
                         ),
                       ],
                     ),
@@ -61,11 +66,18 @@ class CommentWidget extends StatelessWidget {
                     Text(content, style: GoogleFonts.plusJakartaSans(fontSize: 12.sp)),
                     10.hS,
 
-                    if (onReply != null)
-                      TextButton(
-                        onPressed: onReply,
-                        child: Text('Reply', style: TextStyle(color: Colors.blue, fontSize: 12.sp)),
-                      ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(time, style: GoogleFonts.plusJakartaSans(fontSize: 10.sp, color: Colors.grey)),
+                        ),
+                        if (onReply != null)
+                          TextButton(
+                            onPressed: onReply,
+                            child: Text('Reply', style: TextStyle(color: Colors.blue, fontSize: 12.sp)),
+                          ),
+                      ],
+                    ),
                   ],
                 ),
               ),
@@ -111,9 +123,17 @@ class CommentWidget extends StatelessWidget {
                                           ),
                                         ),
                                         5.wS,
-                                        Text(
-                                          HelperUtils.formatTime(reply.createdAt ?? DateTime.now()),
-                                          style: GoogleFonts.plusJakartaSans(fontSize: 10.sp, color: Colors.grey),
+                                        Container(
+                                          margin: EdgeInsets.only(left: 5.w),
+                                          padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
+                                          decoration: BoxDecoration(
+                                            color: AppColors.primaryColor.withAlpha(200),
+                                            borderRadius: BorderRadius.circular(50),
+                                          ),
+                                          child: Text(
+                                            rank,
+                                            style: GoogleFonts.plusJakartaSans(color: Colors.white, fontSize: 10.sp),
+                                          ),
                                         ),
                                       ],
                                     ),
@@ -121,9 +141,19 @@ class CommentWidget extends StatelessWidget {
                                     Text(reply.content ?? '', style: GoogleFonts.plusJakartaSans(fontSize: 11.sp)),
                                     5.hS,
                                     if (onReply != null)
-                                      TextButton(
-                                        onPressed: onReply,
-                                        child: Text('Reply', style: TextStyle(color: Colors.blue, fontSize: 11.sp)),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              HelperUtils.formatTime(reply.createdAt ?? DateTime.now()),
+                                              style: GoogleFonts.plusJakartaSans(fontSize: 10.sp, color: Colors.grey),
+                                            ),
+                                          ),
+                                          TextButton(
+                                            onPressed: onReply,
+                                            child: Text('Reply', style: TextStyle(color: Colors.blue, fontSize: 11.sp)),
+                                          ),
+                                        ],
                                       ),
                                   ],
                                 ),

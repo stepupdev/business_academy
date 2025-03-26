@@ -32,9 +32,10 @@ class CommunityRep {
 
   Future deleteComment(String commentId) async {
     APIManager _manager = APIManager();
-    final response = await _manager.deleteAPICallWithHeader("${ApiUrl.comments}/$commentId/delete",headerData:  {
-      "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
-    });
+    final response = await _manager.deleteAPICallWithHeader(
+      "${ApiUrl.comments}/$commentId/delete",
+      headerData: {"Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}"},
+    );
     print("response: $response");
     return response;
   }
@@ -114,7 +115,13 @@ class CommunityRep {
     return jsonDecode(response.body);
   }
 
-    Future updatePosts({required String content, required String postId, required String topicId, File? imageFile, String? videoUrl}) async {
+  Future updatePosts({
+    required String content,
+    required String postId,
+    required String topicId,
+    File? imageFile,
+    String? videoUrl,
+  }) async {
     var uri = Uri.parse("${ApiUrl.postUpdate}/$postId");
     var request = http.MultipartRequest("PUT", uri);
 
@@ -136,6 +143,7 @@ class CommunityRep {
     // Add headers (including Authorization)
     request.headers.addAll({
       'Accept': 'application/json',
+      'Content-Type': 'application/json',
       "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
     });
 
@@ -172,6 +180,39 @@ class CommunityRep {
     final response = await _manager.getWithHeader(ApiUrl.savePosts, {
       "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
     });
+    print("response: $response");
+    return response;
+  }
+
+  Future getUser() async {
+    APIManager _manager = APIManager();
+    final response = await _manager.getWithHeader(ApiUrl.user, {
+      "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
+    });
+    print("response: $response");
+    return response;
+  }
+
+  Future fetchCommunities() async {
+    APIManager _manager = APIManager();
+    final response = await _manager.getWithHeader(ApiUrl.communities, {
+      "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
+    });
+    print("response: $response");
+    return response;
+  }
+
+  Future changeCommunity(String id) async {
+    APIManager _manager = APIManager();
+    final response = await _manager.postAPICallWithHeader(
+      "${ApiUrl.communities}/change",
+      {"community_id": id},
+      {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
+      },
+    );
     print("response: $response");
     return response;
   }

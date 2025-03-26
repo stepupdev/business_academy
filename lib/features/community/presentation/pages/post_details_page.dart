@@ -142,6 +142,7 @@ class PostDetailsPageState extends State<PostDetailsPage> {
                             return CommentWidget(
                               avatarUrl: comment.user?.avatar ?? '',
                               userName: comment.user?.name ?? '',
+                              rank: comment.user?.rank?.name ?? '',
                               time: HelperUtils.formatTime(comment.createdAt ?? DateTime.now()),
                               content: comment.content ?? '',
                               replies: comment.replies ?? [],
@@ -165,69 +166,77 @@ class PostDetailsPageState extends State<PostDetailsPage> {
               ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
-                child: Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 22.r,
-                      backgroundImage: NetworkImage(
-                        Get.find<AuthService>().currentUser.value.result?.user?.avatar ?? '',
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: dark ? AppColors.dark : Colors.grey.shade200,
+                    borderRadius: BorderRadius.circular(30.0),
+                  ),
+                  child: Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 22.r,
+                        backgroundImage: NetworkImage(
+                          Get.find<AuthService>().currentUser.value.result?.user?.avatar ?? '',
+                        ),
                       ),
-                    ),
-                    10.wS,
-                    Expanded(
-                      child: TextFormField(
-                        onTapOutside: (event) => FocusScope.of(context).unfocus(),
-                        controller: _commentController,
-                        focusNode: _commentFocusNode,
-                        decoration: InputDecoration(
-                          hintText:
-                              _isReplying
-                                  ? 'Replying to ${controller.comments.value.result?.data?.firstWhere((element) => element.id == _replyingTo).user?.name ?? ''}'
-                                  : 'Add comment',
-                          contentPadding: EdgeInsets.symmetric(horizontal: 20.w),
-                          hintStyle: TextStyle(
-                            color: Colors.grey.shade500,
-                            fontSize: 12.sp,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30.0),
-                            borderSide: BorderSide(color: AppColors.borderColor),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30.0),
-                            borderSide: BorderSide(color: AppColors.borderColor),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30.0),
-                            borderSide: BorderSide(color: AppColors.borderColor),
+                      10.wS,
+                      Expanded(
+                        child: TextFormField(
+                          onTapOutside: (event) => FocusScope.of(context).unfocus(),
+                          controller: _commentController,
+                          focusNode: _commentFocusNode,
+                          decoration: InputDecoration(
+                            fillColor: Colors.white,
+                            filled: true,
+                            hintText:
+                                _isReplying
+                                    ? 'Replying to ${controller.comments.value.result?.data?.firstWhere((element) => element.id == _replyingTo).user?.name ?? ''}'
+                                    : 'Add comment',
+                            contentPadding: EdgeInsets.symmetric(horizontal: 20.w),
+                            hintStyle: TextStyle(
+                              color: Colors.grey.shade500,
+                              fontSize: 12.sp,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30.0),
+                              borderSide: BorderSide(color: AppColors.borderColor),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30.0),
+                              borderSide: BorderSide(color: AppColors.borderColor),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30.0),
+                              borderSide: BorderSide(color: AppColors.borderColor),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    10.wS,
-                    InkWell(
-                      onTap: () {
-                        print("here is the _replyto: $_replyingTo");
-                        controller.selectedPostId.value = post?.id ?? 0;
-                        controller.addComments(
-                          postId: controller.selectedPostId.value.toString(),
-                          comments: _commentController.text.trim(),
-                          parentId: _isReplying ? _replyingTo.toString() : "",
-                        );
-                        _commentController.clear();
-                        setState(() {
-                          _isReplying = false;
-                          _replyingTo = null;
-                        });
-                      },
-                      child: SvgPicture.asset(
-                        "assets/icons/share.svg",
-                        height: 24.h,
-                        color: dark ? Colors.grey[300] : Colors.black,
+                      10.wS,
+                      InkWell(
+                        onTap: () {
+                          print("here is the _replyto: $_replyingTo");
+                          controller.selectedPostId.value = post?.id ?? 0;
+                          controller.addComments(
+                            postId: controller.selectedPostId.value.toString(),
+                            comments: _commentController.text.trim(),
+                            parentId: _isReplying ? _replyingTo.toString() : "",
+                          );
+                          _commentController.clear();
+                          setState(() {
+                            _isReplying = false;
+                            _replyingTo = null;
+                          });
+                        },
+                        child: SvgPicture.asset(
+                          "assets/icons/share.svg",
+                          height: 24.h,
+                          color: dark ? Colors.grey[300] : Colors.black,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ],
