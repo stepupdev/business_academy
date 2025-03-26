@@ -115,6 +115,9 @@ class PostDetailsPageState extends State<PostDetailsPage> {
                             ),
                           );
                         }
+                        if (controller.isLoading.value) {
+                          return Center(child: CircularProgressIndicator());
+                        }
                         return ListView.builder(
                           shrinkWrap: true,
                           physics: NeverScrollableScrollPhysics(),

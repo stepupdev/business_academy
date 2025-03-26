@@ -15,6 +15,10 @@ class NotificationPage extends GetView<NotificationController> {
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      controller.fetchNotifications();
+    });
+
     String formatTime(DateTime time) {
       final dateTime = DateTime.now().subtract(DateTime.now().difference(time));
       return timeago.format(dateTime, locale: 'en');
@@ -83,12 +87,15 @@ class NotificationPage extends GetView<NotificationController> {
                           children: [
                             Row(
                               children: [
-                                Container(
-                                  width: 10.0,
-                                  height: 10.0,
-                                  decoration: BoxDecoration(color: Colors.blue, shape: BoxShape.circle),
+                                Visibility(
+                                  visible: notification?.isRead == false,
+                                  child: Container(
+                                    width: 10.0,
+                                    height: 10.0,
+                                    decoration: BoxDecoration(color: Colors.blue, shape: BoxShape.circle),
+                                    child: 10.wS,
+                                  ),
                                 ),
-                                10.wS,
                                 Text(
                                   formatTime(notification?.createdAt ?? DateTime.now()),
                                   style: TextStyle(fontSize: 12.0, color: Colors.grey),

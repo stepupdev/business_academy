@@ -12,12 +12,8 @@ import 'package:get/get.dart';
 
 void checkNotifications(SendPort sendPort) async {
   while (true) {
-    // Simulate API call to check for notifications
-    bool hasNewNotifications = await Get.find<NotificationController>().checkNotification();
-    sendPort.send(hasNewNotifications);
-
-    // Wait for 10 seconds before checking again
-    await Future.delayed(Duration(seconds: 10));
+    sendPort.send("check_notifications");
+    await Future.delayed(Duration(seconds: 30));
   }
 }
 
@@ -25,13 +21,17 @@ void startNotificationChecker() async {
   ReceivePort receivePort = ReceivePort();
   await Isolate.spawn(checkNotifications, receivePort.sendPort);
 
-  receivePort.listen((message) {
-    if (message == true) {
-      print("🔔 New notification received!");
-      // You can trigger a local notification here
+  receivePort.listen((message) async {
+    if (message == "check_notifications") {
+      bool hasNewNotifications = await Get.find<NotificationController>().checkNotification();
+
+      if (hasNewNotifications) {
+        print("🔔 New notification received!");
+      }
     }
   });
 }
+
 
 void main() async {
   await Get.putAsync(() async => AuthService());

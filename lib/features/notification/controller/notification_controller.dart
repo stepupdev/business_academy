@@ -8,8 +8,7 @@ class NotificationController extends GetxController {
   var isLoading = false.obs;
 
   var notifications = NotificationResponseModel().obs;
-
-  var notificationCheck = CheckNotificationResponseModel().obs;
+  var hasNewNotification = false.obs; // Separate flag for new notifications
 
   @override
   void onInit() {
@@ -30,16 +29,17 @@ class NotificationController extends GetxController {
   }
 
   Future<bool> checkNotification() async {
-    isLoading(true);
     try {
       var response = await NotificationRep().checkNotification();
-      notificationCheck(CheckNotificationResponseModel.fromJson(response));
-      return notificationCheck.value.result!.hasNotifications!;
+      var checkResponse = CheckNotificationResponseModel.fromJson(response);
+
+      // Update only the `hasNewNotification` flag
+      hasNewNotification.value = checkResponse.result?.hasNotifications ?? false;
+
+      return hasNewNotification.value;
     } catch (e) {
       print(e);
-      return notificationCheck.value.result!.hasNotifications!;
-    } finally {
-      isLoading(false);
+      return false;
     }
   }
 
@@ -49,6 +49,7 @@ class NotificationController extends GetxController {
       var response = await NotificationRep().markNotification(id);
       print("Notification: $response");
       Ui.successSnackBar(message: "Notification marked as read");
+      fetchNotifications(); // Refresh notifications after marking as read
     } catch (e) {
       print(e);
     } finally {
@@ -62,6 +63,7 @@ class NotificationController extends GetxController {
       var response = await NotificationRep().markAllNotification();
       print("Notification: $response");
       Ui.successSnackBar(message: "All notifications marked as read");
+      fetchNotifications(); // Refresh notifications after marking all as read
     } catch (e) {
       print(e);
     } finally {

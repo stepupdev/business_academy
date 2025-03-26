@@ -63,7 +63,7 @@ class CommunityFeedScreen extends GetView<CommunityController> {
               ),
               Obx(() {
                 return Visibility(
-                  visible: Get.find<NotificationController>().notificationCheck.value.result?.hasNotifications ?? true,
+                  visible: Get.find<NotificationController>().hasNewNotification.value,
                   child: Positioned(
                     right: 0,
                     top: 1,
