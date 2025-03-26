@@ -11,4 +11,5 @@ class ApiUrl {
   static const String groups = '$baseUrl/groups';
   static const String notification = '$baseUrl/notifications';
   static const String createComments = '$baseUrl/comments/create';
+  static const String comments = '$baseUrl/comments';
 }

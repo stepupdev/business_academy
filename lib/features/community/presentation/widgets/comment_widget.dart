@@ -1,4 +1,5 @@
 import 'package:business_application/core/config/app_size.dart';
+import 'package:business_application/core/utils/helper_utils.dart';
 import 'package:business_application/features/community/data/comments_response_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -7,16 +8,20 @@ import 'package:google_fonts/google_fonts.dart';
 class CommentWidget extends StatelessWidget {
   final String avatarUrl;
   final String userName;
+  final String time;
   final String content;
   final List<CommentsResult> replies;
   final VoidCallback? onReply;
+  final VoidCallback? onDelete;
 
   const CommentWidget({
     super.key,
     required this.avatarUrl,
     required this.userName,
+    required this.time,
     required this.content,
     required this.replies,
+    required this.onDelete,
     this.onReply,
   });
 
@@ -43,7 +48,13 @@ class CommentWidget extends StatelessWidget {
                           style: GoogleFonts.plusJakartaSans(fontSize: 14.sp, fontWeight: FontWeight.w700),
                         ),
                         10.wS,
-                        Text('2 hours ago', style: GoogleFonts.plusJakartaSans(fontSize: 12.sp, color: Colors.grey)),
+                        Expanded(
+                          child: Text(
+                            time,
+                            style: GoogleFonts.plusJakartaSans(fontSize: 10.sp, color: Colors.grey),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
                       ],
                     ),
                     10.hS,
@@ -58,58 +69,79 @@ class CommentWidget extends StatelessWidget {
                   ],
                 ),
               ),
+              // 3 dot for show popup menu for delete the comments
+              PopupMenuButton(
+                itemBuilder: (context) => [PopupMenuItem(value: 'delete', child: Text('Delete'))],
+                onSelected: (value) {
+                  if (value == 'delete') {
+                    onDelete?.call();
+                  }
+                },
+              ),
             ],
           ),
           15.hS,
           if (replies.isNotEmpty)
             Padding(
               padding: EdgeInsets.only(left: 20.w),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children:
-                    replies.map((reply) {
-                      return Padding(
-                        padding: EdgeInsets.only(bottom: 10.h),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            CircleAvatar(backgroundImage: NetworkImage(reply.user?.avatar ?? ''), radius: 15.r),
-                            SizedBox(width: 10.w),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Text(
-                                        reply.user?.name ?? '',
-                                        style: GoogleFonts.plusJakartaSans(
-                                          fontSize: 13.sp,
-                                          fontWeight: FontWeight.w600,
+              child: Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children:
+                      replies.map((reply) {
+                        return Padding(
+                          padding: EdgeInsets.only(bottom: 10.h),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              CircleAvatar(backgroundImage: NetworkImage(reply.user?.avatar ?? ''), radius: 15.r),
+                              SizedBox(width: 10.w),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Text(
+                                          reply.user?.name ?? '',
+                                          style: GoogleFonts.plusJakartaSans(
+                                            fontSize: 13.sp,
+                                            fontWeight: FontWeight.w600,
+                                          ),
                                         ),
-                                      ),
-                                      5.wS,
-                                      Text(
-                                        '1 hour ago',
-                                        style: GoogleFonts.plusJakartaSans(fontSize: 10.sp, color: Colors.grey),
-                                      ),
-                                    ],
-                                  ),
-                                  5.hS,
-                                  Text(reply.content ?? '', style: GoogleFonts.plusJakartaSans(fontSize: 11.sp)),
-                                  5.hS,
-                                  if (onReply != null)
-                                    InkWell(
-                                      onTap: onReply,
-                                      child: Text('Reply', style: TextStyle(color: Colors.blue, fontSize: 11.sp)),
+                                        5.wS,
+                                        Text(
+                                          HelperUtils.formatTime(reply.createdAt ?? DateTime.now()),
+                                          style: GoogleFonts.plusJakartaSans(fontSize: 10.sp, color: Colors.grey),
+                                        ),
+                                      ],
                                     ),
-                                ],
+                                    5.hS,
+                                    Text(reply.content ?? '', style: GoogleFonts.plusJakartaSans(fontSize: 11.sp)),
+                                    5.hS,
+                                    if (onReply != null)
+                                      InkWell(
+                                        onTap: onReply,
+                                        child: Text('Reply', style: TextStyle(color: Colors.blue, fontSize: 11.sp)),
+                                      ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }).toList(),
+                              // 3 dot for show popup menu for delete the comments
+                              PopupMenuButton(
+                                itemBuilder: (context) => [PopupMenuItem(value: 'delete', child: Text('Delete'))],
+                                onSelected: (value) {
+                                  if (value == 'delete') {
+                                    onDelete?.call();
+                                  }
+                                },
+                              ),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                ),
               ),
             ),
         ],

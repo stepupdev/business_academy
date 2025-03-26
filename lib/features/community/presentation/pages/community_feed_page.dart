@@ -20,6 +20,11 @@ class CommunityFeedScreen extends GetView<CommunityController> {
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      controller.getCommunityPosts();
+      controller.getTopic();
+      Get.find<NotificationController>().checkNotification();
+    });
     final dark = Ui.isDarkMode(context);
     return Scaffold(
       appBar: AppBar(

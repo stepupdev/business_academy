@@ -127,13 +127,26 @@ class CommunityController extends GetxController {
     }
   }
 
+  deleteComments(String id) async {
+    try {
+      isLoading(true);
+      final response = await CommunityRep().deleteComment(id);
+      print("delete comments response $response");
+      getComments(selectedPostId.value.toString());
+    } catch (e) {
+      isLoading(false);
+      print(e);
+    } finally {
+      isLoading(false);
+    }
+  }
+
   likePosts() async {
     int postIndex = communityPosts.value.result?.data?.indexWhere((post) => post.id == selectedPostId.value) ?? -1;
 
     if (postIndex == -1) return;
 
     bool previousState = communityPosts.value.result!.data![postIndex].isLiked!;
-
 
     communityPosts.update((posts) {
       posts?.result?.data?[postIndex].isLiked = !previousState;
@@ -201,7 +214,6 @@ class CommunityController extends GetxController {
 
     final response = await CommunityRep().savePost(data);
     if (response['success'] == false) {
-
       communityPosts.update((posts) {
         posts?.result?.data?[postIndex].isSaved = previousState;
       });
@@ -279,7 +291,7 @@ class CommunityController extends GetxController {
       final topicsData = topics_model.TopicsResponseModel.fromJson(response);
       topicsData.result?.data?.insert(0, topics_model.Topic(name: "All"));
       topics(topicsData);
-      selectedTopic.value = "All"; 
+      selectedTopic.value = "All";
     } catch (e) {
       isLoading(false);
       print(e);

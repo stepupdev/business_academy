@@ -1,6 +1,7 @@
 import 'package:business_application/core/config/app_colors.dart';
 import 'package:business_application/core/config/app_size.dart';
 import 'package:business_application/core/services/auth_services.dart';
+import 'package:business_application/core/utils/helper_utils.dart';
 import 'package:business_application/core/utils/ui_support.dart';
 import 'package:business_application/features/community/controller/community_controller.dart';
 import 'package:business_application/features/community/presentation/widgets/comment_widget.dart';
@@ -25,13 +26,11 @@ class PostDetailsPage extends StatefulWidget {
 
 class PostDetailsPageState extends State<PostDetailsPage> {
   final TextEditingController _commentController = TextEditingController();
+  final FocusNode _commentFocusNode = FocusNode();
   bool _isReplying = false;
   int? _replyingTo;
 
-  String formatTime(DateTime time) {
-    final dateTime = DateTime.now().subtract(DateTime.now().difference(time));
-    return timeago.format(dateTime, locale: 'en');
-  }
+
 
   @override
   void initState() {
@@ -75,7 +74,7 @@ class PostDetailsPageState extends State<PostDetailsPage> {
                         rank: post?.user?.rank?.name ?? "",
                         topic: post?.topic?.name ?? "",
                         postId: int.tryParse(widget.postId),
-                        time: formatTime(post?.createdAt ?? DateTime.now()),
+                        time: HelperUtils.formatTime(post?.createdAt ?? DateTime.now()),
                         postImage: post?.image ?? "",
                         videoUrl: post?.videoUrl ?? "",
                         dp: post?.user?.avatar ?? "",
@@ -127,13 +126,18 @@ class PostDetailsPageState extends State<PostDetailsPage> {
                             return CommentWidget(
                               avatarUrl: comment.user?.avatar ?? '',
                               userName: comment.user?.name ?? '',
+                              time: HelperUtils.formatTime(comment.createdAt ?? DateTime.now()),
                               content: comment.content ?? '',
                               replies: comment.replies ?? [],
+                              onDelete: () {
+                                controller.deleteComments(comment.id.toString());
+                              },
                               onReply: () {
                                 setState(() {
                                   _isReplying = true;
                                   _replyingTo = comment.id;
                                 });
+                                Future.delayed(Duration(milliseconds: 100), () => _commentFocusNode.requestFocus());
                               },
                             );
                           },
@@ -158,6 +162,7 @@ class PostDetailsPageState extends State<PostDetailsPage> {
                       child: TextFormField(
                         onTapOutside: (event) => FocusScope.of(context).unfocus(),
                         controller: _commentController,
+                        focusNode: _commentFocusNode,
                         decoration: InputDecoration(
                           hintText:
                               _isReplying

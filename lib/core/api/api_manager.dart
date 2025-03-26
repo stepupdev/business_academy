@@ -200,4 +200,26 @@ class APIManager {
         );
     }
   }
+  Future<dynamic> deleteAPICallWithHeader(String url, {Map<String, String>? headerData}) async {
+  print("Calling DELETE API: $url");
+
+  var responseJson;
+  try {
+    final response = await http.delete(Uri.parse(url), headers: headerData);
+    print("API Response: ${response.body}");
+
+    var data = jsonDecode(response.body);
+    if (response.statusCode == 422 || response.statusCode == 400) {
+      Get.showSnackbar(Ui.errorSnackBar(message: data["message"], title: 'Error'.tr));
+    }
+
+    responseJson = _response(response);
+    print("Processed Response: $responseJson");
+  } on SocketException catch (_) {
+    throw FetchDataException('No Internet connection');
+  }
+
+  return responseJson;
+}
+
 }

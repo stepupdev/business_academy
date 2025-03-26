@@ -30,6 +30,15 @@ class CommunityRep {
     return response;
   }
 
+  Future deleteComment(String commentId) async {
+    APIManager _manager = APIManager();
+    final response = await _manager.deleteAPICallWithHeader("${ApiUrl.comments}/$commentId/delete",headerData:  {
+      "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
+    });
+    print("response: $response");
+    return response;
+  }
+
   Future likePosts(Map<String, dynamic> body) async {
     APIManager _manager = APIManager();
     final response = await _manager.postAPICallWithHeader(ApiUrl.likePost, body, {
