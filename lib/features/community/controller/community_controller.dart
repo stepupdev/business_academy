@@ -21,12 +21,12 @@ class CommunityController extends GetxController {
   var topics = topics_model.TopicsResponseModel().obs;
   var selectedTopic = ''.obs;
   topics_model.TopicsResponseModel? selectedTopicValue;
-  var selectedTopicId = ''.obs; // Initialize as an empty observable list
+  var selectedTopicId = ''.obs;
   final TextEditingController postController = TextEditingController();
   var selectedImage = "".obs;
-  final RxInt selectedTabIndex = 0.obs; // 0 for Image, 1 for Video
+  final RxInt selectedTabIndex = 0.obs;
   final TextEditingController videoLinkController = TextEditingController();
-  var filteredPosts = <Posts>[].obs; // Observable for filtered posts
+  var filteredPosts = <Posts>[].obs;
 
   Future<void> pickImage(ImageSource source) async {
     final picker = ImagePicker();
@@ -43,9 +43,9 @@ class CommunityController extends GetxController {
     getTopic();
     selectedTopic.listen((value) {
       if (value.isNotEmpty && value != "All") {
-        filterPostsByTopic(value); // Filter posts locally
+        filterPostsByTopic(value);
       } else {
-        filteredPosts.assignAll(communityPosts.value.result?.data ?? []); // Show all posts if "All" is selected
+        filteredPosts.assignAll(communityPosts.value.result?.data ?? []);
       }
     });
     super.onInit();
@@ -71,7 +71,6 @@ class CommunityController extends GetxController {
       isLoading(true);
       final response = await CommunityRep().getCommunityPosts();
       communityPosts(PostsResponseModel.fromJson(response));
-      // Initialize filteredPosts with all posts after fetching
       filteredPosts.assignAll(communityPosts.value.result?.data ?? []);
     } catch (e) {
       isLoading(false);
@@ -81,12 +80,31 @@ class CommunityController extends GetxController {
     }
   }
 
-  void filterPostsByTopic(String topicName) {
-    final allPosts = communityPosts.value.result?.data ?? [];
+  void filterPostsByTopic(String topicName, {String? topicId}) async {
     if (topicName == "All") {
-      filteredPosts.assignAll(allPosts); // Show all posts for "All" topic
+      try {
+        isLoading(true);
+        final response = await CommunityRep().getCommunityPosts();
+        communityPosts(PostsResponseModel.fromJson(response));
+        filteredPosts.assignAll(communityPosts.value.result?.data ?? []);
+      } catch (e) {
+        print("Error fetching all posts: $e");
+        Ui.errorSnackBar(message: 'Failed to fetch all posts');
+      } finally {
+        isLoading(false);
+      }
     } else {
-      filteredPosts.assignAll(allPosts.where((post) => post.topic?.name == topicName).toList());
+      try {
+        isLoading(true);
+        final response = await CommunityRep().getCommunityPosts(params: {'topic_id': topicId});
+        communityPosts(PostsResponseModel.fromJson(response));
+        filteredPosts.assignAll(communityPosts.value.result?.data ?? []);
+      } catch (e) {
+        print("Error fetching posts by topic: $e");
+        Ui.errorSnackBar(message: 'Failed to fetch posts for the selected topic');
+      } finally {
+        isLoading(false);
+      }
     }
   }
 
@@ -116,19 +134,17 @@ class CommunityController extends GetxController {
 
     bool previousState = communityPosts.value.result!.data![postIndex].isLiked!;
 
-    // Optimistically update UI
+
     communityPosts.update((posts) {
       posts?.result?.data?[postIndex].isLiked = !previousState;
     });
 
-    // Update filteredPosts to reflect the change
     int filteredIndex = filteredPosts.indexWhere((post) => post.id == selectedPostId.value);
     if (filteredIndex != -1) {
       filteredPosts[filteredIndex].isLiked = !previousState;
-      filteredPosts.refresh(); // Trigger UI update
+      filteredPosts.refresh();
     }
 
-    // Update communityPostsById to reflect the change
     if (communityPostsById.value.result?.id == selectedPostId.value) {
       communityPostsById.update((post) {
         post?.result?.isLiked = !previousState;
@@ -139,14 +155,13 @@ class CommunityController extends GetxController {
 
     final response = await CommunityRep().likePosts(data);
     if (response['success'] == false) {
-      // Revert if API fails
       communityPosts.update((posts) {
         posts?.result?.data?[postIndex].isLiked = previousState;
       });
 
       if (filteredIndex != -1) {
         filteredPosts[filteredIndex].isLiked = previousState;
-        filteredPosts.refresh(); // Trigger UI update
+        filteredPosts.refresh();
       }
 
       if (communityPostsById.value.result?.id == selectedPostId.value) {
@@ -166,19 +181,16 @@ class CommunityController extends GetxController {
 
     bool previousState = communityPosts.value.result!.data![postIndex].isSaved!;
 
-    // Optimistically update UI
     communityPosts.update((posts) {
       posts?.result?.data?[postIndex].isSaved = !previousState;
     });
 
-    // Update filteredPosts to reflect the change
     int filteredIndex = filteredPosts.indexWhere((post) => post.id == selectedPostId.value);
     if (filteredIndex != -1) {
       filteredPosts[filteredIndex].isSaved = !previousState;
-      filteredPosts.refresh(); // Trigger UI update
+      filteredPosts.refresh();
     }
 
-    // Update communityPostsById to reflect the change
     if (communityPostsById.value.result?.id == selectedPostId.value) {
       communityPostsById.update((post) {
         post?.result?.isSaved = !previousState;
@@ -189,14 +201,14 @@ class CommunityController extends GetxController {
 
     final response = await CommunityRep().savePost(data);
     if (response['success'] == false) {
-      // Revert if API fails
+
       communityPosts.update((posts) {
         posts?.result?.data?[postIndex].isSaved = previousState;
       });
 
       if (filteredIndex != -1) {
         filteredPosts[filteredIndex].isSaved = previousState;
-        filteredPosts.refresh(); // Trigger UI update
+        filteredPosts.refresh();
       }
 
       if (communityPostsById.value.result?.id == selectedPostId.value) {
@@ -228,8 +240,8 @@ class CommunityController extends GetxController {
     final response = await CommunityRep().communityPosts(
       content: postController.text,
       topicId: selectedTopicId.value,
-      imageFile: selectedFile, // Pass image if selected
-      videoUrl: videoLinkController.text.isNotEmpty ? videoLinkController.text : null, // Pass video URL if provided
+      imageFile: selectedFile,
+      videoUrl: videoLinkController.text.isNotEmpty ? videoLinkController.text : null,
     );
 
     if (response['success'] == true) {
@@ -265,9 +277,9 @@ class CommunityController extends GetxController {
       isLoading(true);
       final response = await CommunityRep().getTopics();
       final topicsData = topics_model.TopicsResponseModel.fromJson(response);
-      topicsData.result?.data?.insert(0, topics_model.Topic(name: "All")); // Add "All" topic at the beginning
+      topicsData.result?.data?.insert(0, topics_model.Topic(name: "All"));
       topics(topicsData);
-      selectedTopic.value = "All"; // Set "All" as the default selected topic
+      selectedTopic.value = "All"; 
     } catch (e) {
       isLoading(false);
       print(e);

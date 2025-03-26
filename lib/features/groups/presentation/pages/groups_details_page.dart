@@ -100,6 +100,7 @@ class GroupDetailsPage extends GetView<GroupsController> {
                                   return GestureDetector(
                                     onTap: () {
                                       controller.selectedTopic.value = topic?.name ?? "";
+                                      controller.filterPostsByTopic(topic?.name ?? "", topicId: topic?.id?.toString());
                                     },
                                     child: IntrinsicHeight(
                                       child: Container(

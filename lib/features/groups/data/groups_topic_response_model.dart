@@ -33,14 +33,14 @@ class GroupsTopicResponseModel {
 }
 
 class Result {
-    List<Datum>? data;
+    List<GroupTopics>? data;
 
     Result({
         this.data,
     });
 
     factory Result.fromJson(Map<String, dynamic> json) => Result(
-        data: json["data"] == null ? [] : List<Datum>.from(json["data"]!.map((x) => Datum.fromJson(x))),
+        data: json["data"] == null ? [] : List<GroupTopics>.from(json["data"]!.map((x) => GroupTopics.fromJson(x))),
     );
 
     Map<String, dynamic> toJson() => {
@@ -48,7 +48,7 @@ class Result {
     };
 }
 
-class Datum {
+class GroupTopics {
     int? id;
     String? name;
     dynamic icon;
@@ -56,7 +56,7 @@ class Datum {
     DateTime? updatedAt;
     int? postsCount;
 
-    Datum({
+    GroupTopics({
         this.id,
         this.name,
         this.icon,
@@ -65,7 +65,7 @@ class Datum {
         this.postsCount,
     });
 
-    factory Datum.fromJson(Map<String, dynamic> json) => Datum(
+    factory GroupTopics.fromJson(Map<String, dynamic> json) => GroupTopics(
         id: json["id"],
         name: json["name"],
         icon: json["icon"],

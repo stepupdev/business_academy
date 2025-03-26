@@ -1,6 +1,5 @@
 import 'package:business_application/core/utils/ui_support.dart';
 import 'package:business_application/features/community/data/community_posts_model.dart';
-import 'package:business_application/features/groups/data/group_post_model.dart';
 import 'package:business_application/features/groups/data/groups_by_id_model.dart';
 import 'package:business_application/features/groups/data/groups_models.dart';
 import 'package:business_application/features/groups/data/groups_topic_response_model.dart';
@@ -15,20 +14,18 @@ class GroupsController extends GetxController {
   var groupsTopicResponse = GroupsTopicResponseModel().obs;
 
   var selectedTopic = ''.obs;
-  var filteredPosts = <GroupPost>[].obs; // Observable for filtered posts
-  var groupPosts = <Posts>[].obs; // Observable for group-specific posts
-  var currentGroupId = ''.obs; // Track the currently selected group ID
+  var filteredPosts = <Posts>[].obs;
+  var groupPosts = <Posts>[].obs;
+  var currentGroupId = ''.obs;
 
   @override
   void onInit() {
     fetchGroups();
     selectedTopic.listen((value) {
       if (value.isNotEmpty && value != "All") {
-        filterPostsByTopic(value); // Filter posts locally
+        filterPostsByTopic(value);
       } else {
-        filteredPosts.assignAll(
-          (groups.value.result?.data as List<GroupPost>?) ?? [],
-        ); // Show all posts if "All" is selected
+        filteredPosts.assignAll(groups.value.result?.data?.cast<Posts>() ?? []);
       }
     });
     super.onInit();
@@ -71,16 +68,15 @@ class GroupsController extends GetxController {
   Future<bool> fetchGroupPosts(String groupId) async {
     try {
       isLoading(true);
-      print("Fetching posts for group: $groupId"); // Debug line
+      print("Fetching posts for group: $groupId");
 
-      // Verify the parameter is valid and non-empty
       if (groupId.isEmpty) {
         print("Group ID is empty!");
         return false;
       }
 
       final response = await CommunityRep().getCommunityPosts(params: {'group_id': groupId});
-      print("Group posts response: $response"); // Debug line
+      print("Group posts response: $response");
 
       final postsModel = PostsResponseModel.fromJson(response);
       groupPosts.assignAll(postsModel.result?.data ?? []);
@@ -96,12 +92,32 @@ class GroupsController extends GetxController {
     }
   }
 
-  void filterPostsByTopic(String topicName) {
-    final allPosts = groups.value.result?.data ?? [];
+  void filterPostsByTopic(String topicName, {String? topicId}) async {
     if (topicName == "All") {
-      filteredPosts.assignAll(allPosts as Iterable<GroupPost>); // Show all posts for "All" topic
+      // Remove topic_id parameter to fetch all posts for the group
+      try {
+        isLoading(true);
+        final response = await CommunityRep().getCommunityPosts(params: {'group_id': currentGroupId.value});
+        groupPosts.assignAll(PostsResponseModel.fromJson(response).result?.data ?? []);
+      } catch (e) {
+        print("Error fetching all group posts: $e");
+        Ui.errorSnackBar(message: 'Failed to fetch all posts for the group');
+      } finally {
+        isLoading(false);
+      }
     } else {
-      filteredPosts.assignAll((allPosts as List<GroupPost>).where((post) => post.topic?.name == topicName).toList());
+      try {
+        isLoading(true);
+        final response = await CommunityRep().getCommunityPosts(
+          params: {'topic_id': topicId, 'group_id': currentGroupId.value},
+        );
+        groupPosts.assignAll(PostsResponseModel.fromJson(response).result?.data ?? []);
+      } catch (e) {
+        print("Error fetching group posts by topic: $e");
+        Ui.errorSnackBar(message: 'Failed to fetch posts for the selected topic');
+      } finally {
+        isLoading(false);
+      }
     }
   }
 }

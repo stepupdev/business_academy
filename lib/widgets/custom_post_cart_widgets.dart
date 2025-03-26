@@ -187,7 +187,7 @@ class _UserPostWidgetState extends State<UserPostWidget> {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(10.r),
                     child: CachedNetworkImage(
-                      imageUrl: videoThumbnail!,
+                      imageUrl: videoThumbnail ?? "",
                       width: 1.sw,
                       height: 200.h,
                       fit: BoxFit.cover,

@@ -99,6 +99,7 @@ class CommunityFeedScreen extends GetView<CommunityController> {
         }
         return RefreshIndicator(
           onRefresh: () {
+            Get.find<NotificationController>().hasNewNotification.value;
             return controller.getCommunityPosts();
           },
           child: SafeArea(
@@ -160,6 +161,7 @@ class CommunityFeedScreen extends GetView<CommunityController> {
                               return GestureDetector(
                                 onTap: () {
                                   controller.selectedTopic.value = topic?.name ?? "";
+                                  controller.filterPostsByTopic(topic?.name ?? "", topicId: topic?.id?.toString());
                                 },
                                 child: IntrinsicHeight(
                                   child: Container(

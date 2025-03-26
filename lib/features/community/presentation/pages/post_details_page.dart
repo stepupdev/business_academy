@@ -161,7 +161,7 @@ class PostDetailsPageState extends State<PostDetailsPage> {
                         decoration: InputDecoration(
                           hintText:
                               _isReplying
-                                  ? 'Replying to ${controller.comments.value.result?.data?.firstWhere((element) => element.id == _replyingTo)?.user?.name ?? ''}'
+                                  ? 'Replying to ${controller.comments.value.result?.data?.firstWhere((element) => element.id == _replyingTo).user?.name ?? ''}'
                                   : 'Add comment',
                           contentPadding: EdgeInsets.symmetric(horizontal: 20.w),
                           hintStyle: TextStyle(
