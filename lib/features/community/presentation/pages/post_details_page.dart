@@ -15,8 +15,9 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class PostDetailsPage extends StatefulWidget {
-  final String postId;
+  final String postId; // Ensure postId is passed as a required parameter
   final bool isVideo;
+
   const PostDetailsPage({super.key, this.isVideo = true, required this.postId});
 
   @override
@@ -29,8 +30,6 @@ class PostDetailsPageState extends State<PostDetailsPage> {
   bool _isReplying = false;
   int? _replyingTo;
 
-
-
   @override
   void initState() {
     Get.find<CommunityController>().getComments(widget.postId);
@@ -41,11 +40,29 @@ class PostDetailsPageState extends State<PostDetailsPage> {
   Widget build(BuildContext context) {
     final dark = Ui.isDarkMode(context);
     final controller = Get.find<CommunityController>();
+    final currentUserId = Get.find<AuthService>().currentUser.value.result?.user?.id;
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: dark ? AppColors.dark : AppColors.light,
         title: Text('Post Details'),
+        actions: [
+          Obx(() {
+            final post = controller.communityPostsById.value.result;
+            if (post?.user?.id == currentUserId) {
+              // Show "Edit Post" only if the post belongs to the logged-in user
+              return PopupMenuButton<String>(
+                onSelected: (value) {
+                  if (value == 'edit') {
+                    context.push('/create-post', extra: {'isGroupTopics': false, 'postId': widget.postId});
+                  }
+                },
+                itemBuilder: (context) => [PopupMenuItem(value: 'edit', child: Text('Edit Post'))],
+              );
+            }
+            return SizedBox.shrink();
+          }),
+        ],
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: dark ? Colors.white : Colors.black),
           onPressed: () => context.pop(),
@@ -203,9 +220,6 @@ class PostDetailsPageState extends State<PostDetailsPage> {
                           _isReplying = false;
                           _replyingTo = null;
                         });
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Comment added successfully'), duration: Duration(seconds: 2)),
-                        );
                       },
                       child: SvgPicture.asset(
                         "assets/icons/share.svg",

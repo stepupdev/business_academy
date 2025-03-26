@@ -13,27 +13,43 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
 class CreatePostPage extends GetView<CommunityController> {
-  final bool isGroupTopics; // New argument to determine the source of topics
+  final bool isGroupTopics;
+  final String? postId; // Optional postId for editing
 
-  CreatePostPage({super.key, required this.isGroupTopics});
+  const CreatePostPage({super.key, required this.isGroupTopics, this.postId});
 
   @override
   Widget build(BuildContext context) {
+    if (postId != null) {
+      Future.delayed(Duration.zero, () => controller.loadPostData(postId ?? ""));
+    }
     return Scaffold(
       appBar: AppBar(
-        title: Text("Create Post"),
+        title: Text(postId == null ? "Create Post" : "Edit Post"),
         actionsPadding: EdgeInsets.symmetric(horizontal: 10),
         actions: [
           FilledButton(
             onPressed: () {
-              controller.createNewPosts();
+              if (postId == null) {
+                controller.createNewPosts();
+              } else {
+                controller.updatePost(
+                  postId: postId ?? "",
+                  content: controller.postController.text,
+                  topicId: controller.selectedTopicId.value,
+                  videoUrl: controller.videoLinkController.text,
+                );
+              }
             },
             style: FilledButton.styleFrom(
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               backgroundColor: AppColors.primaryColor,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.r)),
             ),
-            child: Text("Share", style: TextStyle(color: Colors.white)),
+            child: Text(
+              postId == null ? "Share" : "Update",
+              style: TextStyle(color: Colors.white),
+            ), // Update button text
           ),
         ],
       ),
@@ -51,7 +67,7 @@ class CreatePostPage extends GetView<CommunityController> {
                     controller: controller.postController,
                     maxLines: 5,
                     decoration: InputDecoration(
-                      hintText: "Write something...",
+                      hintText: postId == null ? "Write something..." : "Edit your post...",
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: BorderSide(color: AppColors.borderColor, width: 0.5),
@@ -78,20 +94,23 @@ class CreatePostPage extends GetView<CommunityController> {
                         if (controller.selectedTabIndex.value == 0) ...[
                           Obx(
                             () =>
-                                controller
-                                        .selectedImage
-                                        .value
-                                        .isNotEmpty // Updated condition
+                                controller.selectedImage.value.isNotEmpty
                                     ? Stack(
                                       children: [
                                         Container(
                                           height: 200.h,
                                           decoration: BoxDecoration(
                                             borderRadius: BorderRadius.circular(12),
-                                            image: DecorationImage(
-                                              image: FileImage(File(controller.selectedImage.value)),
-                                              fit: BoxFit.cover,
-                                            ),
+                                            image:
+                                                postId == null || !controller.selectedImage.value.contains("http")
+                                                    ? DecorationImage(
+                                                      image: FileImage(File(controller.selectedImage.value)),
+                                                      fit: BoxFit.cover,
+                                                    )
+                                                    : DecorationImage(
+                                                      image: NetworkImage(controller.selectedImage.value),
+                                                      fit: BoxFit.cover,
+                                                    ),
                                           ),
                                         ),
                                         Positioned(
@@ -110,7 +129,7 @@ class CreatePostPage extends GetView<CommunityController> {
                                         ),
                                       ],
                                     )
-                                    : Container(), // Empty container when no image is selected
+                                    : Container(),
                           ),
                           14.hS,
                           Row(

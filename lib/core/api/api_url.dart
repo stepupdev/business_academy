@@ -3,6 +3,7 @@ class ApiUrl {
   static const String login = '$baseUrl/auth/oauth/login';
   static const String communityPosts = '$baseUrl/posts';
   static const String createPost = '$baseUrl/posts/create';
+  static const String postUpdate = '$baseUrl/posts/update';
   static const String topics = '$baseUrl/topics';
   static const String myPosts = '$baseUrl/user/posts';
   static const String savePosts = '$baseUrl/user/saved-posts';

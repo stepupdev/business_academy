@@ -270,6 +270,43 @@ class CommunityController extends GetxController {
     }
   }
 
+  void updatePost({
+    required String content,
+    required String postId,
+    required String topicId,
+    String? videoUrl,
+  }) async {
+    try {
+      File? selectedFile = selectedImage.value.isNotEmpty ? File(selectedImage.value) : null;
+
+      final response = await CommunityRep().updatePosts(
+        content: content,
+        postId: postId,
+        topicId: topicId,
+        imageFile: selectedFile,
+
+        videoUrl: videoUrl,
+      );
+
+      if (response['success'] == true) {
+        getCommunityPosts();
+        postController.clear();
+        selectedImage.value = "";
+        videoLinkController.clear();
+        selectedTopicId.value = '';
+        selectedTopic.value = '';
+        selectedTabIndex.value = 0;
+        Ui.successSnackBar(message: response['message']);
+      } else {
+        Ui.errorSnackBar(message: response['message']);
+      }
+    } catch (e) {
+      Ui.errorSnackBar(message: 'Failed to update post');
+    } finally {
+      isLoading(false);
+    }
+  }
+
   getCommunityPostsById(String id) async {
     try {
       isLoading(true);
@@ -297,6 +334,17 @@ class CommunityController extends GetxController {
       print(e);
     } finally {
       isLoading(false);
+    }
+  }
+
+  void loadPostData(String postId) {
+    final post = communityPostsById.value.result;
+    if (post != null && post.id.toString() == postId) {
+      postController.text = post.content ?? '';
+      selectedImage.value = post.image ?? '';
+      videoLinkController.text = post.videoUrl ?? '';
+      selectedTopic.value = post.topic?.name ?? '';
+      selectedTopicId.value = post.topic?.id?.toString() ?? '';
     }
   }
 }

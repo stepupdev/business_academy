@@ -28,6 +28,28 @@ class APIManager {
     }
     return responseJson;
   }
+  Future<dynamic> putAPICallWithHeader(String url, Map<String, dynamic> param, Map<String, String> headerData) async {
+    print("Calling API: $url");
+    print("Calling parameters: $param");
+
+    var responseJson;
+    try {
+      final response = await http.post(Uri.parse(url), body: jsonEncode(param), headers: headerData);
+      print("api provider bro bro bro bro ${response.body}");
+      var data = jsonDecode(response.body);
+      if (response.statusCode == 422) {
+        Get.showSnackbar(Ui.errorSnackBar(message: data["message"], title: 'Error'.tr));
+      } else if (response.statusCode == 400) {
+        Get.showSnackbar(Ui.errorSnackBar(message: data["message"], title: 'Error'.tr));
+      }
+      responseJson = _response(response);
+
+      print("hlw bro ++++++++++++++++++++$responseJson");
+    } on SocketException catch (_) {
+      throw FetchDataException('No Internet connection');
+    }
+    return responseJson;
+  }
 
   Future<dynamic> postAPICall(String url, var param, {var header}) async {
     print("Calling API: $url");
