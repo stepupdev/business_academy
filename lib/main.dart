@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
 void checkNotifications(SendPort sendPort) async {
   while (true) {
@@ -32,8 +33,8 @@ void startNotificationChecker() async {
   });
 }
 
-
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await Get.putAsync(() async => AuthService());
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
@@ -62,6 +63,7 @@ class MyApp extends StatelessWidget {
       builder: (_, child) {
         return GetMaterialApp.router(
           debugShowCheckedModeBanner: false,
+          scaffoldMessengerKey: scaffoldMessengerKey,
           routeInformationParser: AppRouter.router.routeInformationParser,
           routerDelegate: AppRouter.router.routerDelegate,
           routeInformationProvider: AppRouter.router.routeInformationProvider,

@@ -62,8 +62,8 @@ class CommentWidget extends StatelessWidget {
                     10.hS,
 
                     if (onReply != null)
-                      InkWell(
-                        onTap: onReply,
+                      TextButton(
+                        onPressed: onReply,
                         child: Text('Reply', style: TextStyle(color: Colors.blue, fontSize: 12.sp)),
                       ),
                   ],
@@ -121,8 +121,8 @@ class CommentWidget extends StatelessWidget {
                                     Text(reply.content ?? '', style: GoogleFonts.plusJakartaSans(fontSize: 11.sp)),
                                     5.hS,
                                     if (onReply != null)
-                                      InkWell(
-                                        onTap: onReply,
+                                      TextButton(
+                                        onPressed: onReply,
                                         child: Text('Reply', style: TextStyle(color: Colors.blue, fontSize: 11.sp)),
                                       ),
                                   ],

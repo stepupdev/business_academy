@@ -2,6 +2,7 @@ import 'package:business_application/core/config/app_routes.dart';
 import 'package:business_application/core/config/app_size.dart';
 import 'package:business_application/core/utils/ui_support.dart';
 import 'package:business_application/features/groups/controller/groups_controller.dart';
+import 'package:business_application/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
@@ -62,7 +63,7 @@ class GroupsPage extends GetView<GroupsController> {
                           context.push(AppRoutes.groupDetails);
                         } catch (e) {
                           print("Error navigating to group details: $e");
-                          Ui.errorSnackBar(message: 'Failed to load group details. Please try again.');
+                          Ui.showErrorSnackBar(scaffoldMessengerKey.currentContext!,message: 'Failed to load group details. Please try again.');
                         } finally {
                           controller.isLoading(false);
                         }

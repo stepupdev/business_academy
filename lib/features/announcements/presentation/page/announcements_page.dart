@@ -1,9 +1,6 @@
-import 'package:business_application/core/services/auth_services.dart';
 import 'package:business_application/core/utils/ui_support.dart';
-import 'package:business_application/widgets/custom_post_cart_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 
 class AnnouncementsPage extends StatelessWidget {
   const AnnouncementsPage({super.key});
@@ -12,26 +9,26 @@ class AnnouncementsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final dark = Ui.isDarkMode(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Announcements')),
-      body: ListView.separated(
-        separatorBuilder: (context, index) => Container(height: 3.h, color: dark ? Colors.black : Colors.grey[200]),
-        itemCount: 11, // Increased by 1 to include the create post section
-        itemBuilder: (context, index) {
-          return UserPostWidget(
-            onTap: () {},
-            name: 'Fahmid Al Nayem',
-            rank: 'Rank $index',
-            topic: "Social Media",
-            time: DateTime.now(),
-            postImage: 'assets/images/stepup_image.png',
-            videoUrl: 'https://www.youtube.com/watch?v=6v2L2UGZJAM',
-            dp: Get.find<AuthService>().currentUser.value.result?.user?.avatar ?? "",
-            caption: 'This is the caption for post $index',
-            commentCount: '12',
-            isLiked: true,
-            isSaved: true,
-          );
-        },
+      // appBar: AppBar(title: const Text('Announcements')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.construction, size: 100.sp, color: dark ? Colors.orangeAccent : Colors.blueAccent),
+            SizedBox(height: 20.h),
+            Text(
+              "Announcements Coming Soon",
+              style: TextStyle(fontSize: 24.sp, fontWeight: FontWeight.bold, color: dark ? Colors.white : Colors.black),
+            ),
+            SizedBox(height: 10.h),
+            Text(
+              "Stay tuned! The announcements feature will be published soon.",
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 16.sp, color: dark ? Colors.grey[400] : Colors.grey[700]),
+            ),
+            SizedBox(height: 30.h),
+          ],
+        ),
       ),
     );
   }

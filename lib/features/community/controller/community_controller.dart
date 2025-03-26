@@ -7,6 +7,7 @@ import 'package:business_application/core/services/auth_services.dart';
 import 'package:business_application/features/community/data/community_posts_model.dart';
 import 'package:business_application/features/community/data/posts_by_id_model.dart';
 import 'package:business_application/features/community/data/topics_model.dart' as topics_model;
+import 'package:business_application/main.dart';
 import 'package:business_application/repository/community_rep.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -89,7 +90,7 @@ class CommunityController extends GetxController {
         filteredPosts.assignAll(communityPosts.value.result?.data ?? []);
       } catch (e) {
         print("Error fetching all posts: $e");
-        Ui.errorSnackBar(message: 'Failed to fetch all posts');
+        Ui.showErrorSnackBar(scaffoldMessengerKey.currentContext!,message: 'Failed to fetch all posts');
       } finally {
         isLoading(false);
       }
@@ -101,7 +102,7 @@ class CommunityController extends GetxController {
         filteredPosts.assignAll(communityPosts.value.result?.data ?? []);
       } catch (e) {
         print("Error fetching posts by topic: $e");
-        Ui.errorSnackBar(message: 'Failed to fetch posts for the selected topic');
+        Ui.showErrorSnackBar(scaffoldMessengerKey.currentContext!,message: 'Failed to fetch posts for the selected topic');
       } finally {
         isLoading(false);
       }
@@ -183,7 +184,7 @@ class CommunityController extends GetxController {
         });
       }
 
-      Ui.errorSnackBar(message: response['message']);
+      Ui.showErrorSnackBar(scaffoldMessengerKey.currentContext!,message: response['message']);
     }
   }
 
@@ -229,7 +230,7 @@ class CommunityController extends GetxController {
         });
       }
 
-      Ui.errorSnackBar(message: response['message']);
+      Ui.showErrorSnackBar(scaffoldMessengerKey.currentContext!,message: response['message']);
     }
   }
 
@@ -264,18 +265,13 @@ class CommunityController extends GetxController {
       selectedTopicId.value = '';
       selectedTopic.value = '';
       selectedTabIndex.value = 0;
-      Ui.successSnackBar(message: response['message']);
+      Ui.showSuccessSnackBar(scaffoldMessengerKey.currentContext!,message: response['message']);
     } else {
-      Ui.errorSnackBar(message: response['message']);
+      Ui.showErrorSnackBar(scaffoldMessengerKey.currentContext!,message: response['message']);
     }
   }
 
-  void updatePost({
-    required String content,
-    required String postId,
-    required String topicId,
-    String? videoUrl,
-  }) async {
+  void updatePost({required String content, required String postId, required String topicId, String? videoUrl}) async {
     try {
       File? selectedFile = selectedImage.value.isNotEmpty ? File(selectedImage.value) : null;
 
@@ -296,12 +292,12 @@ class CommunityController extends GetxController {
         selectedTopicId.value = '';
         selectedTopic.value = '';
         selectedTabIndex.value = 0;
-        Ui.successSnackBar(message: response['message']);
+        Ui.showSuccessSnackBar(scaffoldMessengerKey.currentContext!,message: response['message']);
       } else {
-        Ui.errorSnackBar(message: response['message']);
+        Ui.showErrorSnackBar(scaffoldMessengerKey.currentContext!,message: response['message']);
       }
     } catch (e) {
-      Ui.errorSnackBar(message: 'Failed to update post');
+      Ui.showErrorSnackBar(scaffoldMessengerKey.currentContext!,message: 'Failed to update post');
     } finally {
       isLoading(false);
     }

@@ -4,7 +4,6 @@ import 'package:business_application/features/my_posts/controller/my_posts_contr
 import 'package:business_application/widgets/custom_post_cart_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/state_manager.dart';
 import 'package:go_router/go_router.dart';
 
 class MyPostsPage extends GetView<MyPostsController> {

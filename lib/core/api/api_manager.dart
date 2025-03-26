@@ -1,8 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:business_application/core/utils/ui_support.dart';
+
 import 'package:business_application/core/api/api_exception.dart';
-import 'package:get/get.dart';
+import 'package:business_application/core/utils/ui_support.dart';
+import 'package:business_application/main.dart';
 import 'package:http/http.dart' as http;
 
 class APIManager {
@@ -16,9 +17,9 @@ class APIManager {
       print("api provider bro bro bro bro ${response.body}");
       var data = jsonDecode(response.body);
       if (response.statusCode == 422) {
-        Get.showSnackbar(Ui.errorSnackBar(message: data["message"], title: 'Error'.tr));
+        Ui.showErrorSnackBar(scaffoldMessengerKey.currentContext!, message: data["message"]);
       } else if (response.statusCode == 400) {
-        Get.showSnackbar(Ui.errorSnackBar(message: data["message"], title: 'Error'.tr));
+        Ui.showErrorSnackBar(scaffoldMessengerKey.currentContext!, message: data["message"]);
       }
       responseJson = _response(response);
 
@@ -28,6 +29,7 @@ class APIManager {
     }
     return responseJson;
   }
+
   Future<dynamic> putAPICallWithHeader(String url, Map<String, dynamic> param, Map<String, String> headerData) async {
     print("Calling API: $url");
     print("Calling parameters: $param");
@@ -38,9 +40,9 @@ class APIManager {
       print("api provider bro bro bro bro ${response.body}");
       var data = jsonDecode(response.body);
       if (response.statusCode == 422) {
-        Get.showSnackbar(Ui.errorSnackBar(message: data["message"], title: 'Error'.tr));
+        Ui.showErrorSnackBar(scaffoldMessengerKey.currentContext!, message: data["message"]);
       } else if (response.statusCode == 400) {
-        Get.showSnackbar(Ui.errorSnackBar(message: data["message"], title: 'Error'.tr));
+        Ui.showErrorSnackBar(scaffoldMessengerKey.currentContext!, message: data["message"]);
       }
       responseJson = _response(response);
 
@@ -222,26 +224,26 @@ class APIManager {
         );
     }
   }
+
   Future<dynamic> deleteAPICallWithHeader(String url, {Map<String, String>? headerData}) async {
-  print("Calling DELETE API: $url");
+    print("Calling DELETE API: $url");
 
-  var responseJson;
-  try {
-    final response = await http.delete(Uri.parse(url), headers: headerData);
-    print("API Response: ${response.body}");
+    var responseJson;
+    try {
+      final response = await http.delete(Uri.parse(url), headers: headerData);
+      print("API Response: ${response.body}");
 
-    var data = jsonDecode(response.body);
-    if (response.statusCode == 422 || response.statusCode == 400) {
-      Get.showSnackbar(Ui.errorSnackBar(message: data["message"], title: 'Error'.tr));
+      var data = jsonDecode(response.body);
+      if (response.statusCode == 422 || response.statusCode == 400) {
+        Ui.showErrorSnackBar(scaffoldMessengerKey.currentContext!, message: data["message"]);
+      }
+
+      responseJson = _response(response);
+      print("Processed Response: $responseJson");
+    } on SocketException catch (_) {
+      throw FetchDataException('No Internet connection');
     }
 
-    responseJson = _response(response);
-    print("Processed Response: $responseJson");
-  } on SocketException catch (_) {
-    throw FetchDataException('No Internet connection');
+    return responseJson;
   }
-
-  return responseJson;
-}
-
 }
