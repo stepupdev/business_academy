@@ -119,6 +119,9 @@ class PostDetailsPageState extends State<PostDetailsPage> {
                       ),
                       Obx(() {
                         final comments = controller.comments.value.result?.data ?? [];
+                        if (controller.commentLoading.value) {
+                          return Center(child: CircularProgressIndicator());
+                        }
                         if (comments.isEmpty) {
                           return Center(
                             child: Padding(
@@ -133,31 +136,34 @@ class PostDetailsPageState extends State<PostDetailsPage> {
                         if (controller.isLoading.value) {
                           return Center(child: CircularProgressIndicator());
                         }
-                        return ListView.builder(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount: comments.length,
-                          itemBuilder: (context, index) {
-                            final comment = comments[index];
-                            return CommentWidget(
-                              avatarUrl: comment.user?.avatar ?? '',
-                              userName: comment.user?.name ?? '',
-                              rank: comment.user?.rank?.name ?? '',
-                              time: HelperUtils.formatTime(comment.createdAt ?? DateTime.now()),
-                              content: comment.content ?? '',
-                              replies: comment.replies ?? [],
-                              onDelete: () {
-                                controller.deleteComments(comment.id.toString());
-                              },
-                              onReply: () {
-                                setState(() {
-                                  _isReplying = true;
-                                  _replyingTo = comment.id;
-                                });
-                                Future.delayed(Duration(milliseconds: 100), () => _commentFocusNode.requestFocus());
-                              },
-                            );
-                          },
+                        return SizedBox(
+                          height: 400.h, // Define a fixed height for the ListView
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            physics: AlwaysScrollableScrollPhysics(), // Allow smooth scrolling
+                            itemCount: comments.length,
+                            itemBuilder: (context, index) {
+                              final comment = comments[index];
+                              return CommentWidget(
+                                avatarUrl: comment.user?.avatar ?? '',
+                                userName: comment.user?.name ?? '',
+                                rank: comment.user?.rank?.name ?? '',
+                                time: HelperUtils.formatTime(comment.createdAt ?? DateTime.now()),
+                                content: comment.content ?? '',
+                                replies: comment.replies ?? [],
+                                onDelete: () {
+                                  controller.deleteComments(comment.id.toString());
+                                },
+                                onReply: () {
+                                  setState(() {
+                                    _isReplying = true;
+                                    _replyingTo = comment.id;
+                                  });
+                                  Future.delayed(Duration(milliseconds: 100), () => _commentFocusNode.requestFocus());
+                                },
+                              );
+                            },
+                          ),
                         );
                       }),
                     ],

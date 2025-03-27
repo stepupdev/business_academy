@@ -13,6 +13,7 @@ import 'package:image_picker/image_picker.dart';
 
 class CommunityController extends GetxController {
   var isLoading = false.obs;
+  var commentLoading = false.obs;
   var communityPosts = PostsResponseModel().obs;
   var comments = CommentsResponseModel().obs;
   var selectedPostId = 0.obs;
@@ -217,14 +218,14 @@ class CommunityController extends GetxController {
 
   getComments(String id) async {
     try {
-      isLoading(true);
+      commentLoading(true);
       final response = await CommunityRep().getCommentsByPostId(id);
       comments(CommentsResponseModel.fromJson(response));
     } catch (e) {
-      isLoading(false);
+      commentLoading(false);
       print(e);
     } finally {
-      isLoading(false);
+      commentLoading(false);
     }
   }
 

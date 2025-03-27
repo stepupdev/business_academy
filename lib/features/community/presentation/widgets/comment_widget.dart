@@ -96,82 +96,80 @@ class CommentWidget extends StatelessWidget {
           if (replies.isNotEmpty)
             Padding(
               padding: EdgeInsets.only(left: 20.w),
-              child: Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children:
-                      replies.map((reply) {
-                        return Padding(
-                          padding: EdgeInsets.only(bottom: 10.h),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              CircleAvatar(backgroundImage: NetworkImage(reply.user?.avatar ?? ''), radius: 15.r),
-                              SizedBox(width: 10.w),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
+              child: Column(
+                // Replace Expanded with Column
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children:
+                    replies.map((reply) {
+                      return Padding(
+                        padding: EdgeInsets.only(bottom: 10.h),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            CircleAvatar(backgroundImage: NetworkImage(reply.user?.avatar ?? ''), radius: 15.r),
+                            SizedBox(width: 10.w),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Text(
+                                        reply.user?.name ?? '',
+                                        style: GoogleFonts.plusJakartaSans(
+                                          fontSize: 13.sp,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                      5.wS,
+                                      Container(
+                                        margin: EdgeInsets.only(left: 5.w),
+                                        padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
+                                        decoration: BoxDecoration(
+                                          color: AppColors.primaryColor.withAlpha(200),
+                                          borderRadius: BorderRadius.circular(50),
+                                        ),
+                                        child: Text(
+                                          rank,
+                                          style: GoogleFonts.plusJakartaSans(color: Colors.white, fontSize: 10.sp),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  5.hS,
+                                  Text(reply.content ?? '', style: GoogleFonts.plusJakartaSans(fontSize: 11.sp)),
+                                  5.hS,
+                                  if (onReply != null)
                                     Row(
                                       children: [
-                                        Text(
-                                          reply.user?.name ?? '',
-                                          style: GoogleFonts.plusJakartaSans(
-                                            fontSize: 13.sp,
-                                            fontWeight: FontWeight.w600,
+                                        Expanded(
+                                          child: Text(
+                                            HelperUtils.formatTime(reply.createdAt ?? DateTime.now()),
+                                            style: GoogleFonts.plusJakartaSans(fontSize: 10.sp, color: Colors.grey),
                                           ),
                                         ),
-                                        5.wS,
-                                        Container(
-                                          margin: EdgeInsets.only(left: 5.w),
-                                          padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
-                                          decoration: BoxDecoration(
-                                            color: AppColors.primaryColor.withAlpha(200),
-                                            borderRadius: BorderRadius.circular(50),
-                                          ),
-                                          child: Text(
-                                            rank,
-                                            style: GoogleFonts.plusJakartaSans(color: Colors.white, fontSize: 10.sp),
-                                          ),
+                                        TextButton(
+                                          onPressed: onReply,
+                                          child: Text('Reply', style: TextStyle(color: Colors.blue, fontSize: 11.sp)),
                                         ),
                                       ],
                                     ),
-                                    5.hS,
-                                    Text(reply.content ?? '', style: GoogleFonts.plusJakartaSans(fontSize: 11.sp)),
-                                    5.hS,
-                                    if (onReply != null)
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                            child: Text(
-                                              HelperUtils.formatTime(reply.createdAt ?? DateTime.now()),
-                                              style: GoogleFonts.plusJakartaSans(fontSize: 10.sp, color: Colors.grey),
-                                            ),
-                                          ),
-                                          TextButton(
-                                            onPressed: onReply,
-                                            child: Text('Reply', style: TextStyle(color: Colors.blue, fontSize: 11.sp)),
-                                          ),
-                                        ],
-                                      ),
-                                  ],
-                                ),
+                                ],
                               ),
-                              // 3 dot for show popup menu for delete the comments
-                              PopupMenuButton(
-                                itemBuilder: (context) => [PopupMenuItem(value: 'delete', child: Text('Delete'))],
-                                onSelected: (value) {
-                                  if (value == 'delete') {
-                                    onDelete?.call();
-                                  }
-                                },
-                              ),
-                            ],
-                          ),
-                        );
-                      }).toList(),
-                ),
+                            ),
+                            PopupMenuButton(
+                              itemBuilder: (context) => [PopupMenuItem(value: 'delete', child: Text('Delete'))],
+                              onSelected: (value) {
+                                if (value == 'delete') {
+                                  onDelete?.call();
+                                }
+                              },
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
               ),
             ),
         ],
