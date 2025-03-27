@@ -216,4 +216,20 @@ class CommunityRep {
     print("response: $response");
     return response;
   }
+
+  Future search(String queryParameters, {String? topicQuery, String? groupQuery}) async {
+    APIManager _manager = APIManager();
+    final uri = Uri.parse(ApiUrl.search).replace(
+      queryParameters: {
+        'q': queryParameters,
+        if (topicQuery != null) 'topic_id': topicQuery,
+        if (groupQuery != null) 'group_id': groupQuery,
+      },
+    );
+    final response = await _manager.getWithHeader(uri.toString(), {
+      "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
+    });
+    print("response: $response");
+    return response;
+  }
 }

@@ -1,8 +1,8 @@
 import 'dart:io';
 
+import 'package:business_application/core/services/auth_services.dart';
 import 'package:business_application/core/utils/ui_support.dart';
 import 'package:business_application/features/community/data/comments_response_model.dart';
-import 'package:business_application/core/services/auth_services.dart';
 import 'package:business_application/features/community/data/community_posts_model.dart';
 import 'package:business_application/features/community/data/posts_by_id_model.dart';
 import 'package:business_application/features/community/data/topics_model.dart' as topics_model;
@@ -337,4 +337,5 @@ class CommunityController extends GetxController {
       selectedTopicValue = post.topic as topics_model.TopicsResponseModel?;
     }
   }
+
 }

@@ -86,16 +86,16 @@ class CommunityFeedScreen extends GetView<CommunityController> {
               }),
             ],
           ),
-          // 10.wS,
-          // CircleAvatar(
-          //   backgroundColor: AppColors.primaryColor,
-          //   child: IconButton(
-          //     icon: Icon(Icons.search, color: Colors.white),
-          //     onPressed: () {
-          //       context.push(AppRoutes.search);
-          //     },
-          //   ),
-          // ),
+          10.wS,
+          CircleAvatar(
+            backgroundColor: AppColors.primaryColor,
+            child: IconButton(
+              icon: Icon(Icons.search, color: Colors.white),
+              onPressed: () {
+                context.push(AppRoutes.search);
+              },
+            ),
+          ),
         ],
       ),
       body: Obx(() {

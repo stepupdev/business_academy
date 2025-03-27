@@ -1,34 +1,32 @@
 import 'package:business_application/core/config/app_colors.dart';
 import 'package:business_application/core/config/app_size.dart';
 import 'package:business_application/core/utils/ui_support.dart';
+import 'package:business_application/features/community/controller/community_controller.dart';
+import 'package:business_application/features/search/controller/search_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:heroicons/heroicons.dart';
 
-class SearchPage extends StatefulWidget {
+class SearchPage extends GetView<SearchedController> {
   const SearchPage({super.key});
 
   @override
-  SearchPageState createState() => SearchPageState();
-}
-
-class SearchPageState extends State<SearchPage> {
-  final TextEditingController _searchController = TextEditingController();
-  String _searchQuery = '';
-  final List<String> _searchHistory = ['Flutter', 'Dart', 'Firebase'];
-  final List<String> _topics = ['All', 'Tech', 'Business', 'Health'];
-
-  @override
   Widget build(BuildContext context) {
+    String searchQuery = '';
+    final TextEditingController searchController = TextEditingController();
+    final List<String> searchHistory = ['Flutter', 'Dart', 'Firebase'];
+    var topics = Get.find<CommunityController>().topics.value;
     final dark = Ui.isDarkMode(context);
+
     return Scaffold(
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-              // Search Text Field
               Row(
                 children: [
                   IconButton(icon: HeroIcon(HeroIcons.arrowLeft), onPressed: () => Navigator.of(context).pop()),
@@ -37,12 +35,19 @@ class SearchPageState extends State<SearchPage> {
                       padding: const EdgeInsets.all(8.0),
                       child: TextFormField(
                         onTapOutside: (event) => FocusScope.of(context).unfocus(),
-                        controller: _searchController,
-                        onChanged: (value) {
-                          setState(() {
-                            _searchQuery = value;
-                          });
+                        onEditingComplete: () {
+                          searchQuery = searchController.text;
+                          if (searchQuery.isNotEmpty) {
+                            if (!searchHistory.contains(searchQuery)) {
+                              if (searchHistory.length >= 4) {
+                                searchHistory.removeAt(0);
+                              }
+                              searchHistory.add(searchQuery);
+                            }
+                            controller.searching(searchQuery);
+                          }
                         },
+                        controller: searchController,
                         decoration: InputDecoration(
                           hintText: 'Search...',
                           contentPadding: EdgeInsets.symmetric(horizontal: 20.w),
@@ -74,29 +79,34 @@ class SearchPageState extends State<SearchPage> {
                   child: ListView.separated(
                     scrollDirection: Axis.horizontal,
                     separatorBuilder: (context, index) => SizedBox(width: 5.w),
-                    itemCount: _topics.length,
+                    itemCount: topics.result?.data?.length ?? 0,
                     itemBuilder: (context, index) {
-                      final topic = _topics[index];
-                      return IntrinsicHeight(
-                        child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 12.w),
-                          decoration: BoxDecoration(
-                            color: dark ? AppColors.dark : Colors.white,
-                            border: Border.all(color: Colors.grey[200] ?? Colors.grey),
-                            borderRadius: BorderRadius.circular(50),
-                          ),
-                          child: Row(
-                            children: [
-                              Text(
-                                topic,
-                                style: GoogleFonts.plusJakartaSans(
-                                  color: dark ? AppColors.light : Colors.black,
-                                  fontSize: 12.sp,
-                                  fontWeight: FontWeight.w600,
-                                  height: 1.0,
+                      final topic = topics.result?.data?[index];
+                      return InkWell(
+                        onTap: () {
+                          controller.searching(searchQuery, topicId: topic?.id.toString());
+                        },
+                        child: IntrinsicHeight(
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 12.w),
+                            decoration: BoxDecoration(
+                              color: dark ? AppColors.dark : Colors.white,
+                              border: Border.all(color: Colors.grey[200] ?? Colors.grey),
+                              borderRadius: BorderRadius.circular(50),
+                            ),
+                            child: Row(
+                              children: [
+                                Text(
+                                  topic?.name ?? "",
+                                  style: GoogleFonts.plusJakartaSans(
+                                    color: dark ? AppColors.light : Colors.black,
+                                    fontSize: 12.sp,
+                                    fontWeight: FontWeight.w600,
+                                    height: 1.0,
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       );
@@ -106,60 +116,75 @@ class SearchPageState extends State<SearchPage> {
               ),
               Divider(thickness: 0.5, color: Colors.grey.shade300),
               10.hS,
-
               Expanded(
-                child:
-                    _searchQuery.isEmpty
-                        ? ListView.separated(
-                          separatorBuilder: (context, index) => SizedBox(height: 10.h),
-                          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 10.h),
-                          itemCount: _searchHistory.length,
-                          itemBuilder: (context, index) {
-                            return InkWell(
-                              onTap: () {
-                                _searchController.text = _searchHistory[index];
-                                setState(() {
-                                  _searchQuery = _searchHistory[index];
-                                });
-                              },
-                              child: Row(children: [HeroIcon(HeroIcons.magnifyingGlass), Text(_searchHistory[index])]),
-                            );
-                          },
-                        )
-                        : Column(
+                child: Obx(() {
+                  if (controller.isLoading.value) {
+                    return Center(child: CircularProgressIndicator());
+                  } else if (controller.search.value.result?.data?.isEmpty ?? true) {
+                    return Center(
+                      child: Text(
+                        "No search results found",
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    );
+                  } else {
+                    return Column(
+                      children: [
+                        Row(
                           children: [
-                            Row(
-                              children: [
-                                RichText(
-                                  text: TextSpan(
-                                    text: 'Search Results: ',
-                                    style: GoogleFonts.plusJakartaSans(color: Colors.grey),
-                                    children: [
-                                      TextSpan(
-                                        text: '"$_searchQuery"',
-                                        style: GoogleFonts.plusJakartaSans(
-                                          fontWeight: FontWeight.w600,
-                                          color: AppColors.primaryColor,
-                                        ),
-                                      ),
-                                    ],
+                            RichText(
+                              text: TextSpan(
+                                text: 'Search Results: ',
+                                style: GoogleFonts.plusJakartaSans(color: Colors.grey),
+                                children: [
+                                  TextSpan(
+                                    text: '"$searchQuery"',
+                                    style: GoogleFonts.plusJakartaSans(
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColors.primaryColor,
+                                    ),
                                   ),
-                                ),
-                                const Spacer(),
-                                Text("150 results", style: GoogleFonts.plusJakartaSans(color: Colors.grey)),
-                              ],
-                            ),
-                            15.hS,
-                            Expanded(
-                              child: ListView.builder(
-                                itemCount: 10, // Replace with actual search results count
-                                itemBuilder: (context, index) {
-                                  return ListTile(title: Text('Result $index for "$_searchQuery"'));
-                                },
+                                ],
                               ),
+                            ),
+                            const Spacer(),
+                            Text(
+                              "${controller.search.value.result?.data?.length ?? 0} results",
+                              style: GoogleFonts.plusJakartaSans(color: Colors.grey),
                             ),
                           ],
                         ),
+                        15.hS,
+                        Expanded(
+                          child: ListView.builder(
+                            itemCount: controller.search.value.result?.data?.length ?? 0,
+                            itemBuilder: (context, index) {
+                              final result = controller.search.value.result?.data?[index];
+                              return ListTile(
+                                leading: CircleAvatar(
+                                  radius: 25,
+                                  backgroundImage: NetworkImage(result?.user?.avatar ?? ""),
+                                ),
+                                title: Text(result?.user?.name ?? ""),
+                                subtitle: Text(result?.content ?? "", maxLines: 2, overflow: TextOverflow.ellipsis),
+                                onTap: () {
+                                  Get.find<CommunityController>().getCommunityPostsById(result?.id.toString() ?? "");
+                                  Get.find<CommunityController>().getComments(result?.id.toString() ?? "");
+                                  Get.find<CommunityController>().selectedPostId.value = result?.id ?? 0;
+                                  GoRouter.of(context).push('/post-details/${result?.id}');
+                                },
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    );
+                  }
+                }),
               ),
             ],
           ),

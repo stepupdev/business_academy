@@ -15,4 +15,5 @@ class ApiUrl {
   static const String notification = '$baseUrl/notifications';
   static const String createComments = '$baseUrl/comments/create';
   static const String comments = '$baseUrl/comments';
+  static const String search = '$baseUrl/search';
 }

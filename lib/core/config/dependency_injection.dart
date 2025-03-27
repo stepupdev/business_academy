@@ -5,6 +5,7 @@ import 'package:business_application/features/menu/controller/menu_controller.da
 import 'package:business_application/features/my_posts/controller/my_posts_controller.dart';
 import 'package:business_application/features/notification/controller/notification_controller.dart';
 import 'package:business_application/features/save_posts/controller/save_post_controller.dart';
+import 'package:business_application/features/search/controller/search_controller.dart';
 import 'package:get/get.dart';
 
 class DependencyInjection extends Bindings {
@@ -18,5 +19,6 @@ class DependencyInjection extends Bindings {
     Get.lazyPut<GroupsController>(() => GroupsController(), fenix: true);
     Get.lazyPut<NotificationController>(() => NotificationController(), fenix: true);
     Get.lazyPut<UserMenuController>(() => UserMenuController(), fenix: true);
+    Get.lazyPut<SearchedController>(() => SearchedController(), fenix: true);
   }
 }
