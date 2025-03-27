@@ -139,7 +139,7 @@ class CreatePostPage extends GetView<CommunityController> {
                                   onPressed: () => controller.pickImage(ImageSource.camera),
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Color(0xFFE9F0FF),
-                                    fixedSize: Size(165.w, 48.h),
+                                    fixedSize: Size(165.w, 50.h),
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
                                   ),
                                   label: Text("Camera", style: TextStyle(color: Colors.black)),
@@ -152,7 +152,7 @@ class CreatePostPage extends GetView<CommunityController> {
                                   onPressed: () => controller.pickImage(ImageSource.gallery),
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Color(0xFFE9F0FF),
-                                    fixedSize: Size(165.w, 48.h),
+                                    fixedSize: Size(165.w, 50.h),
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
                                   ),
                                   label: Text("Add Photos", style: TextStyle(color: Colors.black)),
@@ -188,7 +188,10 @@ class CreatePostPage extends GetView<CommunityController> {
                   20.hS,
                   DropdownMenu(
                     hintText: "Select a topic",
-                    initialSelection: controller.selectedTopic.value,
+                    initialSelection:
+                        postId == null
+                            ? controller.selectedTopicValue?.result?.data?.first.name
+                            : controller.selectedTopic.value,
                     inputDecorationTheme: InputDecorationTheme(
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),

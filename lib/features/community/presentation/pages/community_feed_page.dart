@@ -108,144 +108,143 @@ class CommunityFeedScreen extends GetView<CommunityController> {
             return controller.getCommunityPosts();
           },
           child: SafeArea(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  Container(
-                    color: dark ? AppColors.dark : Color(0xffE9F0FF),
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 8.h, vertical: 8.h),
-                      child: Row(
-                        children: [
-                          CircleAvatar(
-                            backgroundImage: NetworkImage(
-                              Get.find<AuthService>().currentUser.value.result?.user?.avatar ?? "",
+            child: Column(
+              children: [
+                Container(
+                  color: dark ? AppColors.dark : Color(0xffE9F0FF),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 8.h, vertical: 8.h),
+                    child: Row(
+                      children: [
+                        CircleAvatar(
+                          backgroundImage: NetworkImage(
+                            Get.find<AuthService>().currentUser.value.result?.user?.avatar ?? "",
+                          ),
+                        ),
+                        10.wS,
+                        Expanded(
+                          child: TextButton(
+                            onPressed: () {
+                              context.push('/create-post', extra: {'isGroupTopics': false}); // Pass argument
+                            },
+                            style: TextButton.styleFrom(
+                              alignment: Alignment.centerLeft,
+                              backgroundColor: dark ? AppColors.dark : Colors.white,
+                              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                              side: BorderSide(color: Colors.blue.shade100, width: 0.5),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+                            ),
+                            child: Text(
+                              'Creatre a Post!',
+                              style: GoogleFonts.plusJakartaSans(
+                                color: dark ? AppColors.light : Colors.grey,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
-                          10.wS,
-                          Expanded(
-                            child: TextButton(
-                              onPressed: () {
-                                context.push('/create-post', extra: {'isGroupTopics': false}); // Pass argument
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                // Divider(color: AppColors.darkerGrey, thickness: 0.3),
+                12.hS,
+                // Add null safety checks and error handling in Obx widgets
+                Obx(() {
+                  if (controller.topics.value.result?.data == null) {
+                    return Center(child: Text("No topics available", style: TextStyle(color: Colors.grey)));
+                  }
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: SizedBox(
+                      height: 25.h,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: controller.topics.value.result?.data?.length ?? 0,
+                        itemBuilder: (context, index) {
+                          final topic = controller.topics.value.result?.data?[index];
+                          return Obx(() {
+                            final isSelected = controller.selectedTopic.value == topic?.name;
+                            return GestureDetector(
+                              onTap: () {
+                                controller.selectedTopic.value = topic?.name ?? "";
+                                controller.selectedTopicId.value = topic?.id?.toString() ?? "";
                               },
-                              style: TextButton.styleFrom(
-                                alignment: Alignment.centerLeft,
-                                backgroundColor: dark ? AppColors.dark : Colors.white,
-                                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-                                side: BorderSide(color: Colors.blue.shade100, width: 0.5),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-                              ),
-                              child: Text(
-                                'Creatre a Post!',
-                                style: GoogleFonts.plusJakartaSans(
-                                  color: dark ? AppColors.light : Colors.grey,
-                                  fontWeight: FontWeight.w600,
+                              child: IntrinsicHeight(
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 12.w),
+                                  decoration: BoxDecoration(
+                                    color: dark ? AppColors.dark : Colors.white,
+                                    border: Border.all(
+                                      color: isSelected ? AppColors.primaryColor : (Colors.grey[200] ?? Colors.grey),
+                                      width: 0.5,
+                                    ),
+                                    borderRadius: BorderRadius.circular(50),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        topic?.name ?? "",
+                                        style: GoogleFonts.plusJakartaSans(
+                                          color: dark ? AppColors.light : Colors.black,
+                                          fontSize: 12.sp,
+                                          fontWeight: FontWeight.w600,
+                                          height: 1.0,
+                                        ),
+                                      ),
+                                      if (topic?.postsCount != null && topic?.name != "All") ...[
+                                        5.wS,
+                                        Text(
+                                          '(${topic?.postsCount.toString()})',
+                                          style: TextStyle(color: Colors.grey.shade400),
+                                        ),
+                                      ],
+                                    ],
+                                  ),
                                 ),
                               ),
+                            );
+                          });
+                        },
+                      ),
+                    ),
+                  );
+                }),
+                5.hS,
+                Divider(color: AppColors.darkerGrey, thickness: 0.3),
+                // Add error handling for filteredPosts
+                Obx(() {
+                  if (controller.filteredPosts.isEmpty) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.forum_outlined, size: 80.sp, color: Colors.grey.shade400),
+                          10.hS,
+                          Text(
+                            "No Posts Available",
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 20.sp,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey.shade600,
                             ),
+                          ),
+                          5.hS,
+                          Text(
+                            "Try selecting a different topic.",
+                            style: GoogleFonts.plusJakartaSans(fontSize: 14.sp, color: Colors.grey.shade500),
                           ),
                         ],
                       ),
-                    ),
-                  ),
-                  // Divider(color: AppColors.darkerGrey, thickness: 0.3),
-                  12.hS,
-                  Obx(() {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: SizedBox(
-                        height: 25.h,
-                        child: ListView.builder(
-                          // Changed from ListView.separated to ListView.builder
-                          scrollDirection: Axis.horizontal,
-                          itemCount: controller.topics.value.result?.data?.length ?? 0,
-                          itemBuilder: (context, index) {
-                            final topic = controller.topics.value.result?.data?[index];
-                            return Obx(() {
-                              final isSelected = controller.selectedTopic.value == topic?.name;
-                              return GestureDetector(
-                                onTap: () {
-                                  controller.selectedTopic.value = topic?.name ?? "";
-                                  controller.selectedTopicId.value = topic?.id?.toString() ?? "";
-                                },
-                                child: IntrinsicHeight(
-                                  child: Container(
-                                    padding: EdgeInsets.symmetric(horizontal: 12.w),
-                                    decoration: BoxDecoration(
-                                      color: dark ? AppColors.dark : Colors.white,
-                                      border: Border.all(
-                                        color: isSelected ? AppColors.primaryColor : (Colors.grey[200] ?? Colors.grey),
-                                        width: 0.5,
-                                      ),
-                                      borderRadius: BorderRadius.circular(50),
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Text(
-                                          topic?.name ?? "",
-                                          style: GoogleFonts.plusJakartaSans(
-                                            color: dark ? AppColors.light : Colors.black,
-                                            fontSize: 12.sp,
-                                            fontWeight: FontWeight.w600,
-                                            height: 1.0,
-                                          ),
-                                        ),
-                                        if (topic?.postsCount != null && topic?.name != "All") ...[
-                                          5.wS,
-                                          Text(
-                                            '(${topic?.postsCount.toString()})',
-                                            style: TextStyle(color: Colors.grey.shade400),
-                                          ),
-                                        ],
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              );
-                            });
-                          },
-                        ),
-                      ),
                     );
-                  }),
-                  5.hS,
-                  Divider(color: AppColors.darkerGrey, thickness: 0.3),
-                  Obx(() {
-                    if (controller.filteredPosts.isEmpty) {
-                      return Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.forum_outlined, size: 80.sp, color: Colors.grey.shade400),
-                            10.hS,
-                            Text(
-                              "No Posts Available",
-                              style: GoogleFonts.plusJakartaSans(
-                                fontSize: 20.sp,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.grey.shade600,
-                              ),
-                            ),
-                            5.hS,
-                            Text(
-                              "Try selecting a different topic.",
-                              style: GoogleFonts.plusJakartaSans(fontSize: 14.sp, color: Colors.grey.shade500),
-                            ),
-                          ],
-                        ),
-                      );
-                    }
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      physics: const BouncingScrollPhysics(), // Keeps smooth scrolling
-                      itemCount: controller.filteredPosts.length * 2 - 1, // Adjust item count to include separators
+                  }
+                  return Expanded(
+                    child: ListView.separated(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      itemCount: controller.filteredPosts.length,
+                      separatorBuilder: (_, __) => Container(height: 2.h, color: AppColors.grey),
                       itemBuilder: (context, index) {
-                        if (index.isOdd) {
-                          // Add a separator for odd indices
-                          return Container(height: 3.h, color: dark ? Colors.black : Colors.grey[200]);
-                        }
-                        final postIndex = index ~/ 2; // Calculate the actual post index
-                        final posts = controller.filteredPosts[postIndex];
+                        final posts = controller.filteredPosts[index];
                         return UserPostWidget(
                           onTap: () {
                             Get.find<CommunityController>().getCommunityPostsById(posts.id.toString());
@@ -267,10 +266,10 @@ class CommunityFeedScreen extends GetView<CommunityController> {
                           isSaved: posts.isSaved ?? false,
                         );
                       },
-                    );
-                  }),
-                ],
-              ),
+                    ),
+                  );
+                }),
+              ],
             ),
           ),
         );

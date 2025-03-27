@@ -1,9 +1,7 @@
-import 'package:business_application/core/utils/ui_support.dart';
 import 'package:business_application/features/community/data/community_posts_model.dart';
 import 'package:business_application/features/groups/data/groups_by_id_model.dart';
 import 'package:business_application/features/groups/data/groups_models.dart';
 import 'package:business_application/features/groups/data/groups_topic_response_model.dart';
-import 'package:business_application/main.dart';
 import 'package:business_application/repository/community_rep.dart';
 import 'package:business_application/repository/groups_rep.dart';
 import 'package:get/get.dart';

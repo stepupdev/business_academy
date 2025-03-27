@@ -214,8 +214,8 @@ class PostDetailsPageState extends State<PostDetailsPage> {
                         ),
                       ),
                       10.wS,
-                      InkWell(
-                        onTap: () {
+                      IconButton(
+                        onPressed: () {
                           print("here is the _replyto: $_replyingTo");
                           controller.selectedPostId.value = post?.id ?? 0;
                           controller.addComments(
@@ -229,7 +229,7 @@ class PostDetailsPageState extends State<PostDetailsPage> {
                             _replyingTo = null;
                           });
                         },
-                        child: SvgPicture.asset(
+                        icon: SvgPicture.asset(
                           "assets/icons/share.svg",
                           height: 24.h,
                           color: dark ? Colors.grey[300] : Colors.black,

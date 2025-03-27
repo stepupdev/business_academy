@@ -4,7 +4,6 @@ import 'package:business_application/core/config/app_size.dart';
 import 'package:business_application/core/utils/ui_support.dart';
 import 'package:business_application/features/auth/controller/auth_controller.dart';
 import 'package:business_application/features/community/controller/community_controller.dart';
-import 'package:business_application/core/services/auth_services.dart';
 import 'package:business_application/features/menu/controller/menu_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -18,7 +17,7 @@ class MenuPage extends GetView<UserMenuController> {
 
   @override
   Widget build(BuildContext context) {
-    final communityController = Get.put(CommunityController());
+    Get.put(CommunityController());
     final dark = Ui.isDarkMode(context);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       controller.getUser();
