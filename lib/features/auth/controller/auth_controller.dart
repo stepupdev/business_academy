@@ -1,10 +1,8 @@
 import 'package:business_application/core/config/app_routes.dart';
-import 'package:business_application/core/utils/auth_utils.dart';
-import 'package:business_application/core/utils/ui_support.dart';
-import 'package:business_application/features/auth/data/login_response_model.dart';
-import 'package:business_application/main.dart';
-import 'package:business_application/repository/auth_repo/auth_repo.dart';
 import 'package:business_application/core/services/auth_services.dart';
+import 'package:business_application/core/utils/auth_utils.dart';
+import 'package:business_application/features/auth/data/login_response_model.dart';
+import 'package:business_application/repository/auth_repo/auth_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
@@ -47,18 +45,19 @@ class AuthController extends GetxController {
             await AuthUtlity.saveUserInfo(data);
 
             print("✅ User logged in successfully.");
-            Ui.showSuccessSnackBar(scaffoldMessengerKey.currentContext!, message: 'Login successful');
             context.go('/home'); // Navigate to Home
             await Get.find<AuthService>().getCurrentUser();
+            Get.showSnackbar(GetSnackBar(title: "Success", message: "Login Successfull"));
           } else {
             isLoading.value = false;
-            Ui.showErrorSnackBar(scaffoldMessengerKey.currentContext!, message: 'Login failed ${loginResponseModel.value.message}');
+
+            Get.showSnackbar(GetSnackBar(title: "Failed", message: "Login Failed "));
           }
         });
       }
     } catch (error) {
       isLoading.value = false;
-      Ui.showErrorSnackBar(scaffoldMessengerKey.currentContext!,message: 'Error during Google sign-in: $error');
+      print("Error: $error");
       return null;
     } finally {
       isLoading.value = false;

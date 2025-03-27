@@ -155,9 +155,9 @@ class CommunityFeedScreen extends GetView<CommunityController> {
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       child: SizedBox(
                         height: 25.h,
-                        child: ListView.separated(
+                        child: ListView.builder(
+                          // Changed from ListView.separated to ListView.builder
                           scrollDirection: Axis.horizontal,
-                          separatorBuilder: (context, index) => SizedBox(width: 5.w),
                           itemCount: controller.topics.value.result?.data?.length ?? 0,
                           itemBuilder: (context, index) {
                             final topic = controller.topics.value.result?.data?[index];
@@ -235,15 +235,17 @@ class CommunityFeedScreen extends GetView<CommunityController> {
                         ),
                       );
                     }
-                    return ListView.separated(
+                    return ListView.builder(
                       shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      separatorBuilder:
-                          (context, index) => Container(height: 3.h, color: dark ? Colors.black : Colors.grey[200]),
-                      itemCount: controller.filteredPosts.length,
+                      physics: const BouncingScrollPhysics(), // Keeps smooth scrolling
+                      itemCount: controller.filteredPosts.length * 2 - 1, // Adjust item count to include separators
                       itemBuilder: (context, index) {
-                        final posts = controller.filteredPosts[index];
-
+                        if (index.isOdd) {
+                          // Add a separator for odd indices
+                          return Container(height: 3.h, color: dark ? Colors.black : Colors.grey[200]);
+                        }
+                        final postIndex = index ~/ 2; // Calculate the actual post index
+                        final posts = controller.filteredPosts[postIndex];
                         return UserPostWidget(
                           onTap: () {
                             Get.find<CommunityController>().getCommunityPostsById(posts.id.toString());
@@ -251,7 +253,6 @@ class CommunityFeedScreen extends GetView<CommunityController> {
                             controller.selectedPostId.value = posts.id ?? 0;
                             GoRouter.of(context).push('/post-details/${posts.id}');
                           },
-
                           name: posts.user?.name ?? "",
                           postId: posts.id ?? 0,
                           rank: posts.user?.rank?.name ?? "",

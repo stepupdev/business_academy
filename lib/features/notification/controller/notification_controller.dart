@@ -1,7 +1,5 @@
-import 'package:business_application/core/utils/ui_support.dart';
 import 'package:business_application/features/notification/data/check_notification_model.dart';
 import 'package:business_application/features/notification/data/notification_models.dart';
-import 'package:business_application/main.dart';
 import 'package:business_application/repository/notification_rep.dart';
 import 'package:get/get.dart';
 
@@ -49,7 +47,6 @@ class NotificationController extends GetxController {
     try {
       var response = await NotificationRep().markNotification(id);
       print("Notification: $response");
-      Ui.showSuccessSnackBar(scaffoldMessengerKey.currentContext!,message: "Notification marked as read");
       fetchNotifications(); // Refresh notifications after marking as read
     } catch (e) {
       print(e);
@@ -63,7 +60,7 @@ class NotificationController extends GetxController {
     try {
       var response = await NotificationRep().markAllNotification();
       print("Notification: $response");
-      Ui.showSuccessSnackBar(scaffoldMessengerKey.currentContext!,message: "All notifications marked as read");
+
       fetchNotifications(); // Refresh notifications after marking all as read
     } catch (e) {
       print(e);

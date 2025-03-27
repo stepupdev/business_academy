@@ -37,9 +37,7 @@ class GroupsController extends GetxController {
     try {
       var response = await GroupsRep().getGroups();
       groups(GroupsResponseModel.fromJson(response));
-      Ui.showSuccessSnackBar(scaffoldMessengerKey.currentContext!,message: 'Groups fetched successfully');
     } catch (e) {
-      Ui.showErrorSnackBar(scaffoldMessengerKey.currentContext!,message: 'Failed to fetch groups: $e');
     } finally {
       isLoading(false);
     }
@@ -49,10 +47,8 @@ class GroupsController extends GetxController {
     try {
       var response = await GroupsRep().getGroupsTopic(id);
       groupsTopicResponse(GroupsTopicResponseModel.fromJson(response));
-      Ui.showSuccessSnackBar(scaffoldMessengerKey.currentContext!,message: 'Group topics fetched successfully');
       return true;
     } catch (e) {
-      Ui.showErrorSnackBar(scaffoldMessengerKey.currentContext!,message: 'Failed to fetch group topics: $e');
       return false;
     }
   }
@@ -61,10 +57,8 @@ class GroupsController extends GetxController {
     try {
       var response = await GroupsRep().getGroupsDetails(id);
       groupsDetails(GroupsByIdResponseModel.fromJson(response));
-      Ui.showSuccessSnackBar(scaffoldMessengerKey.currentContext!,message: 'Group details fetched successfully');
       return true;
     } catch (e) {
-      Ui.showErrorSnackBar(scaffoldMessengerKey.currentContext!,message: 'Failed to fetch group details: $e');
       return false;
     }
   }
@@ -76,7 +70,6 @@ class GroupsController extends GetxController {
 
       if (groupId.isEmpty) {
         print("Group ID is empty!");
-        Ui.showErrorSnackBar(scaffoldMessengerKey.currentContext!,message: 'Group ID is empty');
         return false;
       }
 
@@ -85,11 +78,9 @@ class GroupsController extends GetxController {
 
       final postsModel = PostsResponseModel.fromJson(response);
       groupPosts.assignAll(postsModel.result?.data ?? []);
-      Ui.showSuccessSnackBar(scaffoldMessengerKey.currentContext!,message: 'Posts fetched successfully for group $groupId');
       print("Loaded ${groupPosts.length} posts for group $groupId"); // Debug line
       return true;
     } catch (e) {
-      Ui.showErrorSnackBar(scaffoldMessengerKey.currentContext!,message: 'Failed to fetch group posts: $e');
       return false;
     } finally {
       isLoading(false);
@@ -105,7 +96,6 @@ class GroupsController extends GetxController {
         groupPosts.assignAll(PostsResponseModel.fromJson(response).result?.data ?? []);
       } catch (e) {
         print("Error fetching all group posts: $e");
-        Ui.showErrorSnackBar(scaffoldMessengerKey.currentContext!,message: 'Failed to fetch all posts for the group');
       } finally {
         isLoading(false);
       }
@@ -118,7 +108,6 @@ class GroupsController extends GetxController {
         groupPosts.assignAll(PostsResponseModel.fromJson(response).result?.data ?? []);
       } catch (e) {
         print("Error fetching group posts by topic: $e");
-        Ui.showErrorSnackBar(scaffoldMessengerKey.currentContext!,message: 'Failed to fetch posts for the selected topic');
       } finally {
         isLoading(false);
       }

@@ -82,7 +82,6 @@ class CommunityController extends GetxController {
         filteredPosts.assignAll(communityPosts.value.result?.data ?? []);
       } catch (e) {
         print("Error fetching all posts: $e");
-        Ui.showErrorSnackBar(scaffoldMessengerKey.currentContext!, message: 'Failed to fetch all posts');
       } finally {
         isLoading(false);
       }
@@ -94,10 +93,6 @@ class CommunityController extends GetxController {
         filteredPosts.assignAll(communityPosts.value.result?.data ?? []);
       } catch (e) {
         print("Error fetching posts by topic: $e");
-        Ui.showErrorSnackBar(
-          scaffoldMessengerKey.currentContext!,
-          message: 'Failed to fetch posts for the selected topic',
-        );
       } finally {
         isLoading(false);
       }
@@ -179,7 +174,6 @@ class CommunityController extends GetxController {
         });
       }
 
-      Ui.showErrorSnackBar(scaffoldMessengerKey.currentContext!, message: response['message']);
     }
   }
 
@@ -225,7 +219,6 @@ class CommunityController extends GetxController {
         });
       }
 
-      Ui.showErrorSnackBar(scaffoldMessengerKey.currentContext!, message: response['message']);
     }
   }
 
@@ -260,9 +253,7 @@ class CommunityController extends GetxController {
       selectedTopicId.value = '';
       selectedTopic.value = '';
       selectedTabIndex.value = 0;
-      Ui.showSuccessSnackBar(scaffoldMessengerKey.currentContext!, message: response['message']);
     } else {
-      Ui.showErrorSnackBar(scaffoldMessengerKey.currentContext!, message: response['message']);
     }
   }
 
@@ -287,12 +278,9 @@ class CommunityController extends GetxController {
         selectedTopicId.value = '';
         selectedTopic.value = '';
         selectedTabIndex.value = 0;
-        Ui.showSuccessSnackBar(scaffoldMessengerKey.currentContext!, message: response['message']);
       } else {
-        Ui.showErrorSnackBar(scaffoldMessengerKey.currentContext!, message: response['message']);
       }
     } catch (e) {
-      Ui.showErrorSnackBar(scaffoldMessengerKey.currentContext!, message: 'Failed to update post');
     } finally {
       isLoading(false);
     }

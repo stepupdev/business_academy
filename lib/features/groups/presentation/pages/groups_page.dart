@@ -1,8 +1,6 @@
 import 'package:business_application/core/config/app_routes.dart';
 import 'package:business_application/core/config/app_size.dart';
-import 'package:business_application/core/utils/ui_support.dart';
 import 'package:business_application/features/groups/controller/groups_controller.dart';
-import 'package:business_application/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
@@ -14,11 +12,15 @@ class GroupsPage extends GetView<GroupsController> {
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      controller.fetchGroups();
+    });
     return Scaffold(
       appBar: AppBar(
         title: Text('Groups', style: GoogleFonts.plusJakartaSans(fontSize: 18.sp, fontWeight: FontWeight.w700)),
       ),
-      body: SingleChildScrollView(
+      body: RefreshIndicator(
+        onRefresh: () => controller.fetchGroups(),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
@@ -60,7 +62,7 @@ class GroupsPage extends GetView<GroupsController> {
                 return ListView.builder(
                   itemCount: controller.groups.value.result?.data?.length,
                   shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
+                  physics: BouncingScrollPhysics(),
                   itemBuilder: (context, index) {
                     return ListTile(
                       leading: CircleAvatar(
@@ -87,10 +89,6 @@ class GroupsPage extends GetView<GroupsController> {
                           context.push(AppRoutes.groupDetails);
                         } catch (e) {
                           print("Error navigating to group details: $e");
-                          Ui.showErrorSnackBar(
-                            scaffoldMessengerKey.currentContext!,
-                            message: 'Failed to load group details. Please try again.',
-                          );
                         } finally {
                           controller.isLoading(false);
                         }
