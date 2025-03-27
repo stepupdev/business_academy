@@ -32,6 +32,17 @@ class CommunityController extends GetxController {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: source);
     if (pickedFile != null) {
+      final file = File(pickedFile.path);
+      final fileSize = await file.length();
+
+      if (fileSize > 2 * 1024 * 1024) {
+        // Check if file size exceeds 2 MB
+        scaffoldMessengerKey.currentState!.showSnackBar(
+          SnackBar(content: Text("Image size must be less than 2 MB"), backgroundColor: Colors.red),
+        );
+        return;
+      }
+
       selectedImage.value = pickedFile.path;
     }
   }
