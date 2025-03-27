@@ -35,7 +35,8 @@ class AppRouter {
           final extra = state.extra as Map<String, dynamic>? ?? {};
           final bool isGroup = extra['isGroupTopics'] as bool? ?? false;
           final String? postId = extra['postId'] as String?;
-          return MaterialPage(key: state.pageKey, child: CreatePostPage(isGroupTopics: isGroup, postId: postId));
+          final String? groupId = extra['groupId'] as String?;
+          return MaterialPage(key: state.pageKey, child: CreatePostPage(isGroupTopics: isGroup, postId: postId, groupId: groupId));
         },
       ),
       GoRoute(

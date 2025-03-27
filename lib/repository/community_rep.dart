@@ -80,13 +80,22 @@ class CommunityRep {
     return response;
   }
 
-  Future communityPosts({required String content, required String topicId, File? imageFile, String? videoUrl}) async {
+  Future communityPosts({
+    required String content,
+    required String topicId,
+    File? imageFile,
+    String? videoUrl,
+    String? groupId, // Add groupId parameter
+  }) async {
     var uri = Uri.parse(ApiUrl.createPost);
     var request = http.MultipartRequest("POST", uri);
 
     // Add text fields
     request.fields['content'] = content;
     request.fields['topic_id'] = topicId;
+    if (groupId != null) {
+      request.fields['group_id'] = groupId; // Include group_id if provided
+    }
     if (videoUrl != null && videoUrl.isNotEmpty) {
       request.fields['video_url'] = videoUrl;
     }
@@ -121,6 +130,7 @@ class CommunityRep {
     required String topicId,
     File? imageFile,
     String? videoUrl,
+    String? groupId, // Add groupId parameter
   }) async {
     var uri = Uri.parse("${ApiUrl.postUpdate}/$postId");
     var request = http.MultipartRequest("PUT", uri);
@@ -128,6 +138,9 @@ class CommunityRep {
     // Add text fields
     request.fields['content'] = content;
     request.fields['topic_id'] = topicId;
+    if (groupId != null) {
+      request.fields['group_id'] = groupId; // Include group_id if provided
+    }
     if (videoUrl != null && videoUrl.isNotEmpty) {
       request.fields['video_url'] = videoUrl;
     }

@@ -15,8 +15,9 @@ import 'package:image_picker/image_picker.dart';
 class CreatePostPage extends GetView<CommunityController> {
   final bool isGroupTopics;
   final String? postId; // Optional postId for editing
+  final String? groupId; // Group ID for group posts
 
-  const CreatePostPage({super.key, required this.isGroupTopics, this.postId});
+  const CreatePostPage({super.key, required this.isGroupTopics, this.postId, this.groupId});
 
   @override
   Widget build(BuildContext context) {
@@ -30,14 +31,15 @@ class CreatePostPage extends GetView<CommunityController> {
         actions: [
           FilledButton(
             onPressed: () {
-              if (postId == null) {
-                controller.createNewPosts();
+              if (postId == null || isGroupTopics) {
+                controller.createNewPosts(groupId: groupId); // Pass groupId for group posts
               } else {
                 controller.updatePost(
                   postId: postId ?? "",
                   content: controller.postController.text,
                   topicId: controller.selectedTopicId.value,
                   videoUrl: controller.videoLinkController.text,
+                  groupId: groupId, // Pass groupId for updating group posts
                 );
               }
             },

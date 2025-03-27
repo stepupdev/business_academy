@@ -63,7 +63,7 @@ class GroupDetailsPage extends GetView<GroupsController> {
                             Expanded(
                               child: TextButton(
                                 onPressed: () {
-                                  context.push('/create-post', extra: {'isGroupTopics': true}); // Pass argument
+                                  context.push('/create-post', extra: {'isGroupTopics': true, 'groupId' : controller.currentGroupId.value}); // Pass argument
                                 },
                                 style: TextButton.styleFrom(
                                   alignment: Alignment.centerLeft,

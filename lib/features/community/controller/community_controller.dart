@@ -240,7 +240,7 @@ class CommunityController extends GetxController {
     }
   }
 
-  createNewPosts() async {
+  createNewPosts({String? groupId}) async {
     File? selectedFile = selectedImage.value.isNotEmpty ? File(selectedImage.value) : null;
 
     final response = await CommunityRep().communityPosts(
@@ -248,6 +248,7 @@ class CommunityController extends GetxController {
       topicId: selectedTopicId.value,
       imageFile: selectedFile,
       videoUrl: videoLinkController.text.isNotEmpty ? videoLinkController.text : null,
+      groupId: groupId, // Pass groupId to the repository
     );
 
     if (response['success'] == true) {
@@ -268,7 +269,13 @@ class CommunityController extends GetxController {
     }
   }
 
-  void updatePost({required String content, required String postId, required String topicId, String? videoUrl}) async {
+  void updatePost({
+    required String content,
+    required String postId,
+    required String topicId,
+    String? videoUrl,
+    String? groupId, // Add groupId parameter
+  }) async {
     try {
       File? selectedFile = selectedImage.value.isNotEmpty ? File(selectedImage.value) : null;
 
@@ -277,8 +284,8 @@ class CommunityController extends GetxController {
         postId: postId,
         topicId: topicId,
         imageFile: selectedFile,
-
         videoUrl: videoUrl,
+        groupId: groupId, // Pass groupId to the repository
       );
 
       if (response['success'] == true) {
