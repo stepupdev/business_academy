@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:business_application/core/services/auth_services.dart';
 import 'package:business_application/core/utils/ui_support.dart';
 import 'package:business_application/features/community/data/comments_response_model.dart';
-import 'package:business_application/features/community/data/community_posts_model.dart';
+import 'package:business_application/features/community/data/community_posts_model.dart' ;
 import 'package:business_application/features/community/data/posts_by_id_model.dart';
 import 'package:business_application/features/community/data/topics_model.dart' as topics_model;
 import 'package:business_application/main.dart';
@@ -42,10 +42,9 @@ class CommunityController extends GetxController {
     getCommunityPosts();
     getTopic();
     selectedTopic.listen((value) {
-      if (value.isNotEmpty && value != "All") {
-        filterPostsByTopic(value);
-      } else {
-        filteredPosts.assignAll(communityPosts.value.result?.data ?? []);
+      if (value.isNotEmpty) {
+        final topic = topics.value.result?.data?.firstWhere((t) => t.name == value, orElse: () => topics_model.Topic());
+        filterPostsByTopic(value, topicId: topic?.id?.toString());
       }
     });
     super.onInit();
@@ -83,7 +82,7 @@ class CommunityController extends GetxController {
         filteredPosts.assignAll(communityPosts.value.result?.data ?? []);
       } catch (e) {
         print("Error fetching all posts: $e");
-        Ui.showErrorSnackBar(scaffoldMessengerKey.currentContext!,message: 'Failed to fetch all posts');
+        Ui.showErrorSnackBar(scaffoldMessengerKey.currentContext!, message: 'Failed to fetch all posts');
       } finally {
         isLoading(false);
       }
@@ -95,7 +94,10 @@ class CommunityController extends GetxController {
         filteredPosts.assignAll(communityPosts.value.result?.data ?? []);
       } catch (e) {
         print("Error fetching posts by topic: $e");
-        Ui.showErrorSnackBar(scaffoldMessengerKey.currentContext!,message: 'Failed to fetch posts for the selected topic');
+        Ui.showErrorSnackBar(
+          scaffoldMessengerKey.currentContext!,
+          message: 'Failed to fetch posts for the selected topic',
+        );
       } finally {
         isLoading(false);
       }
@@ -177,7 +179,7 @@ class CommunityController extends GetxController {
         });
       }
 
-      Ui.showErrorSnackBar(scaffoldMessengerKey.currentContext!,message: response['message']);
+      Ui.showErrorSnackBar(scaffoldMessengerKey.currentContext!, message: response['message']);
     }
   }
 
@@ -223,7 +225,7 @@ class CommunityController extends GetxController {
         });
       }
 
-      Ui.showErrorSnackBar(scaffoldMessengerKey.currentContext!,message: response['message']);
+      Ui.showErrorSnackBar(scaffoldMessengerKey.currentContext!, message: response['message']);
     }
   }
 
@@ -258,9 +260,9 @@ class CommunityController extends GetxController {
       selectedTopicId.value = '';
       selectedTopic.value = '';
       selectedTabIndex.value = 0;
-      Ui.showSuccessSnackBar(scaffoldMessengerKey.currentContext!,message: response['message']);
+      Ui.showSuccessSnackBar(scaffoldMessengerKey.currentContext!, message: response['message']);
     } else {
-      Ui.showErrorSnackBar(scaffoldMessengerKey.currentContext!,message: response['message']);
+      Ui.showErrorSnackBar(scaffoldMessengerKey.currentContext!, message: response['message']);
     }
   }
 
@@ -285,12 +287,12 @@ class CommunityController extends GetxController {
         selectedTopicId.value = '';
         selectedTopic.value = '';
         selectedTabIndex.value = 0;
-        Ui.showSuccessSnackBar(scaffoldMessengerKey.currentContext!,message: response['message']);
+        Ui.showSuccessSnackBar(scaffoldMessengerKey.currentContext!, message: response['message']);
       } else {
-        Ui.showErrorSnackBar(scaffoldMessengerKey.currentContext!,message: response['message']);
+        Ui.showErrorSnackBar(scaffoldMessengerKey.currentContext!, message: response['message']);
       }
     } catch (e) {
-      Ui.showErrorSnackBar(scaffoldMessengerKey.currentContext!,message: 'Failed to update post');
+      Ui.showErrorSnackBar(scaffoldMessengerKey.currentContext!, message: 'Failed to update post');
     } finally {
       isLoading(false);
     }
@@ -337,5 +339,4 @@ class CommunityController extends GetxController {
       selectedTopicValue = post.topic as topics_model.TopicsResponseModel?;
     }
   }
-
 }

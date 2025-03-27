@@ -166,7 +166,7 @@ class CommunityFeedScreen extends GetView<CommunityController> {
                               return GestureDetector(
                                 onTap: () {
                                   controller.selectedTopic.value = topic?.name ?? "";
-                                  controller.filterPostsByTopic(topic?.name ?? "", topicId: topic?.id?.toString());
+                                  controller.selectedTopicId.value = topic?.id?.toString() ?? "";
                                 },
                                 child: IntrinsicHeight(
                                   child: Container(
