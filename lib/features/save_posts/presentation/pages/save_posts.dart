@@ -14,6 +14,9 @@ class SavePostsPage extends GetView<SavePostController> {
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      controller.getSavePosts();
+    });
     return Scaffold(
       appBar: AppBar(
         title: Text('Saved Posts', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600, fontSize: 18.sp)),
