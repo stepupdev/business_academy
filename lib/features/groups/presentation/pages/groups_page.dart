@@ -33,6 +33,30 @@ class GroupsPage extends GetView<GroupsController> {
                 if (controller.isLoading.value) {
                   return Center(child: CircularProgressIndicator());
                 }
+                if (controller.groups.value.result?.data?.isEmpty ?? true) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.group_outlined, size: 80.sp, color: Colors.grey.shade400),
+                        10.hS,
+                        Text(
+                          "No Groups Found",
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 20.sp,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey.shade600,
+                          ),
+                        ),
+                        5.hS,
+                        Text(
+                          "Join or create a group to see it here.",
+                          style: GoogleFonts.plusJakartaSans(fontSize: 14.sp, color: Colors.grey.shade500),
+                        ),
+                      ],
+                    ),
+                  );
+                }
                 return ListView.builder(
                   itemCount: controller.groups.value.result?.data?.length,
                   shrinkWrap: true,
@@ -63,7 +87,10 @@ class GroupsPage extends GetView<GroupsController> {
                           context.push(AppRoutes.groupDetails);
                         } catch (e) {
                           print("Error navigating to group details: $e");
-                          Ui.showErrorSnackBar(scaffoldMessengerKey.currentContext!,message: 'Failed to load group details. Please try again.');
+                          Ui.showErrorSnackBar(
+                            scaffoldMessengerKey.currentContext!,
+                            message: 'Failed to load group details. Please try again.',
+                          );
                         } finally {
                           controller.isLoading(false);
                         }

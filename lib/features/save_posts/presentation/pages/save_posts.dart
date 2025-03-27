@@ -1,4 +1,5 @@
 import 'package:business_application/core/config/app_routes.dart';
+import 'package:business_application/core/config/app_size.dart';
 import 'package:business_application/features/community/controller/community_controller.dart';
 import 'package:business_application/features/save_posts/controller/save_post_controller.dart';
 import 'package:business_application/widgets/custom_post_cart_widgets.dart';
@@ -24,7 +25,28 @@ class SavePostsPage extends GetView<SavePostController> {
             return Center(child: CircularProgressIndicator());
           }
           if (controller.savePosts.value.result?.data?.isEmpty ?? true) {
-            return Center(child: Text('No posts found'));
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.bookmark_border, size: 80.sp, color: Colors.grey.shade400),
+                  10.hS,
+                  Text(
+                    "No Saved Posts",
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 20.sp,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                  5.hS,
+                  Text(
+                    "Save posts to view them here.",
+                    style: GoogleFonts.plusJakartaSans(fontSize: 14.sp, color: Colors.grey.shade500),
+                  ),
+                ],
+              ),
+            );
           }
           return ListView.builder(
             itemCount: controller.savePosts.value.result?.data?.length,

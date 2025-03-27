@@ -122,13 +122,25 @@ class SearchPage extends GetView<SearchedController> {
                     return Center(child: CircularProgressIndicator());
                   } else if (controller.search.value.result?.data?.isEmpty ?? true) {
                     return Center(
-                      child: Text(
-                        "No search results found",
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.grey,
-                        ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.search_off, size: 80.sp, color: Colors.grey.shade400),
+                          10.hS,
+                          Text(
+                            "No Results Found",
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 20.sp,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey.shade600,
+                            ),
+                          ),
+                          5.hS,
+                          Text(
+                            "Try searching with different keywords.",
+                            style: GoogleFonts.plusJakartaSans(fontSize: 14.sp, color: Colors.grey.shade500),
+                          ),
+                        ],
                       ),
                     );
                   } else {

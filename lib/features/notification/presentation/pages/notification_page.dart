@@ -60,6 +60,25 @@ class NotificationPage extends GetView<NotificationController> {
           if (controller.isLoading.value) {
             return Center(child: CircularProgressIndicator());
           }
+          if (controller.notifications.value.result?.data?.isEmpty ?? true) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  HeroIcon(HeroIcons.bell, size: 80.sp, color: Colors.grey.shade400),
+                  10.hS,
+                  Text(
+                    "No Notifications Yet",
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 20.sp,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }
           return ListView.builder(
             itemCount: controller.notifications.value.result?.data?.length,
             itemBuilder: (context, index) {

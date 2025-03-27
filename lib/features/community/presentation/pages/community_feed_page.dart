@@ -213,12 +213,25 @@ class CommunityFeedScreen extends GetView<CommunityController> {
                   Obx(() {
                     if (controller.filteredPosts.isEmpty) {
                       return Center(
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(vertical: 20.h),
-                          child: Text(
-                            'No posts available for the selected topic.',
-                            style: TextStyle(color: Colors.grey, fontSize: 14.sp, fontWeight: FontWeight.w500),
-                          ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.forum_outlined, size: 80.sp, color: Colors.grey.shade400),
+                            10.hS,
+                            Text(
+                              "No Posts Available",
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 20.sp,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey.shade600,
+                              ),
+                            ),
+                            5.hS,
+                            Text(
+                              "Try selecting a different topic.",
+                              style: GoogleFonts.plusJakartaSans(fontSize: 14.sp, color: Colors.grey.shade500),
+                            ),
+                          ],
                         ),
                       );
                     }

@@ -1,10 +1,13 @@
 import 'package:business_application/core/config/app_routes.dart';
+import 'package:business_application/core/config/app_size.dart';
 import 'package:business_application/features/community/controller/community_controller.dart';
 import 'package:business_application/features/my_posts/controller/my_posts_controller.dart';
 import 'package:business_application/widgets/custom_post_cart_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class MyPostsPage extends GetView<MyPostsController> {
   const MyPostsPage({super.key});
@@ -18,7 +21,28 @@ class MyPostsPage extends GetView<MyPostsController> {
           return Center(child: CircularProgressIndicator());
         }
         if (controller.myPosts.value.result?.data?.isEmpty ?? true) {
-          return Center(child: Text('No posts found'));
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.post_add, size: 80.sp, color: Colors.grey.shade400),
+                10.hS,
+                Text(
+                  "No Posts Yet",
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey.shade600,
+                  ),
+                ),
+                5.hS,
+                Text(
+                  "Create your first post to see it here.",
+                  style: GoogleFonts.plusJakartaSans(fontSize: 14.sp, color: Colors.grey.shade500),
+                ),
+              ],
+            ),
+          );
         }
         return ListView.builder(
           itemCount: controller.myPosts.value.result?.data?.length,
