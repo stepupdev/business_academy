@@ -59,42 +59,43 @@ class GroupsPage extends GetView<GroupsController> {
                     ),
                   );
                 }
-                return ListView.builder(
-                  itemCount: controller.groups.value.result?.data?.length,
-                  shrinkWrap: true,
-                  physics: BouncingScrollPhysics(),
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      leading: CircleAvatar(
-                        radius: 20,
-                        child: Image.asset("assets/logo/icon.png", fit: BoxFit.contain),
-                      ),
-                      title: Text(
-                        controller.groups.value.result?.data?[index].name ?? "",
-                        style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.bold, fontSize: 16.sp),
-                      ),
-                      onTap: () async {
-                        try {
-                          controller.isLoading(true);
-                          final groupId = controller.groups.value.result?.data?[index].id.toString() ?? "";
+                return Expanded(
+                  child: ListView.builder(
+                    itemCount: controller.groups.value.result?.data?.length,
+                    physics: AlwaysScrollableScrollPhysics(),
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        leading: CircleAvatar(
+                          radius: 20,
+                          child: Image.asset("assets/logo/icon.png", fit: BoxFit.contain),
+                        ),
+                        title: Text(
+                          controller.groups.value.result?.data?[index].name ?? "",
+                          style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.bold, fontSize: 16.sp),
+                        ),
+                        onTap: () async {
+                          try {
+                            controller.isLoading(true);
+                            final groupId = controller.groups.value.result?.data?[index].id.toString() ?? "";
 
-                          // Store the groupId in the controller for use in GroupDetailsPage
-                          controller.currentGroupId.value = groupId;
+                            // Store the groupId in the controller for use in GroupDetailsPage
+                            controller.currentGroupId.value = groupId;
 
-                          controller.fetchGroupsTopic(groupId);
-                          controller.fetchGroupsDetails(groupId);
-                          controller.fetchGroupPosts(groupId);
+                            controller.fetchGroupsTopic(groupId);
+                            controller.fetchGroupsDetails(groupId);
+                            controller.fetchGroupPosts(groupId);
 
-                          // Use GoRouter for navigation to match your app's routing system
-                          context.push(AppRoutes.groupDetails);
-                        } catch (e) {
-                          print("Error navigating to group details: $e");
-                        } finally {
-                          controller.isLoading(false);
-                        }
-                      },
-                    );
-                  },
+                            // Use GoRouter for navigation to match your app's routing system
+                            context.push(AppRoutes.groupDetails);
+                          } catch (e) {
+                            print("Error navigating to group details: $e");
+                          } finally {
+                            controller.isLoading(false);
+                          }
+                        },
+                      );
+                    },
+                  ),
                 );
               }),
             ],
