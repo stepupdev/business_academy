@@ -158,7 +158,8 @@ class CommunityFeedScreen extends GetView<CommunityController> {
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
                     child: SizedBox(
                       height: 25.h,
-                      child: ListView.builder(
+                      child: ListView.separated(
+                        separatorBuilder: (context, index) => SizedBox(width: 5.w),
                         scrollDirection: Axis.horizontal,
                         itemCount: controller.topics.value.result?.data?.length ?? 0,
                         itemBuilder: (context, index) {

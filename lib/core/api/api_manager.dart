@@ -22,9 +22,16 @@ class APIManager {
       final response = await http.post(Uri.parse(url), body: jsonEncode(param), headers: headerData);
       print("api provider bro bro bro bro ${response.body}");
       var data = jsonDecode(response.body);
+
       if (response.statusCode == 422) {
         Ui.showErrorSnackBar(context, message: data["message"]);
       } else if (response.statusCode == 400) {
+        Ui.showErrorSnackBar(context, message: data["message"]);
+      } else if(response.statusCode == 200) {
+        Ui.showSuccessSnackBar(context, message: data["message"]);
+      } else if (response.statusCode == 401) {
+        Ui.showErrorSnackBar(context, message: data["message"]);
+      } else if (response.statusCode == 403) {
         Ui.showErrorSnackBar(context, message: data["message"]);
       }
       responseJson = _response(response);
@@ -230,7 +237,7 @@ class APIManager {
     }
   }
 
-  Future<dynamic> deleteAPICallWithHeader(String url, {Map<String, String>? headerData}) async {
+  Future<dynamic> deleteAPICallWithHeader(BuildContext context, String url, {Map<String, String>? headerData}) async {
     print("Calling DELETE API: $url");
 
     var responseJson;
@@ -240,7 +247,10 @@ class APIManager {
 
       var data = jsonDecode(response.body);
       if (response.statusCode == 422 || response.statusCode == 400) {
-        Ui.showErrorSnackBar(scaffoldMessengerKey.currentContext!, message: data["message"]);
+        Ui.showErrorSnackBar(context, message: data["message"]);
+      }
+      if(response.statusCode == 200) {
+        Ui.showSuccessSnackBar(context, message: data["message"]);
       }
 
       responseJson = _response(response);

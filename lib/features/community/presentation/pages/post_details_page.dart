@@ -1,4 +1,5 @@
 import 'package:business_application/core/config/app_colors.dart';
+import 'package:business_application/core/config/app_routes.dart';
 import 'package:business_application/core/config/app_size.dart';
 import 'package:business_application/core/services/auth_services.dart';
 import 'package:business_application/core/utils/helper_utils.dart';
@@ -54,9 +55,33 @@ class PostDetailsPageState extends State<PostDetailsPage> {
                 onSelected: (value) {
                   if (value == 'edit') {
                     context.push('/create-post', extra: {'isGroupTopics': false, 'postId': widget.postId});
+                  } else if (value == 'delete') {
+                    // Show confirmation dialog for deleting the post
+                    showDialog(
+                      context: context,
+                      builder:
+                          (context) => AlertDialog(
+                            title: Text('Delete Post'),
+                            content: Text('Are you sure you want to delete this post?'),
+                            actions: [
+                              TextButton(onPressed: () => Navigator.of(context).pop(), child: Text('Cancel')),
+                              TextButton(
+                                onPressed: () {
+                                  context.push(AppRoutes.home);
+                                  controller.deletePost(widget.postId, context);
+                                },
+                                child: Text('Delete'),
+                              ),
+                            ],
+                          ),
+                    );
                   }
                 },
-                itemBuilder: (context) => [PopupMenuItem(value: 'edit', child: Text('Edit Post'))],
+                itemBuilder:
+                    (context) => [
+                      PopupMenuItem(value: 'edit', child: Text('Edit Post')),
+                      PopupMenuItem(value: 'delete', child: Text('Delete Post')), // Add Delete Post option
+                    ],
               );
             }
             return SizedBox.shrink();
@@ -151,7 +176,31 @@ class PostDetailsPageState extends State<PostDetailsPage> {
                                 content: comment.content ?? '',
                                 replies: comment.replies ?? [],
                                 onDelete: () {
-                                  controller.deleteComments(comment.id.toString());
+                                  // show confirmation dialog
+                                  showDialog(
+                                    context: context,
+                                    builder:
+                                        (context) => AlertDialog(
+                                          title: Text('Delete Comment'),
+                                          content: Text('Are you sure you want to delete this comment?'),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () => Navigator.of(context).pop(),
+                                              child: Text('Cancel'),
+                                            ),
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                                // Call the delete comment method
+                                                controller.selectedPostId.value = post?.id ?? 0;
+                                                controller.deleteComments(comment.id.toString(), context);
+                                                context.push(AppRoutes.home);
+                                              },
+                                              child: Text('Delete'),
+                                            ),
+                                          ],
+                                        ),
+                                  );
                                 },
                                 onReply: () {
                                   setState(() {

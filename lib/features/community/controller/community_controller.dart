@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:business_application/core/services/auth_services.dart';
-import 'package:business_application/core/utils/ui_support.dart';
 import 'package:business_application/features/community/data/comments_response_model.dart';
 import 'package:business_application/features/community/data/community_posts_model.dart';
 import 'package:business_application/features/community/data/posts_by_id_model.dart';
@@ -125,19 +124,13 @@ class CommunityController extends GetxController {
     }, context);
     print("comments response $response");
     getComments(postId);
-    if (response['success'] == true) {
-      Ui.showSuccessSnackBar(context, message: response['message']);
-    } else {
-      Ui.showErrorSnackBar(context, message: response['message']);
-    }
   }
 
-  deleteComments(String id) async {
+  deleteComments(String id, BuildContext context) async {
     try {
       isLoading(true);
-      final response = await CommunityRep().deleteComment(id);
+      final response = await CommunityRep().deleteComment(id, context);
       print("delete comments response $response");
-      getComments(selectedPostId.value.toString());
     } catch (e) {
       isLoading(false);
       print(e);
@@ -367,5 +360,31 @@ class CommunityController extends GetxController {
       selectedTopicId.value = post.topic?.id?.toString() ?? '';
       isPostDataLoaded.value = true;
     }
+  }
+
+  void deletePost(String postId, BuildContext context) async {
+    try {
+      isLoading(true);
+      final response = await CommunityRep().deletePost(postId,context );
+      if (response['success'] == true) {
+        Get.snackbar(
+          "Success",
+          response['message'] ?? "Post deleted successfully",
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.BOTTOM,
+          margin: const EdgeInsets.all(20),
+          borderRadius: 8,
+          duration: const Duration(seconds: 5),
+        );
+        getCommunityPosts(); // Refresh posts after deletion
+      } else {
+        print("Error deleting post: ${response['message']}");
+      }
+    } catch (e) {
+      print("Error deleting post: $e");
+    } finally {
+      isLoading(false);
+    } //
   }
 }

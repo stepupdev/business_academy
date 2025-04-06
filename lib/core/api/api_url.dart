@@ -5,6 +5,7 @@ class ApiUrl {
   static const String communities = '$baseUrl/communities';
   static const String communityPosts = '$baseUrl/posts';
   static const String createPost = '$baseUrl/posts/create';
+  static const String deletePost = '$baseUrl/posts/delete';
   static const String postUpdate = '$baseUrl/posts/update';
   static const String topics = '$baseUrl/topics';
   static const String myPosts = '$baseUrl/user/posts';

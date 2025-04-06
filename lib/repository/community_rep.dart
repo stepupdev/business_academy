@@ -20,7 +20,7 @@ class CommunityRep {
     return response;
   }
 
-  Future createComments(Map<String, dynamic> body, BuildContext context)async {
+  Future createComments(Map<String, dynamic> body, BuildContext context) async {
     APIManager _manager = APIManager();
     final response = await _manager.postAPICallWithHeader(ApiUrl.createComments, body, {
       'Content-Type': 'application/json',
@@ -31,9 +31,11 @@ class CommunityRep {
     return response;
   }
 
-  Future deleteComment(String commentId) async {
+  Future deleteComment(String commentId, BuildContext context) async {
     APIManager _manager = APIManager();
     final response = await _manager.deleteAPICallWithHeader(
+
+context,
       "${ApiUrl.comments}/$commentId/delete",
       headerData: {"Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}"},
     );
@@ -123,6 +125,17 @@ class CommunityRep {
     print("Body: ${response.body}");
 
     return jsonDecode(response.body);
+  }
+
+  Future deletePost(String postId, BuildContext context) async {
+    APIManager _manager = APIManager();
+    final response = await _manager.deleteAPICallWithHeader(
+      context,
+      "${ApiUrl.communityPosts}/delete/$postId",
+      headerData: {"Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}"},
+    );
+    print("response: $response");
+    return response;
   }
 
   Future updatePosts({
@@ -226,7 +239,7 @@ class CommunityRep {
         'Accept': 'application/json',
         "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
       },
-      context
+      context,
     );
     print("response: $response");
     return response;
