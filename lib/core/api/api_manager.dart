@@ -27,7 +27,7 @@ class APIManager {
         Ui.showErrorSnackBar(context, message: data["message"]);
       } else if (response.statusCode == 400) {
         Ui.showErrorSnackBar(context, message: data["message"]);
-      } else if(response.statusCode == 200) {
+      } else if (response.statusCode == 200) {
         Ui.showSuccessSnackBar(context, message: data["message"]);
       } else if (response.statusCode == 401) {
         Ui.showErrorSnackBar(context, message: data["message"]);
@@ -249,7 +249,7 @@ class APIManager {
       if (response.statusCode == 422 || response.statusCode == 400) {
         Ui.showErrorSnackBar(context, message: data["message"]);
       }
-      if(response.statusCode == 200) {
+      if (response.statusCode == 200) {
         Ui.showSuccessSnackBar(context, message: data["message"]);
       }
 

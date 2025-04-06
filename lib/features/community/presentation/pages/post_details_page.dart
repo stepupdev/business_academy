@@ -194,7 +194,6 @@ class PostDetailsPageState extends State<PostDetailsPage> {
                                                 // Call the delete comment method
                                                 controller.selectedPostId.value = post?.id ?? 0;
                                                 controller.deleteComments(comment.id.toString(), context);
-                                                context.push(AppRoutes.home);
                                               },
                                               child: Text('Delete'),
                                             ),

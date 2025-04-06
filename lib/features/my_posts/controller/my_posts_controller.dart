@@ -19,7 +19,6 @@ class MyPostsController extends GetxController {
       isLoading(true);
       final response = await CommunityRep().getMyPosts();
       myPosts(MyPostResponseModel.fromJson(response));
-      scaffoldMessengerKey.currentState?.showSnackBar(SnackBar(content: Text('My posts fetched successfully')));
     } catch (e) {
       isLoading(false);
       scaffoldMessengerKey.currentState?.showSnackBar(

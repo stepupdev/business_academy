@@ -131,6 +131,7 @@ class CommunityController extends GetxController {
       isLoading(true);
       final response = await CommunityRep().deleteComment(id, context);
       print("delete comments response $response");
+      getComments(selectedPostId.value.toString());
     } catch (e) {
       isLoading(false);
       print(e);
@@ -296,12 +297,6 @@ class CommunityController extends GetxController {
 
       if (response['success'] == true) {
         getCommunityPosts();
-        postController.clear();
-        selectedImage.value = "";
-        videoLinkController.clear();
-        selectedTopicId.value = '';
-        selectedTopic.value = '';
-        selectedTabIndex.value = 0;
         scaffoldMessengerKey.currentState!.showSnackBar(
           SnackBar(content: Text(response['message']), backgroundColor: Colors.green),
         );
@@ -365,7 +360,7 @@ class CommunityController extends GetxController {
   void deletePost(String postId, BuildContext context) async {
     try {
       isLoading(true);
-      final response = await CommunityRep().deletePost(postId,context );
+      final response = await CommunityRep().deletePost(postId, context);
       if (response['success'] == true) {
         Get.snackbar(
           "Success",

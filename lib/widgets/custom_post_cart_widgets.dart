@@ -82,9 +82,11 @@ class _UserPostWidgetState extends State<UserPostWidget> {
     final textPainter = TextPainter(text: textSpan, maxLines: 3, textDirection: TextDirection.ltr)
       ..layout(maxWidth: MediaQuery.of(context).size.width - 20.w);
 
-    setState(() {
-      _isOverflowing = textPainter.didExceedMaxLines;
-    });
+    if (mounted) {
+      setState(() {
+        _isOverflowing = textPainter.didExceedMaxLines;
+      });
+    }
   }
 
   @override
