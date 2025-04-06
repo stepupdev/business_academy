@@ -37,7 +37,7 @@ class UserMenuController extends GetxController {
   changeCommunity(String id) async {
     isLoading(true);
     try {
-      var response = await CommunityRep().changeCommunity(id);
+      var response = await CommunityRep().changeCommunity(id, Get.context!);
       print("response: $response");
     } catch (e) {
       print(e);

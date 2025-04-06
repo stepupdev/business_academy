@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
 void checkNotifications(SendPort sendPort) async {
@@ -64,9 +65,10 @@ class MyApp extends StatelessWidget {
         return GetMaterialApp.router(
           debugShowCheckedModeBanner: false,
           scaffoldMessengerKey: scaffoldMessengerKey,
-          routeInformationParser: AppRouter.router.routeInformationParser,
-          routerDelegate: AppRouter.router.routerDelegate,
-          routeInformationProvider: AppRouter.router.routeInformationProvider,
+          routerDelegate: AppRouter.router.routerDelegate, // Use GoRouter's routerDelegate
+          routeInformationParser: AppRouter.router.routeInformationParser, // Use GoRouter's routeInformationParser
+          routeInformationProvider:
+              AppRouter.router.routeInformationProvider, // Use GoRouter's routeInformationProvider
           title: 'Business Academy',
           theme: TAppTheme.lightTheme,
           themeMode: ThemeMode.system,

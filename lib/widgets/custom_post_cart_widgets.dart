@@ -218,7 +218,7 @@ class _UserPostWidgetState extends State<UserPostWidget> {
                       widget.onLike ??
                       () {
                         Get.find<CommunityController>().selectedPostId.value = widget.postId ?? 0;
-                        Get.find<CommunityController>().likePosts();
+                        Get.find<CommunityController>().likePosts(context);
                         Get.find<CommunityController>().communityPostsById.refresh();
                       },
                   child: Icon(
@@ -243,7 +243,7 @@ class _UserPostWidgetState extends State<UserPostWidget> {
                       widget.onSave ??
                       () {
                         Get.find<CommunityController>().selectedPostId.value = widget.postId ?? 0;
-                        Get.find<CommunityController>().savePost();
+                        Get.find<CommunityController>().savePost(context);
                         Get.find<CommunityController>().communityPostsById.refresh();
                       },
                   child: Icon(

@@ -76,7 +76,7 @@ class SavePostsPage extends GetView<SavePostController> {
                 },
                 onLike: () {
                   Get.find<CommunityController>().selectedPostId.value = post?.id ?? 0;
-                  Get.find<CommunityController>().likePosts();
+                  Get.find<CommunityController>().likePosts(context);
                   controller.getSavePosts(); // Refresh saved posts
                 },
               );

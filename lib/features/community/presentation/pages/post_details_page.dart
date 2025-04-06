@@ -99,12 +99,12 @@ class PostDetailsPageState extends State<PostDetailsPage> {
                         isSaved: post?.isSaved ?? false,
                         onLike: () {
                           controller.selectedPostId.value = post?.id ?? 0;
-                          controller.likePosts();
+                          controller.likePosts(context);
                           controller.communityPostsById.refresh(); // Trigger UI update
                         },
                         onSave: () {
                           controller.selectedPostId.value = post?.id ?? 0;
-                          controller.savePost();
+                          controller.savePost(context);
                           controller.communityPostsById.refresh(); // Trigger UI update
                         },
                       ),
@@ -191,7 +191,7 @@ class PostDetailsPageState extends State<PostDetailsPage> {
                           controller: _commentController,
                           focusNode: _commentFocusNode,
                           decoration: InputDecoration(
-                            fillColor: Colors.white,
+                            fillColor: dark ? AppColors.dark : Colors.white,
                             filled: true,
                             hintText:
                                 _isReplying
@@ -224,6 +224,7 @@ class PostDetailsPageState extends State<PostDetailsPage> {
                           print("here is the _replyto: $_replyingTo");
                           controller.selectedPostId.value = post?.id ?? 0;
                           controller.addComments(
+                            context: context,
                             postId: controller.selectedPostId.value.toString(),
                             comments: _commentController.text.trim(),
                             parentId: _isReplying ? _replyingTo.toString() : "",

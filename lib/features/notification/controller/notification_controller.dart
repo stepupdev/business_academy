@@ -1,6 +1,7 @@
 import 'package:business_application/features/notification/data/check_notification_model.dart';
 import 'package:business_application/features/notification/data/notification_models.dart';
 import 'package:business_application/repository/notification_rep.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class NotificationController extends GetxController {
@@ -42,10 +43,10 @@ class NotificationController extends GetxController {
     }
   }
 
-  markReadNotification(String id) async {
+  markReadNotification(String id, BuildContext context) async {
     isLoading(true);
     try {
-      var response = await NotificationRep().markNotification(id);
+      var response = await NotificationRep().markNotification(id, context);
       print("Notification: $response");
       fetchNotifications(); // Refresh notifications after marking as read
     } catch (e) {
@@ -55,10 +56,10 @@ class NotificationController extends GetxController {
     }
   }
 
-  markAllReadNotification() async {
+  markAllReadNotification(BuildContext context) async {
     isLoading(true);
     try {
-      var response = await NotificationRep().markAllNotification();
+      var response = await NotificationRep().markAllNotification(context);
       print("Notification: $response");
 
       fetchNotifications(); // Refresh notifications after marking all as read

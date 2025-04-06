@@ -4,10 +4,16 @@ import 'dart:io';
 import 'package:business_application/core/api/api_exception.dart';
 import 'package:business_application/core/utils/ui_support.dart';
 import 'package:business_application/main.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class APIManager {
-  Future<dynamic> postAPICallWithHeader(String url, Map<String, dynamic> param, Map<String, String> headerData) async {
+  Future<dynamic> postAPICallWithHeader(
+    String url,
+    Map<String, dynamic> param,
+    Map<String, String> headerData,
+    BuildContext context,
+  ) async {
     print("Calling API: $url");
     print("Calling parameters: $param");
 
@@ -17,9 +23,9 @@ class APIManager {
       print("api provider bro bro bro bro ${response.body}");
       var data = jsonDecode(response.body);
       if (response.statusCode == 422) {
-        Ui.showErrorSnackBar(scaffoldMessengerKey.currentContext!, message: data["message"]);
+        Ui.showErrorSnackBar(context, message: data["message"]);
       } else if (response.statusCode == 400) {
-        Ui.showErrorSnackBar(scaffoldMessengerKey.currentContext!, message: data["message"]);
+        Ui.showErrorSnackBar(context, message: data["message"]);
       }
       responseJson = _response(response);
 
@@ -205,7 +211,6 @@ class APIManager {
         var responseJson = json.decode(response.body.toString());
         return responseJson;
       case 400:
-        throw BadRequestException(response.body.toString());
       case 401:
       case 403:
         var responseJson = json.decode(response.body.toString());

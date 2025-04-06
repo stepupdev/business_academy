@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:business_application/core/services/auth_services.dart';
+import 'package:business_application/core/utils/ui_support.dart';
 import 'package:business_application/features/community/data/comments_response_model.dart';
 import 'package:business_application/features/community/data/community_posts_model.dart';
 import 'package:business_application/features/community/data/posts_by_id_model.dart';
@@ -111,18 +112,23 @@ class CommunityController extends GetxController {
     }
   }
 
-  addComments({required String postId, required String comments, required String parentId}) async {
+  void addComments({
+    required BuildContext context,
+    required String postId,
+    required String comments,
+    required String parentId,
+  }) async {
     final response = await CommunityRep().createComments({
       "post_id": postId,
       "content": comments,
       "parent_id": parentId,
-    });
+    }, context);
     print("comments response $response");
     getComments(postId);
     if (response['success'] == true) {
-      scaffoldMessengerKey.currentState!.showSnackBar(
-        SnackBar(content: Text(response['message']), backgroundColor: Colors.green),
-      );
+      Ui.showSuccessSnackBar(context, message: response['message']);
+    } else {
+      Ui.showErrorSnackBar(context, message: response['message']);
     }
   }
 
@@ -140,7 +146,7 @@ class CommunityController extends GetxController {
     }
   }
 
-  likePosts() async {
+  likePosts(BuildContext context) async {
     int postIndex = communityPosts.value.result?.data?.indexWhere((post) => post.id == selectedPostId.value) ?? -1;
 
     if (postIndex == -1) return;
@@ -165,7 +171,7 @@ class CommunityController extends GetxController {
 
     Map<String, dynamic> data = {"type": "App\\Models\\Post", "id": selectedPostId.value};
 
-    final response = await CommunityRep().likePosts(data);
+    final response = await CommunityRep().likePosts(data, context);
     if (response['success'] == false) {
       communityPosts.update((posts) {
         posts?.result?.data?[postIndex].isLiked = previousState;
@@ -184,7 +190,7 @@ class CommunityController extends GetxController {
     }
   }
 
-  savePost() async {
+  savePost(BuildContext context) async {
     int postIndex = communityPosts.value.result?.data?.indexWhere((post) => post.id == selectedPostId.value) ?? -1;
 
     if (postIndex == -1) return;
@@ -209,7 +215,7 @@ class CommunityController extends GetxController {
 
     Map<String, dynamic> data = {"post_id": selectedPostId.value};
 
-    final response = await CommunityRep().savePost(data);
+    final response = await CommunityRep().savePost(data, context);
     if (response['success'] == false) {
       communityPosts.update((posts) {
         posts?.result?.data?[postIndex].isSaved = previousState;
@@ -350,7 +356,7 @@ class CommunityController extends GetxController {
 
   void loadPostData(String postId) {
     final post = communityPostsById.value.result;
-    if(isPostDataLoaded.value) {
+    if (isPostDataLoaded.value) {
       return; // Prevent loading if already loaded
     }
     if (post != null && post.id.toString() == postId) {

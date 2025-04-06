@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:business_application/core/api/api_manager.dart';
 import 'package:business_application/core/api/api_url.dart';
 import 'package:business_application/core/services/auth_services.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
@@ -19,13 +20,13 @@ class CommunityRep {
     return response;
   }
 
-  Future createComments(Map<String, dynamic> body) async {
+  Future createComments(Map<String, dynamic> body, BuildContext context)async {
     APIManager _manager = APIManager();
     final response = await _manager.postAPICallWithHeader(ApiUrl.createComments, body, {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
       "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
-    });
+    }, context);
     print("response: $response");
     return response;
   }
@@ -40,24 +41,24 @@ class CommunityRep {
     return response;
   }
 
-  Future likePosts(Map<String, dynamic> body) async {
+  Future likePosts(Map<String, dynamic> body, BuildContext context) async {
     APIManager _manager = APIManager();
     final response = await _manager.postAPICallWithHeader(ApiUrl.likePost, body, {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
       "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
-    });
+    }, context);
     print("response: $response");
     return response;
   }
 
-  Future savePost(Map<String, dynamic> body) async {
+  Future savePost(Map<String, dynamic> body, BuildContext context) async {
     APIManager _manager = APIManager();
     final response = await _manager.postAPICallWithHeader(ApiUrl.savePost, body, {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
       "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
-    });
+    }, context);
     print("response: $response");
     return response;
   }
@@ -215,7 +216,7 @@ class CommunityRep {
     return response;
   }
 
-  Future changeCommunity(String id) async {
+  Future changeCommunity(String id, BuildContext context) async {
     APIManager _manager = APIManager();
     final response = await _manager.postAPICallWithHeader(
       "${ApiUrl.communities}/change",
@@ -225,6 +226,7 @@ class CommunityRep {
         'Accept': 'application/json',
         "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
       },
+      context
     );
     print("response: $response");
     return response;

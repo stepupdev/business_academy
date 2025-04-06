@@ -40,7 +40,7 @@ class NotificationPage extends GetView<NotificationController> {
                     value: 'mark_all_read',
                     child: Text('Mark all read'),
                     onTap: () {
-                      controller.markAllReadNotification();
+                      controller.markAllReadNotification(context);
                       controller.fetchNotifications();
                     },
                   ),
@@ -86,7 +86,7 @@ class NotificationPage extends GetView<NotificationController> {
               final notification = controller.notifications.value.result?.data?[index];
               return InkWell(
                 onTap: () {
-                  controller.markReadNotification(notification?.id.toString() ?? "");
+                  controller.markReadNotification(notification?.id.toString() ?? "", context);
                   context.push(AppRoutes.postDetails, extra: {'postId': notification?.notifiableId});
                 },
                 child: Padding(
