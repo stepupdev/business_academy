@@ -47,11 +47,8 @@ class AuthController extends GetxController {
             print("✅ User logged in successfully.");
             context.go('/home'); // Navigate to Home
             await Get.find<AuthService>().getCurrentUser();
-            Get.showSnackbar(GetSnackBar(title: "Success", message: "Login Successfull"));
           } else {
             isLoading.value = false;
-
-            Get.showSnackbar(GetSnackBar(title: "Failed", message: "Login Failed "));
           }
         });
       }

@@ -50,7 +50,6 @@ class PostDetailsPageState extends State<PostDetailsPage> {
           Obx(() {
             final post = controller.communityPostsById.value.result;
             if (post?.user?.id == currentUserId) {
-              // Show "Edit Post" only if the post belongs to the logged-in user
               return PopupMenuButton<String>(
                 onSelected: (value) {
                   if (value == 'edit') {

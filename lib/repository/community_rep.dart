@@ -133,7 +133,7 @@ class CommunityRep {
     String? groupId, // Add groupId parameter
   }) async {
     var uri = Uri.parse("${ApiUrl.postUpdate}/$postId");
-    var request = http.MultipartRequest("PUT", uri);
+    var request = http.MultipartRequest("POST", uri);
 
     // Add text fields
     request.fields['content'] = content;

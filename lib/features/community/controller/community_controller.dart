@@ -13,6 +13,7 @@ import 'package:image_picker/image_picker.dart';
 
 class CommunityController extends GetxController {
   var isLoading = false.obs;
+  var isPostDataLoaded = false.obs;
   var commentLoading = false.obs;
   var communityPosts = PostsResponseModel().obs;
   var comments = CommentsResponseModel().obs;
@@ -274,18 +275,24 @@ class CommunityController extends GetxController {
     required String postId,
     required String topicId,
     String? videoUrl,
-    String? groupId, // Add groupId parameter
+    String? groupId,
   }) async {
     try {
-      File? selectedFile = selectedImage.value.isNotEmpty ? File(selectedImage.value) : null;
+      isLoading(true);
+
+      // Check if the selectedImage is a local file path or a URL
+      File? selectedFile;
+      if (selectedImage.value.isNotEmpty && !selectedImage.value.startsWith('http')) {
+        selectedFile = File(selectedImage.value); // Only create a File object for local paths
+      }
 
       final response = await CommunityRep().updatePosts(
         content: content,
         postId: postId,
         topicId: topicId,
-        imageFile: selectedFile,
+        imageFile: selectedFile, // Pass the File object or null
         videoUrl: videoUrl,
-        groupId: groupId, // Pass groupId to the repository
+        groupId: groupId,
       );
 
       if (response['success'] == true) {
@@ -296,8 +303,16 @@ class CommunityController extends GetxController {
         selectedTopicId.value = '';
         selectedTopic.value = '';
         selectedTabIndex.value = 0;
-      } else {}
+        scaffoldMessengerKey.currentState!.showSnackBar(
+          SnackBar(content: Text(response['message']), backgroundColor: Colors.green),
+        );
+      } else {
+        scaffoldMessengerKey.currentState!.showSnackBar(
+          SnackBar(content: Text(response['message']), backgroundColor: Colors.red),
+        );
+      }
     } catch (e) {
+      print("Error updating post: $e");
     } finally {
       isLoading(false);
     }
@@ -335,13 +350,16 @@ class CommunityController extends GetxController {
 
   void loadPostData(String postId) {
     final post = communityPostsById.value.result;
+    if(isPostDataLoaded.value) {
+      return; // Prevent loading if already loaded
+    }
     if (post != null && post.id.toString() == postId) {
-      postController.text = post.content ?? '';
+      postController.text = post.content ?? ''; // Properly set the text content
       selectedImage.value = post.image ?? '';
       videoLinkController.text = post.videoUrl ?? '';
       selectedTopic.value = post.topic?.name ?? '';
       selectedTopicId.value = post.topic?.id?.toString() ?? '';
-      selectedTopicValue = post.topic as topics_model.TopicsResponseModel?;
+      isPostDataLoaded.value = true;
     }
   }
 }

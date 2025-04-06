@@ -22,7 +22,11 @@ class CreatePostPage extends GetView<CommunityController> {
   @override
   Widget build(BuildContext context) {
     if (postId != null) {
-      Future.delayed(Duration.zero, () => controller.loadPostData(postId ?? ""));
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        controller.loadPostData(postId ?? "");
+        controller.selectedTopic.value = controller.communityPostsById.value.result?.topic?.name ?? '';
+        controller.selectedTopicId.value = controller.communityPostsById.value.result?.topic?.id?.toString() ?? '';
+      });
     }
     return Scaffold(
       appBar: AppBar(
@@ -66,7 +70,7 @@ class CreatePostPage extends GetView<CommunityController> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   TextFormField(
-                    controller: controller.postController,
+                    controller: controller.postController, // Ensure the controller is bound
                     maxLines: 5,
                     decoration: InputDecoration(
                       hintText: postId == null ? "Write something..." : "Edit your post...",
@@ -79,7 +83,10 @@ class CreatePostPage extends GetView<CommunityController> {
                         borderSide: BorderSide(color: AppColors.primaryColor, width: 0.5),
                       ),
                     ),
-                    onTapOutside: (event) => FocusScope.of(context).unfocus(),
+                    onEditingComplete: () {
+                      controller.postController.text = controller.postController.text.trim();
+                    },
+                    onTapOutside: (event) => FocusScope.of(context).unfocus(), // Dismiss keyboard on tap outside
                   ),
                   20.hS,
                   Obx(
@@ -190,10 +197,7 @@ class CreatePostPage extends GetView<CommunityController> {
                   20.hS,
                   DropdownMenu(
                     hintText: "Select a topic",
-                    initialSelection:
-                        postId == null
-                            ? controller.selectedTopicValue?.result?.data?.first.name
-                            : controller.selectedTopic.value,
+                    initialSelection: controller.selectedTopic.value,
                     inputDecorationTheme: InputDecorationTheme(
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
