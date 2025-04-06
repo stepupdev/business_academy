@@ -30,11 +30,17 @@ class PostDetailsPageState extends State<PostDetailsPage> {
   final FocusNode _commentFocusNode = FocusNode();
   bool _isReplying = false;
   int? _replyingTo;
+  bool _isInitialized = false; // To ensure the logic runs only once
 
   @override
-  void initState() {
-    Get.find<CommunityController>().getComments(widget.postId);
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_isInitialized) {
+      final controller = Get.find<CommunityController>();
+      controller.getCommunityPostsById(widget.postId); // Fetch post details
+      controller.getComments(widget.postId); // Fetch comments
+      _isInitialized = true; // Mark as initialized
+    }
   }
 
   @override

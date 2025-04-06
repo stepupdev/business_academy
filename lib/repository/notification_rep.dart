@@ -25,6 +25,14 @@ class NotificationRep {
 
   Future markNotification(String id, BuildContext context) async {
     APIManager _manager = APIManager();
+    final response = await _manager.postAPICallWithHeader("${ApiUrl.notification}/$id/mark-read", {}, {
+      "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
+    }, context);
+    print("response: $response");
+    return response;
+  }
+  Future markReadUnreadNotification(String id, BuildContext context) async {
+    APIManager _manager = APIManager();
     final response = await _manager.postAPICallWithHeader("${ApiUrl.notification}/$id/mark-read-unread", {}, {
       "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
     }, context);

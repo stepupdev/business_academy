@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 
 class NotificationController extends GetxController {
   var isLoading = false.obs;
+  var notificationLoading = <String, bool>{}.obs; // Track loading state for individual notifications
 
   var notifications = NotificationResponseModel().obs;
   var hasNewNotification = false.obs; // Separate flag for new notifications
@@ -53,6 +54,29 @@ class NotificationController extends GetxController {
       print(e);
     } finally {
       isLoading(false);
+    }
+  }
+
+  markReadUnreadNotification(String id, BuildContext context) async {
+    notificationLoading[id] = true; // Set loading for the specific notification
+    notificationLoading.refresh(); // Notify listeners about the change
+
+    try {
+      var response = await NotificationRep().markReadUnreadNotification(id, context);
+      print("Notification: $response");
+
+      // Update the specific notification in the list
+      var notificationIndex = notifications.value.result?.data?.indexWhere((n) => n.id.toString() == id);
+      if (notificationIndex != null && notificationIndex >= 0) {
+        notifications.value.result?.data?[notificationIndex].isRead =
+            !(notifications.value.result?.data?[notificationIndex].isRead ?? false);
+        notifications.refresh(); // Notify listeners about the change
+      }
+    } catch (e) {
+      print(e);
+    } finally {
+      notificationLoading[id] = false; // Reset loading for the specific notification
+      notificationLoading.refresh(); // Notify listeners about the change
     }
   }
 

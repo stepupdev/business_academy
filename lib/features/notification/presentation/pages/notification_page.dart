@@ -1,9 +1,11 @@
 import 'package:business_application/core/config/app_routes.dart';
 import 'package:business_application/core/config/app_size.dart';
+import 'package:business_application/features/community/controller/community_controller.dart';
 import 'package:business_application/features/notification/controller/notification_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -88,7 +90,11 @@ class NotificationPage extends GetView<NotificationController> {
                 return InkWell(
                   onTap: () {
                     controller.markReadNotification(notification?.id.toString() ?? "", context);
-                    context.push(AppRoutes.postDetails, extra: {'postId': notification?.notifiableId});
+                    Get.find<CommunityController>().getCommunityPostsById(notification?.notifiableId.toString() ?? "");
+                    Get.find<CommunityController>().getComments(notification?.notifiableId.toString() ?? "");
+                    Get.find<CommunityController>().selectedPostId.value = notification?.notifiableId ?? 0;
+                    GoRouter.of(context).push('/post-details/${notification?.notifiableId}');
+                    // context.push(AppRoutes.postDetails, extra: {'postId': notification?.notifiableId});
                   },
                   child: Padding(
                     padding: EdgeInsets.all(16.0),
@@ -136,27 +142,32 @@ class NotificationPage extends GetView<NotificationController> {
                         ),
                         IconButton(
                           onPressed: () {
-                            // show popup button for read unread
+                            if (controller.notificationLoading[notification?.id.toString()] == true) {
+                              return; // Prevent multiple taps while loading
+                            }
                             showMenu(
                               context: context,
-                              position: RelativeRect.fromLTRB(100.w, 80.h, 0, 0),
+                              position: RelativeRect.fromLTRB(100.w, 120.h, 16.w, 0),
                               items: [
                                 PopupMenuItem(
                                   value: 'mark_read_unread',
-                                  child: Text(
-                                    controller.notifications.value.result?.data?[index].isRead == false
-                                        ? "Mark as read"
-                                        : "Mark as unread",
-                                  ),
+                                  child: Obx(() {
+                                    return controller.notificationLoading[notification?.id.toString()] == true
+                                        ? SizedBox(
+                                          width: 20,
+                                          height: 20,
+                                          child: CircularProgressIndicator(strokeWidth: 2),
+                                        )
+                                        : Text(notification?.isRead == false ? "Mark as read" : "Mark as unread");
+                                  }),
                                   onTap: () {
-                                    controller.markReadNotification(notification?.id.toString() ?? "", context);
-                                    controller.fetchNotifications();
+                                    controller.markReadUnreadNotification(notification?.id.toString() ?? "", context);
                                   },
                                 ),
                               ],
                             );
                           },
-                          icon: const Icon(Icons.more_vert, color: Colors.grey),
+                          icon: Icon(Icons.more_vert, color: Colors.grey, size: 18.sp),
                         ),
                       ],
                     ),
