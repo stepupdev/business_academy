@@ -37,23 +37,62 @@ void startNotificationChecker() async {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Get.putAsync(() async => AuthService());
-  SystemChrome.setSystemUIOverlayStyle(
-    const SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.dark,
-      statusBarBrightness: Brightness.dark,
-      systemNavigationBarColor: Colors.white,
-      systemNavigationBarIconBrightness: Brightness.dark,
-    ),
-  );
+  // SystemChrome.setSystemUIOverlayStyle(
+  //   const SystemUiOverlayStyle(
+  //     statusBarColor: Colors.transparent,
+  //     statusBarIconBrightness: Brightness.dark,
+  //     statusBarBrightness: Brightness.dark,
+  //     systemNavigationBarColor: Colors.white,
+  //     systemNavigationBarIconBrightness: Brightness.dark,
+  //   ),
+  // );
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_) {
     runApp(const MyApp());
     startNotificationChecker();
   });
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _setSystemUIOverlayStyle();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangePlatformBrightness() {
+    super.didChangePlatformBrightness();
+    _setSystemUIOverlayStyle();
+  }
+
+  void _setSystemUIOverlayStyle() {
+    final brightness = WidgetsBinding.instance.platformDispatcher.platformBrightness;
+    final isDark = brightness == Brightness.dark;
+
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+        statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
+        systemNavigationBarColor: isDark ? Colors.black : Colors.white,
+        systemNavigationBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,10 +104,9 @@ class MyApp extends StatelessWidget {
         return GetMaterialApp.router(
           debugShowCheckedModeBanner: false,
           scaffoldMessengerKey: scaffoldMessengerKey,
-          routerDelegate: AppRouter.router.routerDelegate, // Use GoRouter's routerDelegate
-          routeInformationParser: AppRouter.router.routeInformationParser, // Use GoRouter's routeInformationParser
-          routeInformationProvider:
-              AppRouter.router.routeInformationProvider, // Use GoRouter's routeInformationProvider
+          routerDelegate: AppRouter.router.routerDelegate,
+          routeInformationParser: AppRouter.router.routeInformationParser,
+          routeInformationProvider: AppRouter.router.routeInformationProvider,
           title: 'Business Academy',
           theme: TAppTheme.lightTheme,
           themeMode: ThemeMode.system,

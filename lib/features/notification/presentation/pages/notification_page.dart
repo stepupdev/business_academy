@@ -80,65 +80,91 @@ class NotificationPage extends GetView<NotificationController> {
               ),
             );
           }
-          return ListView.builder(
-            itemCount: controller.notifications.value.result?.data?.length,
-            itemBuilder: (context, index) {
-              final notification = controller.notifications.value.result?.data?[index];
-              return InkWell(
-                onTap: () {
-                  controller.markReadNotification(notification?.id.toString() ?? "", context);
-                  context.push(AppRoutes.postDetails, extra: {'postId': notification?.notifiableId});
-                },
-                child: Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+          return Obx(() {
+            return ListView.builder(
+              itemCount: controller.notifications.value.result?.data?.length,
+              itemBuilder: (context, index) {
+                final notification = controller.notifications.value.result?.data?[index];
+                return InkWell(
+                  onTap: () {
+                    controller.markReadNotification(notification?.id.toString() ?? "", context);
+                    context.push(AppRoutes.postDetails, extra: {'postId': notification?.notifiableId});
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
 
-                    children: [
-                      10.wS,
-                      CircleAvatar(
-                        radius: 25.r,
-                        child: SvgPicture.asset('assets/logo/logo.svg', width: 30.0, height: 30.0),
-                      ),
-                      10.wS,
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Visibility(
-                                  visible: notification?.isRead == false,
-                                  child: Container(
-                                    width: 10.0,
-                                    height: 10.0,
-                                    decoration: BoxDecoration(color: Colors.blue, shape: BoxShape.circle),
-                                    child: 10.wS,
+                      children: [
+                        10.wS,
+                        CircleAvatar(
+                          radius: 25.r,
+                          child: SvgPicture.asset('assets/logo/logo.svg', width: 30.0, height: 30.0),
+                        ),
+                        10.wS,
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Visibility(
+                                    visible: notification?.isRead == false,
+                                    child: Container(
+                                      width: 10.0,
+                                      height: 10.0,
+                                      decoration: BoxDecoration(color: Colors.blue, shape: BoxShape.circle),
+                                      child: 10.wS,
+                                    ),
                                   ),
+                                  Text(
+                                    formatTime(notification?.createdAt ?? DateTime.now()),
+                                    style: TextStyle(fontSize: 12.0, color: Colors.grey),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 8.0),
+                              Text(
+                                "${notification?.fromUser?.name ?? ""} ${notification?.type ?? ""}",
+                                style: TextStyle(
+                                  fontSize: 16.0,
+                                  fontWeight: notification?.isRead ?? false ? FontWeight.w500 : FontWeight.bold,
                                 ),
-                                Text(
-                                  formatTime(notification?.createdAt ?? DateTime.now()),
-                                  style: TextStyle(fontSize: 12.0, color: Colors.grey),
+                              ),
+                            ],
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            // show popup button for read unread
+                            showMenu(
+                              context: context,
+                              position: RelativeRect.fromLTRB(100.w, 80.h, 0, 0),
+                              items: [
+                                PopupMenuItem(
+                                  value: 'mark_read_unread',
+                                  child: Text(
+                                    controller.notifications.value.result?.data?[index].isRead == false
+                                        ? "Mark as read"
+                                        : "Mark as unread",
+                                  ),
+                                  onTap: () {
+                                    controller.markReadNotification(notification?.id.toString() ?? "", context);
+                                    controller.fetchNotifications();
+                                  },
                                 ),
                               ],
-                            ),
-                            SizedBox(height: 8.0),
-                            Text(
-                              "${notification?.fromUser?.name ?? ""} ${notification?.type ?? ""}",
-                              style: TextStyle(
-                                fontSize: 16.0,
-                                fontWeight: notification?.isRead ?? false ? FontWeight.w500 : FontWeight.bold,
-                              ),
-                            ),
-                          ],
+                            );
+                          },
+                          icon: const Icon(Icons.more_vert, color: Colors.grey),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              );
-            },
-          );
+                );
+              },
+            );
+          });
         }),
       ),
     );
