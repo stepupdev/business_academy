@@ -204,6 +204,7 @@ class _PostDetailsState extends State<PostDetailsCard> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 IconButton(
+                  padding: EdgeInsets.all(16.w),
                   onPressed: widget.onLike,
                   icon: Icon(
                     widget.isLiked ? Icons.favorite : Icons.favorite_border,
@@ -222,16 +223,21 @@ class _PostDetailsState extends State<PostDetailsCard> {
                     Text(widget.commentCount, style: GoogleFonts.plusJakartaSans(color: Colors.grey)),
                   ],
                 ),
-                InkWell(
+                GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+
                   onTap: widget.onSave,
-                  child: Icon(
-                    widget.isSaved ? Icons.bookmark : Icons.bookmark_border,
-                    color:
-                        widget.isSaved
-                            ? Colors.amber
-                            : dark
-                            ? AppColors.darkGrey
-                            : AppColors.dark,
+                  child: Container(
+                    padding: EdgeInsets.all(16.w),
+                    child: Icon(
+                      widget.isSaved ? Icons.bookmark : Icons.bookmark_border,
+                      color:
+                          widget.isSaved
+                              ? Colors.amber
+                              : dark
+                              ? AppColors.darkGrey
+                              : AppColors.dark,
+                    ),
                   ),
                 ),
               ],

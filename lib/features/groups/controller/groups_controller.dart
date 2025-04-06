@@ -4,12 +4,14 @@ import 'package:business_application/features/groups/data/groups_models.dart';
 import 'package:business_application/features/groups/data/groups_topic_response_model.dart';
 import 'package:business_application/repository/community_rep.dart';
 import 'package:business_application/repository/groups_rep.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class GroupsController extends GetxController {
   var isLoading = false.obs;
   var groups = GroupsResponseModel().obs;
   var groupsDetails = GroupsByIdResponseModel().obs;
+  var selectedPostId = 0.obs;
   var groupsTopicResponse = GroupsTopicResponseModel().obs;
 
   var selectedTopic = ''.obs;
@@ -108,6 +110,72 @@ class GroupsController extends GetxController {
         print("Error fetching group posts by topic: $e");
       } finally {
         isLoading(false);
+      }
+    }
+  }
+
+  likePosts(BuildContext context) async {
+    int postIndex = groupPosts.indexWhere((post) => post.id == selectedPostId.value);
+
+    if (postIndex == -1) return;
+
+    bool previousState = groupPosts[postIndex].isLiked ?? false;
+
+    // Update the UI immediately
+    groupPosts[postIndex].isLiked = !previousState;
+    groupPosts.refresh();
+
+    int filteredIndex = filteredPosts.indexWhere((post) => post.id == selectedPostId.value);
+    if (filteredIndex != -1) {
+      filteredPosts[filteredIndex].isLiked = !previousState;
+      filteredPosts.refresh();
+    }
+
+    // Send the like request to the server
+    Map<String, dynamic> data = {"type": "App\\Models\\Post", "id": selectedPostId.value};
+    final response = await CommunityRep().likePosts(data, context);
+
+    // Revert the state if the server request fails
+    if (response['success'] == false) {
+      groupPosts[postIndex].isLiked = previousState;
+      groupPosts.refresh();
+
+      if (filteredIndex != -1) {
+        filteredPosts[filteredIndex].isLiked = previousState;
+        filteredPosts.refresh();
+      }
+    }
+  }
+
+  void saveGroupPosts(BuildContext context) async {
+    int postIndex = groupPosts.indexWhere((post) => post.id == selectedPostId.value);
+
+    if (postIndex == -1) return;
+
+    bool previousState = groupPosts[postIndex].isSaved ?? false;
+
+    // Update the UI immediately
+    groupPosts[postIndex].isSaved = !previousState;
+    groupPosts.refresh();
+
+    int filteredIndex = filteredPosts.indexWhere((post) => post.id == selectedPostId.value);
+    if (filteredIndex != -1) {
+      filteredPosts[filteredIndex].isSaved = !previousState;
+      filteredPosts.refresh();
+    }
+
+    // Send the like request to the server
+    Map<String, dynamic> data = {"type": "App\\Models\\Post", "id": selectedPostId.value};
+    final response = await CommunityRep().savePost(data, context);
+
+    // Revert the state if the server request fails
+    if (response['success'] == false) {
+      groupPosts[postIndex].isSaved = previousState;
+      groupPosts.refresh();
+
+      if (filteredIndex != -1) {
+        filteredPosts[filteredIndex].isSaved = previousState;
+        filteredPosts.refresh();
       }
     }
   }

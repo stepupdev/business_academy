@@ -8,6 +8,7 @@ import 'package:business_application/features/community/controller/community_con
 import 'package:business_application/features/community/presentation/widgets/comment_widget.dart';
 import 'package:business_application/features/community/presentation/widgets/post_details_card.dart';
 import 'package:business_application/features/community/presentation/widgets/post_details_shimmer.dart';
+import 'package:business_application/features/groups/controller/groups_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -16,10 +17,11 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class PostDetailsPage extends StatefulWidget {
-  final String postId; // Ensure postId is passed as a required parameter
+  final String postId;
   final bool isVideo;
+  final bool isGroupPost;
 
-  const PostDetailsPage({super.key, this.isVideo = true, required this.postId});
+  const PostDetailsPage({super.key, this.isVideo = true, this.isGroupPost = false, required this.postId});
 
   @override
   PostDetailsPageState createState() => PostDetailsPageState();
@@ -52,7 +54,7 @@ class PostDetailsPageState extends State<PostDetailsPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: dark ? AppColors.dark : AppColors.light,
-        title: Text('Post Details'),
+        title: Text(widget.isGroupPost ? 'Group Post Details' : 'Post Details'),
         actions: [
           Obx(() {
             final post = controller.communityPostsById.value.result;
@@ -129,14 +131,34 @@ class PostDetailsPageState extends State<PostDetailsPage> {
                         isLiked: post?.isLiked ?? false,
                         isSaved: post?.isSaved ?? false,
                         onLike: () {
-                          controller.selectedPostId.value = post?.id ?? 0;
-                          controller.likePosts(context);
-                          controller.communityPostsById.refresh(); // Trigger UI update
+                          if (widget.isGroupPost) {
+                            final groupsController = Get.find<GroupsController>();
+                            groupsController.selectedPostId.value = post?.id ?? 0;
+                            groupsController.likePosts(context); // Handle group post likes
+                            groupsController.fetchGroupPosts(
+                              groupsController.currentGroupId.value,
+                            ); // Refresh group posts
+                            groupsController.update(); // Ensure UI updates
+                          } else {
+                            controller.selectedPostId.value = post?.id ?? 0;
+                            controller.likePosts(context); // Handle community post likes
+                            controller.communityPostsById.refresh(); // Refresh community post details UI
+                            controller.update(); // Ensure UI updates
+                          }
                         },
                         onSave: () {
-                          controller.selectedPostId.value = post?.id ?? 0;
-                          controller.savePost(context);
-                          controller.communityPostsById.refresh(); // Trigger UI update
+                          if (widget.isGroupPost) {
+                            final groupsController = Get.find<GroupsController>();
+                            groupsController.selectedPostId.value = post?.id ?? 0;
+                            groupsController.saveGroupPosts(context); // Handle group post saves
+                            groupsController.groupPosts.refresh(); // Refresh group posts UI
+                            groupsController.update(); // Ensure UI updates
+                          } else {
+                            controller.selectedPostId.value = post?.id ?? 0;
+                            controller.savePost(context); // Handle community post saves
+                            controller.communityPostsById.refresh(); // Refresh community post details UI
+                            controller.update(); // Ensure UI updates
+                          }
                         },
                       ),
                       Divider(height: 1.h),

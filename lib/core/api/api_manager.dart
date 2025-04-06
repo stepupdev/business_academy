@@ -27,8 +27,6 @@ class APIManager {
         Ui.showErrorSnackBar(context, message: data["message"]);
       } else if (response.statusCode == 400) {
         Ui.showErrorSnackBar(context, message: data["message"]);
-      } else if (response.statusCode == 200) {
-        Ui.showSuccessSnackBar(context, message: data["message"]);
       } else if (response.statusCode == 401) {
         Ui.showErrorSnackBar(context, message: data["message"]);
       } else if (response.statusCode == 403) {

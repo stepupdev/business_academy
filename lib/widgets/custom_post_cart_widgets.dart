@@ -101,113 +101,125 @@ class _UserPostWidgetState extends State<UserPostWidget> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             /// User Info
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CircleAvatar(backgroundImage: NetworkImage(widget.dp)),
-                10.wS,
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Text(widget.name, style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600)),
-                        5.wS,
-                        Container(
-                          margin: EdgeInsets.only(left: 5.w),
-                          padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
-                          decoration: BoxDecoration(
-                            color: AppColors.primaryColor.withAlpha(200),
-                            borderRadius: BorderRadius.circular(50),
+            GestureDetector(
+              onTap: widget.onTap,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CircleAvatar(backgroundImage: NetworkImage(widget.dp)),
+                  10.wS,
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(widget.name, style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600)),
+                          5.wS,
+                          Container(
+                            margin: EdgeInsets.only(left: 5.w),
+                            padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
+                            decoration: BoxDecoration(
+                              color: AppColors.primaryColor.withAlpha(200),
+                              borderRadius: BorderRadius.circular(50),
+                            ),
+                            child: Text(
+                              widget.rank,
+                              style: GoogleFonts.plusJakartaSans(color: Colors.white, fontSize: 10.sp),
+                            ),
                           ),
-                          child: Text(
-                            widget.rank,
-                            style: GoogleFonts.plusJakartaSans(color: Colors.white, fontSize: 10.sp),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Text(dateTime!, style: GoogleFonts.plusJakartaSans(color: Colors.grey)),
-                  ],
-                ),
-                10.wS,
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.2.w,
-                  child: Text(
-                    widget.topic,
-                    style: GoogleFonts.plusJakartaSans(color: Colors.grey, fontSize: 12.sp),
-                    overflow: TextOverflow.ellipsis,
+                        ],
+                      ),
+                      Text(dateTime!, style: GoogleFonts.plusJakartaSans(color: Colors.grey)),
+                    ],
                   ),
-                ),
-              ],
+                  10.wS,
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.2.w,
+                    child: Text(
+                      widget.topic,
+                      style: GoogleFonts.plusJakartaSans(color: Colors.grey, fontSize: 12.sp),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
             ),
 
             /// Caption
             15.hS,
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  widget.caption,
-                  style: GoogleFonts.plusJakartaSans(color: dark ? Colors.white : Colors.black),
-                  maxLines: _isExpanded ? null : 3,
-                  overflow: _isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
-                ),
-                if (_isOverflowing)
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _isExpanded = !_isExpanded;
-                      });
-                    },
-                    child: Text(
-                      _isExpanded ? 'Show less' : 'Show more',
-                      style: TextStyle(color: Colors.blue, fontSize: 14.sp, fontWeight: FontWeight.bold),
-                    ),
+            GestureDetector(
+              onTap: widget.onTap,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.caption,
+                    style: GoogleFonts.plusJakartaSans(color: dark ? Colors.white : Colors.black),
+                    maxLines: _isExpanded ? null : 3,
+                    overflow: _isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
                   ),
-              ],
+                  if (_isOverflowing)
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _isExpanded = !_isExpanded;
+                        });
+                      },
+                      child: Text(
+                        _isExpanded ? 'Show less' : 'Show more',
+                        style: TextStyle(color: Colors.blue, fontSize: 14.sp, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                ],
+              ),
             ),
             10.hS,
 
             /// Post Image/Video Thumbnail with Play Icon
             if (widget.postImage.isNotEmpty)
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10.r),
-                child: CachedNetworkImage(
-                  imageUrl: widget.postImage,
-                  width: 1.sw,
-                  height: 200.h,
-                  fit: BoxFit.cover,
-                  placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-                  errorWidget: (context, url, error) => Icon(Icons.error),
+              GestureDetector(
+                onTap: widget.onTap,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10.r),
+                  child: CachedNetworkImage(
+                    imageUrl: widget.postImage,
+                    width: 1.sw,
+                    height: 200.h,
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                    errorWidget: (context, url, error) => Icon(Icons.error),
+                  ),
                 ),
               ),
             if (widget.videoUrl.isNotEmpty && widget.postImage.isEmpty)
-              Stack(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(10.r),
-                    child: CachedNetworkImage(
-                      imageUrl: videoThumbnail ?? "",
-                      width: 1.sw,
-                      height: 200.h,
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-                      errorWidget: (context, url, error) => Icon(Icons.error),
+              GestureDetector(
+                onTap: widget.onTap,
+                child: Stack(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10.r),
+                      child: CachedNetworkImage(
+                        imageUrl: videoThumbnail ?? "",
+                        width: 1.sw,
+                        height: 200.h,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                        errorWidget: (context, url, error) => Icon(Icons.error),
+                      ),
                     ),
-                  ),
-                  Positioned(
-                    top: 70.h,
-                    left: 150.w,
-                    child: Container(
-                      width: 60.w,
-                      height: 60.w,
-                      decoration: BoxDecoration(color: Colors.black54, shape: BoxShape.circle),
-                      child: Icon(Icons.play_arrow, color: Colors.white, size: 40.w),
+                    Positioned(
+                      top: 70.h,
+                      left: 150.w,
+                      child: Container(
+                        width: 60.w,
+                        height: 60.w,
+                        decoration: BoxDecoration(color: Colors.black54, shape: BoxShape.circle),
+                        child: Icon(Icons.play_arrow, color: Colors.white, size: 40.w),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
 
             /// Actions (Like, Comment, Bookmark)
@@ -215,7 +227,8 @@ class _UserPostWidgetState extends State<UserPostWidget> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                InkWell(
+                GestureDetector(
+                  behavior: HitTestBehavior.translucent,
                   onTap:
                       widget.onLike ??
                       () {
@@ -223,24 +236,32 @@ class _UserPostWidgetState extends State<UserPostWidget> {
                         Get.find<CommunityController>().likePosts(context);
                         Get.find<CommunityController>().communityPostsById.refresh();
                       },
-                  child: Icon(
-                    widget.isLiked ? Icons.favorite : Icons.favorite_border,
-                    color:
-                        widget.isLiked
-                            ? Colors.red
-                            : dark
-                            ? AppColors.darkGrey
-                            : AppColors.dark,
+                  child: Container(
+                    padding: EdgeInsets.only(right: 20.w, top: 20.h, bottom: 10.h), // Increased hit area
+                    child: Icon(
+                      widget.isLiked ? Icons.favorite : Icons.favorite_border,
+                      color:
+                          widget.isLiked
+                              ? Colors.red
+                              : dark
+                              ? AppColors.darkGrey
+                              : AppColors.dark,
+                    ),
                   ),
                 ),
-                Row(
-                  children: [
-                    SvgPicture.asset("assets/icons/comment.svg", color: dark ? AppColors.darkGrey : AppColors.dark),
-                    5.wS,
-                    Text(widget.commentCount, style: GoogleFonts.plusJakartaSans(color: Colors.grey)),
-                  ],
+                GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onTap: widget.onTap, // Navigate to post details
+                  child: Row(
+                    children: [
+                      SvgPicture.asset("assets/icons/comment.svg", color: dark ? AppColors.darkGrey : AppColors.dark),
+                      10.wS,
+                      Text(widget.commentCount, style: GoogleFonts.plusJakartaSans(color: Colors.grey)),
+                    ],
+                  ),
                 ),
-                InkWell(
+                GestureDetector(
+                  behavior: HitTestBehavior.translucent,
                   onTap:
                       widget.onSave ??
                       () {
@@ -248,14 +269,17 @@ class _UserPostWidgetState extends State<UserPostWidget> {
                         Get.find<CommunityController>().savePost(context);
                         Get.find<CommunityController>().communityPostsById.refresh();
                       },
-                  child: Icon(
-                    widget.isSaved ? Icons.bookmark : Icons.bookmark_border,
-                    color:
-                        widget.isSaved
-                            ? Colors.amber
-                            : dark
-                            ? AppColors.darkGrey
-                            : AppColors.dark,
+                  child: Container(
+                    padding: EdgeInsets.only(right: 20.w, top: 20.h, bottom: 10.h), // Increased hit area
+                    child: Icon(
+                      widget.isSaved ? Icons.bookmark : Icons.bookmark_border,
+                      color:
+                          widget.isSaved
+                              ? Colors.amber
+                              : dark
+                              ? AppColors.darkGrey
+                              : AppColors.dark,
+                    ),
                   ),
                 ),
               ],

@@ -63,7 +63,10 @@ class GroupDetailsPage extends GetView<GroupsController> {
                             Expanded(
                               child: TextButton(
                                 onPressed: () {
-                                  context.push('/create-post', extra: {'isGroupTopics': true, 'groupId' : controller.currentGroupId.value}); // Pass argument
+                                  context.push(
+                                    '/create-post',
+                                    extra: {'isGroupTopics': true, 'groupId': controller.currentGroupId.value},
+                                  ); // Pass argument
                                 },
                                 style: TextButton.styleFrom(
                                   alignment: Alignment.centerLeft,
@@ -171,7 +174,7 @@ class GroupDetailsPage extends GetView<GroupsController> {
                               onTap: () {
                                 Get.find<CommunityController>().getCommunityPostsById(posts.id.toString());
                                 Get.find<CommunityController>().getComments(posts.id.toString());
-                                GoRouter.of(context).push('/post-details/${posts.id}');
+                                GoRouter.of(context).push('/post-details/${posts.id}', extra: true);
                               },
                               name: posts.user?.name ?? "",
                               postId: posts.id,
@@ -185,6 +188,14 @@ class GroupDetailsPage extends GetView<GroupsController> {
                               commentCount: posts.commentsCount?.toString() ?? "0",
                               isLiked: posts.isLiked ?? false,
                               isSaved: posts.isSaved ?? false,
+                              onLike: () {
+                                controller.likePosts(context);
+                                controller.update(); // Ensure UI updates after liking a post
+                              },
+                              onSave: () {
+                                controller.saveGroupPosts(context);
+                                controller.update(); // Ensure UI updates after saving a post
+                              },
                             );
                           },
                         );

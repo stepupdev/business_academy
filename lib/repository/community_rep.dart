@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:business_application/core/api/api_manager.dart';
 import 'package:business_application/core/api/api_url.dart';
 import 'package:business_application/core/services/auth_services.dart';
+import 'package:business_application/core/utils/ui_support.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -28,6 +29,11 @@ class CommunityRep {
       "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
     }, context);
     print("response: $response");
+    if(response['success'] == true){
+      Ui.showSuccessSnackBar(context, message: response['message']);
+    } else {
+      Ui.showErrorSnackBar(context, message: response['message']);
+    }
     return response;
   }
 
@@ -242,6 +248,11 @@ context,
       context,
     );
     print("response: $response");
+        if(response['success'] == true){
+      Ui.showSuccessSnackBar(context, message: response['message']);
+    } else {
+      Ui.showErrorSnackBar(context, message: response['message']);
+    }
     return response;
   }
 
