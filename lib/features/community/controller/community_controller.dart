@@ -296,6 +296,7 @@ class CommunityController extends GetxController {
       );
 
       if (response['success'] == true) {
+        getCommunityPostsById(postId);
         getCommunityPosts();
         scaffoldMessengerKey.currentState!.showSnackBar(
           SnackBar(content: Text(response['message']), backgroundColor: Colors.green),

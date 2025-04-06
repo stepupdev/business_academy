@@ -10,6 +10,7 @@ import 'package:business_application/features/groups/data/groups_topic_response_
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
 class CreatePostPage extends GetView<CommunityController> {
@@ -45,6 +46,7 @@ class CreatePostPage extends GetView<CommunityController> {
                   videoUrl: controller.videoLinkController.text,
                   groupId: groupId, // Pass groupId for updating group posts
                 );
+                context.pop();
               }
             },
             style: FilledButton.styleFrom(
