@@ -20,8 +20,9 @@ class PostDetailsPage extends StatefulWidget {
   final String postId;
   final bool isVideo;
   final bool isGroupPost;
+  final String? groupId;
 
-  const PostDetailsPage({super.key, this.isVideo = true, this.isGroupPost = false, required this.postId});
+  const PostDetailsPage({super.key, this.isVideo = true, required this.isGroupPost, this.groupId, required this.postId});
 
   @override
   PostDetailsPageState createState() => PostDetailsPageState();
@@ -62,7 +63,7 @@ class PostDetailsPageState extends State<PostDetailsPage> {
               return PopupMenuButton<String>(
                 onSelected: (value) {
                   if (value == 'edit') {
-                    context.push('/create-post', extra: {'isGroupTopics': false, 'postId': widget.postId});
+                    context.push('/create-post', extra: {'isGroupTopics': false, 'postId': widget.postId, 'groupId' : widget.groupId});
                   } else if (value == 'delete') {
                     // Show confirmation dialog for deleting the post
                     showDialog(

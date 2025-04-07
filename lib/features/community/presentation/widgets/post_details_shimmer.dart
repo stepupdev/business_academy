@@ -22,7 +22,7 @@ class PostDetailsShimmer extends StatelessWidget {
               // Title shimmer
               Shimmer.fromColors(
                 baseColor: dark ? AppColors.dark : Colors.grey[300]!,
-                highlightColor: dark ? AppColors.grey : Colors.grey[100]!,
+                highlightColor: dark ? AppColors.darkerGrey : Colors.grey[100]!,
                 child: Container(width: double.infinity, height: 20.h, color: Colors.grey[300]),
               ),
               10.hS,
@@ -31,7 +31,7 @@ class PostDetailsShimmer extends StatelessWidget {
                 children: [
                   Shimmer.fromColors(
                     baseColor: dark ? AppColors.dark : Colors.grey[300]!,
-                    highlightColor: dark ? AppColors.grey : Colors.grey[100]!,
+                    highlightColor: dark ? AppColors.darkerGrey : Colors.grey[100]!,
                     child: CircleAvatar(backgroundColor: Colors.grey[300], radius: 20),
                   ),
                   10.wS,
@@ -40,13 +40,13 @@ class PostDetailsShimmer extends StatelessWidget {
                     children: [
                       Shimmer.fromColors(
                         baseColor: dark ? AppColors.dark : Colors.grey[300]!,
-                        highlightColor: dark ? AppColors.grey : Colors.grey[100]!,
+                        highlightColor: dark ? AppColors.darkerGrey : Colors.grey[100]!,
                         child: Container(width: 100.w, height: 10.h, color: Colors.grey[300]),
                       ),
                       5.hS,
                       Shimmer.fromColors(
                         baseColor: dark ? AppColors.dark : Colors.grey[300]!,
-                        highlightColor: dark ? AppColors.grey : Colors.grey[100]!,
+                        highlightColor: dark ? AppColors.darkerGrey : Colors.grey[100]!,
                         child: Container(width: 60.w, height: 10.h, color: Colors.grey[300]),
                       ),
                     ],
@@ -57,7 +57,7 @@ class PostDetailsShimmer extends StatelessWidget {
               // Image shimmer
               Shimmer.fromColors(
                 baseColor: dark ? AppColors.dark : Colors.grey[300]!,
-                highlightColor: dark ? AppColors.grey : Colors.grey[100]!,
+                highlightColor: dark ? AppColors.darkerGrey : Colors.grey[100]!,
                 child: Container(width: double.infinity, height: 200.h, color: Colors.grey[300]),
               ),
               15.hS,
@@ -69,7 +69,7 @@ class PostDetailsShimmer extends StatelessWidget {
                     padding: EdgeInsets.only(bottom: 10.h),
                     child: Shimmer.fromColors(
                       baseColor: dark ? AppColors.dark : Colors.grey[300]!,
-                      highlightColor: dark ? AppColors.grey : Colors.grey[100]!,
+                      highlightColor: dark ? AppColors.darkerGrey : Colors.grey[100]!,
                       child: Container(width: double.infinity, height: 10.h, color: Colors.grey[300]),
                     ),
                   ),
@@ -83,7 +83,7 @@ class PostDetailsShimmer extends StatelessWidget {
                   3,
                   (index) => Shimmer.fromColors(
                     baseColor: dark ? AppColors.dark : Colors.grey[300]!,
-                    highlightColor: dark ? AppColors.grey : Colors.grey[100]!,
+                    highlightColor: dark ? AppColors.darkerGrey : Colors.grey[100]!,
                     child: Container(
                       width: 30.w,
                       height: 30.h,

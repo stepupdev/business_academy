@@ -22,13 +22,15 @@ class CreatePostPage extends GetView<CommunityController> {
 
   @override
   Widget build(BuildContext context) {
-    if (postId != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        controller.loadPostData(postId ?? "");
-        controller.selectedTopic.value = controller.communityPostsById.value.result?.topic?.name ?? '';
-        controller.selectedTopicId.value = controller.communityPostsById.value.result?.topic?.id?.toString() ?? '';
-      });
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (postId != null) {
+        await controller.getCommunityPostsById(postId!); // Wait for data to load
+        controller.loadPostData(postId!); // Load the post data after fetching
+      } else {
+        controller.loadPostData(""); // For new posts
+      }
+    });
+
     return Scaffold(
       appBar: AppBar(
         title: Text(postId == null ? "Create Post" : "Edit Post"),
@@ -41,7 +43,7 @@ class CreatePostPage extends GetView<CommunityController> {
               } else {
                 controller.updatePost(
                   postId: postId ?? "",
-                  content: controller.postController.text,
+                  content: controller.postController.value.text,
                   topicId: controller.selectedTopicId.value,
                   videoUrl: controller.videoLinkController.text,
                   groupId: groupId, // Pass groupId for updating group posts
@@ -71,25 +73,25 @@ class CreatePostPage extends GetView<CommunityController> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  TextFormField(
-                    controller: controller.postController, // Ensure the controller is bound
-                    maxLines: 5,
-                    decoration: InputDecoration(
-                      hintText: postId == null ? "Write something..." : "Edit your post...",
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(color: AppColors.borderColor, width: 0.5),
+                  Obx(() {
+                    return TextFormField(
+                      controller: controller.postController.value,
+                      focusNode: controller.postFocusNode,
+                      maxLines: 5,
+                      decoration: InputDecoration(
+                        hintText: postId == null ? "Write something..." : "Edit your post...",
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: AppColors.borderColor, width: 0.5),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: AppColors.primaryColor, width: 0.5),
+                        ),
                       ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(color: AppColors.primaryColor, width: 0.5),
-                      ),
-                    ),
-                    onEditingComplete: () {
-                      controller.postController.text = controller.postController.text.trim();
-                    },
-                    onTapOutside: (event) => FocusScope.of(context).unfocus(), // Dismiss keyboard on tap outside
-                  ),
+                      onTapOutside: (event) => FocusScope.of(context).unfocus(),
+                    );
+                  }),
                   20.hS,
                   Obx(
                     () => Column(

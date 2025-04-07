@@ -5,6 +5,7 @@ import 'package:business_application/features/community/data/comments_response_m
 import 'package:business_application/features/community/data/community_posts_model.dart';
 import 'package:business_application/features/community/data/posts_by_id_model.dart';
 import 'package:business_application/features/community/data/topics_model.dart' as topics_model;
+import 'package:business_application/features/groups/controller/groups_controller.dart';
 import 'package:business_application/features/notification/controller/notification_controller.dart';
 import 'package:business_application/main.dart';
 import 'package:business_application/repository/community_rep.dart';
@@ -14,7 +15,6 @@ import 'package:image_picker/image_picker.dart';
 
 class CommunityController extends GetxController {
   var isLoading = false.obs;
-  var isPostDataLoaded = false.obs;
   var commentLoading = false.obs;
   var communityPosts = PostsResponseModel().obs;
   var comments = CommentsResponseModel().obs;
@@ -24,11 +24,12 @@ class CommunityController extends GetxController {
   var selectedTopic = ''.obs;
   topics_model.TopicsResponseModel? selectedTopicValue;
   var selectedTopicId = ''.obs;
-  final TextEditingController postController = TextEditingController();
+  var postController = TextEditingController().obs;
   var selectedImage = "".obs;
   final RxInt selectedTabIndex = 0.obs;
   final TextEditingController videoLinkController = TextEditingController();
   var filteredPosts = <Posts>[].obs;
+  final FocusNode postFocusNode = FocusNode();
 
   Future<void> pickImage(ImageSource source) async {
     final picker = ImagePicker();
@@ -63,22 +64,6 @@ class CommunityController extends GetxController {
       }
     });
     super.onInit();
-  }
-
-  @override
-  void onReady() {
-    Get.find<AuthService>().getCurrentUser();
-    getCommunityPosts();
-    getTopic();
-
-    Get.find<NotificationController>().checkNotification();
-    selectedTopic.listen((value) {
-      if (value.isNotEmpty) {
-        final topic = topics.value.result?.data?.firstWhere((t) => t.name == value, orElse: () => topics_model.Topic());
-        filterPostsByTopic(value, topicId: topic?.id?.toString());
-      }
-    });
-    super.onReady();
   }
 
   static const imageLink =
@@ -264,7 +249,7 @@ class CommunityController extends GetxController {
     File? selectedFile = selectedImage.value.isNotEmpty ? File(selectedImage.value) : null;
 
     final response = await CommunityRep().communityPosts(
-      content: postController.text,
+      content: postController.value.text.trim(),
       topicId: selectedTopicId.value,
       imageFile: selectedFile,
       videoUrl: videoLinkController.text.isNotEmpty ? videoLinkController.text : null,
@@ -273,7 +258,7 @@ class CommunityController extends GetxController {
 
     if (response['success'] == true) {
       getCommunityPosts();
-      postController.clear();
+      postController.value.clear();
       selectedImage.value = "";
       videoLinkController.clear();
       selectedTopicId.value = '';
@@ -309,7 +294,7 @@ class CommunityController extends GetxController {
         content: content,
         postId: postId,
         topicId: topicId,
-        imageFile: selectedFile, // Pass the File object or null
+        imageFile: selectedFile,
         videoUrl: videoUrl,
         groupId: groupId,
       );
@@ -317,6 +302,9 @@ class CommunityController extends GetxController {
       if (response['success'] == true) {
         getCommunityPostsById(postId);
         getCommunityPosts();
+        if (groupId != null) {
+          Get.find<GroupsController>().fetchGroupPosts(groupId);
+        }
         scaffoldMessengerKey.currentState!.showSnackBar(
           SnackBar(content: Text(response['message']), backgroundColor: Colors.green),
         );
@@ -339,8 +327,7 @@ class CommunityController extends GetxController {
       communityPostsById(PostByIdResponseModel.fromJson(response));
       getComments(id);
     } catch (e) {
-      isLoading(false);
-      print(e);
+      print("Error fetching post by ID: $e");
     } finally {
       isLoading(false);
     }
@@ -364,17 +351,21 @@ class CommunityController extends GetxController {
 
   void loadPostData(String postId) {
     final post = communityPostsById.value.result;
-    if (isPostDataLoaded.value) {
-      return; // Prevent loading if already loaded
-    }
+
     if (post != null && post.id.toString() == postId) {
-      postController.text = post.content ?? ''; // Properly set the text content
+      postController.value.text = post.content ?? '';
       selectedImage.value = post.image ?? '';
       videoLinkController.text = post.videoUrl ?? '';
       selectedTopic.value = post.topic?.name ?? '';
       selectedTopicId.value = post.topic?.id?.toString() ?? '';
-      isPostDataLoaded.value = true;
     }
+    //  else {
+    //   postController.value.clear();
+    //   videoLinkController.clear();
+    //   selectedImage.value = '';
+    //   selectedTopic.value = '';
+    //   selectedTopicId.value = '';
+    // }
   }
 
   void deletePost(String postId, BuildContext context) async {

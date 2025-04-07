@@ -174,7 +174,14 @@ class GroupDetailsPage extends GetView<GroupsController> {
                               onTap: () {
                                 Get.find<CommunityController>().getCommunityPostsById(posts.id.toString());
                                 Get.find<CommunityController>().getComments(posts.id.toString());
-                                GoRouter.of(context).push('/post-details/${posts.id}', extra: true);
+                                GoRouter.of(context).push(
+                                  '/post-details/${posts.id}',
+                                  extra: {
+                                    'isGroupTopics': true,
+                                    'groupId': controller.currentGroupId.value,
+                                    'postId': posts.id.toString(),
+                                  },
+                                );
                               },
                               name: posts.user?.name ?? "",
                               postId: posts.id,

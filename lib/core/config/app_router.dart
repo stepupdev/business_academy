@@ -45,9 +45,14 @@ class AppRouter {
       GoRoute(
         path: AppRoutes.postDetails,
         pageBuilder: (context, state) {
-          final postId = state.params['postId'] ?? ''; // Use params for dynamic segments
-          final isGroupPost = state.extra as bool? ?? false; // Use extra for additional data
-          return MaterialPage(key: state.pageKey, child: PostDetailsPage(postId: postId, isGroupPost: isGroupPost));
+          final extra = state.extra as Map<String, dynamic>? ?? {};
+          final bool isGroup = extra['isGroupTopics'] as bool? ?? false;
+          final String? postId = state.params['postId'];
+          final String? groupId = extra['groupId'] as String?;
+          return MaterialPage(
+            key: state.pageKey,
+            child: PostDetailsPage(postId: postId!, isGroupPost: isGroup, groupId: groupId),
+          );
         },
       ),
       GoRoute(
