@@ -19,10 +19,6 @@ class MenuPage extends GetView<UserMenuController> {
   Widget build(BuildContext context) {
     Get.put(CommunityController());
     final dark = Ui.isDarkMode(context);
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      controller.getUser();
-      controller.fetchCommunities();
-    });
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profile'),
@@ -141,11 +137,13 @@ class MenuPage extends GetView<UserMenuController> {
                                                       ? Icon(Icons.check_circle, color: AppColors.primaryColor)
                                                       : null,
                                               onTap: () {
-                                                print("Community ID: ${community?.id}");
-                                                // communityController.changeCommunity(community.id);
-                                                controller.changeCommunity(community?.id?.toString() ?? "");
-                                                context.pop();
-                                                // context.push(AppRoutes.home);
+                                                final communityId = community?.id?.toString() ?? "";
+                                                print("Community ID: $communityId");
+                                                controller.changeCommunity(communityId, context);
+                                                controller.getUser();
+                                                controller.communities.refresh();
+                                                controller.user.refresh();
+                                                GoRouter.of(context).pop();
                                               },
                                             );
                                           },

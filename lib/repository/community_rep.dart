@@ -29,7 +29,7 @@ class CommunityRep {
       "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
     }, context);
     print("response: $response");
-    if(response['success'] == true){
+    if (response['success'] == true) {
       Ui.showSuccessSnackBar(context, message: response['message']);
     } else {
       Ui.showErrorSnackBar(context, message: response['message']);
@@ -40,8 +40,7 @@ class CommunityRep {
   Future deleteComment(String commentId, BuildContext context) async {
     APIManager _manager = APIManager();
     final response = await _manager.deleteAPICallWithHeader(
-
-context,
+      context,
       "${ApiUrl.comments}/$commentId/delete",
       headerData: {"Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}"},
     );
@@ -235,11 +234,11 @@ context,
     return response;
   }
 
-  Future changeCommunity(String id, BuildContext context) async {
+  Future changeCommunity(Map<String, dynamic> body, BuildContext context) async {
     APIManager _manager = APIManager();
     final response = await _manager.postAPICallWithHeader(
       "${ApiUrl.communities}/change",
-      {"community_id": id},
+      body,
       {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -248,7 +247,7 @@ context,
       context,
     );
     print("response: $response");
-        if(response['success'] == true){
+    if (response['success'] == true) {
       Ui.showSuccessSnackBar(context, message: response['message']);
     } else {
       Ui.showErrorSnackBar(context, message: response['message']);

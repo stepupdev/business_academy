@@ -138,34 +138,50 @@ class NotificationPage extends GetView<NotificationController> {
                             ],
                           ),
                         ),
-                        IconButton(
-                          onPressed: () {
-                            if (controller.notificationLoading[notification?.id.toString()] == true) {
-                              return; // Prevent multiple taps while loading
-                            }
-                            showMenu(
-                              context: context,
-                              position: RelativeRect.fromLTRB(100.w, 120.h, 16.w, 0),
-                              items: [
-                                PopupMenuItem(
-                                  value: 'mark_read_unread',
-                                  child: Obx(() {
-                                    return controller.notificationLoading[notification?.id.toString()] == true
-                                        ? SizedBox(
-                                          width: 20,
-                                          height: 20,
-                                          child: CircularProgressIndicator(strokeWidth: 2),
-                                        )
-                                        : Text(notification?.isRead == false ? "Mark as read" : "Mark as unread");
-                                  }),
-                                  onTap: () {
-                                    controller.markReadUnreadNotification(notification?.id.toString() ?? "", context);
-                                  },
-                                ),
-                              ],
+                        Builder(
+                          builder: (buttonContext) {
+                            return IconButton(
+                              onPressed: () async {
+                                if (controller.notificationLoading[notification?.id.toString()] == true) return;
+
+                                final RenderBox button = buttonContext.findRenderObject() as RenderBox;
+                                final Offset offset = button.localToGlobal(Offset.zero);
+                                final RelativeRect position = RelativeRect.fromLTRB(
+                                  offset.dx,
+                                  offset.dy,
+                                  offset.dx + button.size.width,
+                                  offset.dy + button.size.height,
+                                );
+
+                                final result = await showMenu(
+                                  context: buttonContext,
+                                  position: position,
+                                  items: [
+                                    PopupMenuItem(
+                                      value: 'mark_read_unread',
+                                      child: Obx(() {
+                                        return controller.notificationLoading[notification?.id.toString()] == true
+                                            ? SizedBox(
+                                              width: 20,
+                                              height: 20,
+                                              child: CircularProgressIndicator(strokeWidth: 2),
+                                            )
+                                            : Text(notification?.isRead == false ? "Mark as read" : "Mark as unread");
+                                      }),
+                                    ),
+                                  ],
+                                );
+
+                                if (result == 'mark_read_unread') {
+                                  controller.markReadUnreadNotification(
+                                    notification?.id.toString() ?? "",
+                                    buttonContext,
+                                  );
+                                }
+                              },
+                              icon: Icon(Icons.more_vert, color: Colors.grey, size: 18.sp),
                             );
                           },
-                          icon: Icon(Icons.more_vert, color: Colors.grey, size: 18.sp),
                         ),
                       ],
                     ),

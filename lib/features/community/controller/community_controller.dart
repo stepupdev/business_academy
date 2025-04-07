@@ -5,6 +5,7 @@ import 'package:business_application/features/community/data/comments_response_m
 import 'package:business_application/features/community/data/community_posts_model.dart';
 import 'package:business_application/features/community/data/posts_by_id_model.dart';
 import 'package:business_application/features/community/data/topics_model.dart' as topics_model;
+import 'package:business_application/features/notification/controller/notification_controller.dart';
 import 'package:business_application/main.dart';
 import 'package:business_application/repository/community_rep.dart';
 import 'package:flutter/material.dart';
@@ -53,6 +54,8 @@ class CommunityController extends GetxController {
     Get.find<AuthService>().getCurrentUser();
     getCommunityPosts();
     getTopic();
+
+    Get.find<NotificationController>().checkNotification();
     selectedTopic.listen((value) {
       if (value.isNotEmpty) {
         final topic = topics.value.result?.data?.firstWhere((t) => t.name == value, orElse: () => topics_model.Topic());
@@ -60,6 +63,22 @@ class CommunityController extends GetxController {
       }
     });
     super.onInit();
+  }
+
+  @override
+  void onReady() {
+    Get.find<AuthService>().getCurrentUser();
+    getCommunityPosts();
+    getTopic();
+
+    Get.find<NotificationController>().checkNotification();
+    selectedTopic.listen((value) {
+      if (value.isNotEmpty) {
+        final topic = topics.value.result?.data?.firstWhere((t) => t.name == value, orElse: () => topics_model.Topic());
+        filterPostsByTopic(value, topicId: topic?.id?.toString());
+      }
+    });
+    super.onReady();
   }
 
   static const imageLink =
