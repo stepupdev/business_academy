@@ -93,13 +93,14 @@ class AppRouter {
       GoRoute(
         path: AppRoutes.postDetails,
         pageBuilder: (context, state) {
-          final extra = state.extra as Map<String, dynamic>? ?? {};
-          final bool isGroup = extra['isGroupTopics'] as bool? ?? false;
+          final Map<String, dynamic> extra = state.extra as Map<String, dynamic>? ?? {};
+          final bool isGroupPost = extra['isGroupPost'] as bool? ?? false;
           final String? postId = state.params['postId'];
           final String? groupId = extra['groupId'] as String?;
+          print("ROUTER: Creating PostDetailsPage with postId: $postId, isGroupPost: $isGroupPost, groupId: $groupId");
           return CustomTransitionPage<void>(
             key: state.pageKey,
-            child: PostDetailsPage(postId: postId!, isGroupPost: isGroup, groupId: groupId),
+            child: PostDetailsPage(postId: postId!, isGroupPost: isGroupPost, groupId: groupId),
             transitionsBuilder: (context, animation, secondaryAnimation, child) {
               return FadeTransition(
                 opacity: animation,

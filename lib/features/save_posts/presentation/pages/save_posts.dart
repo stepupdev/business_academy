@@ -72,6 +72,7 @@ class _SavePostsPageState extends State<SavePostsPage> {
           return ListView.builder(
             controller: controller.scrollController, // Add scroll controller here
             itemCount: controller.savePosts.value.result?.data?.length,
+            physics: AlwaysScrollableScrollPhysics(),
             itemBuilder: (context, index) {
               final post = controller.savePosts.value.result?.data?[index];
               return UserPostWidget(
@@ -97,34 +98,18 @@ class _SavePostsPageState extends State<SavePostsPage> {
                 isLiked: post?.isLiked ?? false,
                 isSaved: post?.isSaved ?? false,
                 onSave: () {
-                  final communityController = Get.find<CommunityController>();
-                  communityController.selectedPostId.value = post?.id ?? 0;
+                  final postId = post?.id ?? 0;
+                  if (postId == 0) return;
 
-                  // Update UI optimistically
-                  int postIndex = controller.savePosts.value.result?.data?.indexWhere((p) => p.id == post?.id) ?? -1;
-                  if (postIndex != -1) {
-                    bool currentState = controller.savePosts.value.result!.data![postIndex].isSaved ?? false;
-                    controller.savePosts.value.result!.data![postIndex].isSaved = !currentState;
-                    controller.savePosts.refresh();
-                  }
-
-                  // API call
-                  communityController.savePost(context);
+                  // Use the updated method
+                  controller.handlePostInteraction(postId, 'save', context);
                 },
                 onLike: () {
-                  final communityController = Get.find<CommunityController>();
-                  communityController.selectedPostId.value = post?.id ?? 0;
+                  final postId = post?.id ?? 0;
+                  if (postId == 0) return;
 
-                  // Update UI optimistically
-                  int postIndex = controller.savePosts.value.result?.data?.indexWhere((p) => p.id == post?.id) ?? -1;
-                  if (postIndex != -1) {
-                    bool currentState = controller.savePosts.value.result!.data![postIndex].isLiked ?? false;
-                    controller.savePosts.value.result!.data![postIndex].isLiked = !currentState;
-                    controller.savePosts.refresh();
-                  }
-
-                  // Call controller method
-                  communityController.likePosts(context);
+                  // Use the updated method
+                  controller.handlePostInteraction(postId, 'like', context);
                 },
               );
             },

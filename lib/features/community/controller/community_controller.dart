@@ -392,21 +392,38 @@ class CommunityController extends GetxController {
 
   void loadPostData(String postId) {
     final post = communityPostsById.value.result;
+    final isDebug = true;
+
+    if (isDebug) print("COMMUNITY CONTROLLER: Loading post data for ID: $postId");
 
     if (post != null && post.id.toString() == postId) {
+      // Set content, image and video
       postController.text = post.content ?? '';
       selectedImage.value = post.image ?? '';
       videoLinkController.text = post.videoUrl ?? '';
-      selectedTopic.value = post.topic?.name ?? '';
-      selectedTopicId.value = post.topic?.id?.toString() ?? '';
+
+      // Only set topic if it's not already set (to avoid overriding values already set)
+      if (selectedTopic.value.isEmpty && post.topic != null) {
+        selectedTopic.value = post.topic?.name ?? '';
+        selectedTopicId.value = post.topic?.id?.toString() ?? '';
+        if (isDebug)
+          print("COMMUNITY CONTROLLER: Setting topic from post: ${selectedTopic.value}, ID: ${selectedTopicId.value}");
+      } else if (isDebug) {
+        print("COMMUNITY CONTROLLER: Keeping existing topic: ${selectedTopic.value}, ID: ${selectedTopicId.value}");
+      }
+
+      // Update the tab index based on whether there's a video URL or image
+      if (post.videoUrl != null && post.videoUrl!.isNotEmpty) {
+        selectedTabIndex.value = 1;
+      } else {
+        selectedTabIndex.value = 0;
+      }
+    } else {
+      // Clear data for new posts
+      postController.clear();
+      videoLinkController.clear();
+      selectedImage.value = '';
     }
-    //  else {
-    //   postController.value.clear();
-    //   videoLinkController.clear();
-    //   selectedImage.value = '';
-    //   selectedTopic.value = '';
-    //   selectedTopicId.value = '';
-    // }
   }
 
   void deletePost(String postId, BuildContext context) async {
@@ -553,5 +570,27 @@ class CommunityController extends GetxController {
       // SavePostController might not be registered yet
       print("SavePostController not available: $e");
     }
+  }
+
+  // Add these methods to your CommunityController class:
+
+  // Process a like action regardless of post type (group or regular)
+  Future<void> processLike(BuildContext context, int postId) async {
+    // Set the selected post ID
+    selectedPostId.value = postId;
+
+    // Call the like API endpoint
+    Map<String, dynamic> data = {"type": "App\\Models\\Post", "id": postId};
+    await CommunityRep().likePosts(data, context);
+  }
+
+  // Process a save action regardless of post type (group or regular)
+  Future<void> processSave(BuildContext context, int postId) async {
+    // Set the selected post ID
+    selectedPostId.value = postId;
+
+    // Call the save API endpoint
+    Map<String, dynamic> data = {"post_id": postId};
+    await CommunityRep().savePost(data, context);
   }
 }

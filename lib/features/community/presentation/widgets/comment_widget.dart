@@ -13,6 +13,7 @@ class CommentWidget extends StatelessWidget {
   final String time;
   final String content;
   final List<CommentsResult> replies;
+  final VoidCallback? onLikeTap;
   final VoidCallback? onReply;
   final VoidCallback? onDelete;
 
@@ -23,6 +24,7 @@ class CommentWidget extends StatelessWidget {
     required this.time,
     required this.rank,
     required this.content,
+    required this.onLikeTap,
     required this.replies,
     required this.onDelete,
     this.onReply,
@@ -71,6 +73,11 @@ class CommentWidget extends StatelessWidget {
                         Expanded(
                           child: Text(time, style: GoogleFonts.plusJakartaSans(fontSize: 10.sp, color: Colors.grey)),
                         ),
+                        10.wS,
+                          InkWell(
+                            onTap: onLikeTap,
+                            child: Text('Like', style: TextStyle(color: Colors.blue, fontSize: 12.sp)),
+                          ),
                         if (onReply != null)
                           TextButton(
                             onPressed: onReply,

@@ -71,6 +71,7 @@ class NotificationController extends GetxController {
         notifications.value.result?.data?[notificationIndex].isRead =
             !(notifications.value.result?.data?[notificationIndex].isRead ?? false);
         notifications.refresh(); // Notify listeners about the change
+        checkNotification();
       }
     } catch (e) {
       print(e);
@@ -86,7 +87,8 @@ class NotificationController extends GetxController {
       var response = await NotificationRep().markAllNotification(context);
       print("Notification: $response");
 
-      fetchNotifications(); // Refresh notifications after marking all as read
+      notifications.refresh();
+      checkNotification();
     } catch (e) {
       print(e);
     } finally {

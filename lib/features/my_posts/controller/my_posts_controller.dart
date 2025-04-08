@@ -1,3 +1,5 @@
+import 'package:business_application/features/community/controller/community_controller.dart';
+import 'package:business_application/features/groups/controller/groups_controller.dart';
 import 'package:business_application/features/my_posts/data/my_posts_model.dart';
 import 'package:business_application/main.dart';
 import 'package:business_application/repository/community_rep.dart';
@@ -70,6 +72,36 @@ class MyPostsController extends GetxController {
       );
     } finally {
       isLoading(false);
+    }
+  }
+
+  // Update the handlePostInteraction method:
+
+  void handlePostInteraction(int postId, String action, BuildContext context) async {
+    final communityController = Get.find<CommunityController>();
+
+    if (action == 'like') {
+      // Update UI optimistically
+      int postIndex = myPosts.value.result?.data?.indexWhere((p) => p.id == postId) ?? -1;
+      if (postIndex != -1) {
+        bool currentState = myPosts.value.result!.data![postIndex].isLiked ?? false;
+        myPosts.value.result!.data![postIndex].isLiked = !currentState;
+        myPosts.refresh();
+      }
+
+      // Process the like action directly
+      await communityController.processLike(context, postId);
+    } else if (action == 'save') {
+      // Update UI optimistically
+      int postIndex = myPosts.value.result?.data?.indexWhere((p) => p.id == postId) ?? -1;
+      if (postIndex != -1) {
+        bool currentState = myPosts.value.result!.data![postIndex].isSaved ?? false;
+        myPosts.value.result!.data![postIndex].isSaved = !currentState;
+        myPosts.refresh();
+      }
+
+      // Process the save action directly
+      await communityController.processSave(context, postId);
     }
   }
 }

@@ -23,12 +23,66 @@ class CreatePostPage extends GetView<CommunityController> {
 
   @override
   Widget build(BuildContext context) {
+    // Set up debug flag to track execution flow
+    final isDebug = true;
+    // Create a key for forcing the dropdown to refresh
+    final forceRefreshKey = GlobalKey();
+
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (postId != null) {
-        await controller.getCommunityPostsById(postId!);
-        controller.loadPostData(postId!);
+      if (isDebug) {
+        print("\n\n=========== CREATE POST PAGE DIAGNOSTICS ===========");
+        print("isGroupTopics = $isGroupTopics (This controls which topics are shown)");
+        print("postId = $postId (If not null, this is an edit operation)");
+        print("groupId = $groupId (This identifies which group's topics to load)");
+      }
+
+      // Clear any existing selections to avoid conflicts
+      controller.selectedTopic.value = "";
+      controller.selectedTopicId.value = "";
+
+      // CRITICAL: Load topics FIRST before loading the post data
+      if (isGroupTopics && groupId != null) {
+        if (isDebug) print("CREATE POST PAGE: Loading group topics for group ID $groupId");
+        final groupsController = Get.find<GroupsController>();
+        await groupsController.fetchGroupsTopic(groupId!);
+
+        if (isDebug) {
+          final topics = groupsController.groupsTopicResponse.value.result?.data ?? [];
+          print("CREATE POST PAGE: Loaded ${topics.length} group topics:");
+          topics.forEach((topic) {
+            print("  - ${topic.name} (ID: ${topic.id})");
+          });
+        }
       } else {
-        controller.loadPostData("");
+        if (isDebug) print("CREATE POST PAGE: Loading community topics");
+        await controller.getTopic();
+
+        if (isDebug) {
+          final topics = controller.topics.value.result?.data ?? [];
+          print("CREATE POST PAGE: Loaded ${topics.length} community topics");
+        }
+      }
+
+      // Now handle post data if this is an edit
+      if (postId != null) {
+        if (isDebug) print("CREATE POST PAGE: Loading post with ID $postId");
+        await controller.getCommunityPostsById(postId!);
+
+        // Extract topic information from the post
+        final topicName = controller.communityPostsById.value.result?.topic?.name ?? '';
+        final topicId = controller.communityPostsById.value.result?.topic?.id?.toString() ?? '';
+
+        if (isDebug) {
+          print("CREATE POST PAGE: Post has topic: $topicName (ID: $topicId)");
+          print("CREATE POST PAGE: isGroupTopics=$isGroupTopics");
+        }
+
+        // Set the topic AFTER both topics list and post data are loaded
+        controller.selectedTopic.value = topicName;
+        controller.selectedTopicId.value = topicId;
+
+        // Load other post data
+        controller.loadPostData(postId!);
       }
     });
 
@@ -49,15 +103,18 @@ class CreatePostPage extends GetView<CommunityController> {
                   return;
                 }
 
-                if (postId == null || isGroupTopics) {
-                  controller.createNewPosts(groupId: groupId);
+                if (postId == null) {
+                  // Creating a new post (group or regular)
+                  controller.createNewPosts(groupId: isGroupTopics ? groupId : null);
+                  context.pop();
                 } else {
+                  // Editing an existing post
                   controller.updatePost(
                     postId: postId ?? "",
                     content: controller.postController.text,
                     topicId: controller.selectedTopicId.value,
                     videoUrl: controller.videoLinkController.text,
-                    groupId: groupId,
+                    groupId: isGroupTopics ? groupId : null,
                   );
                   context.pop();
                 }
@@ -205,63 +262,96 @@ class CreatePostPage extends GetView<CommunityController> {
                       ),
                     ),
                     20.hS,
-                    DropdownMenu(
-                      hintText: "Select a topic",
-                      initialSelection: postId != null ? controller.selectedTopic.value : null,
-                      inputDecorationTheme: InputDecorationTheme(
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: AppColors.borderColor),
+                    Obx(() {
+                      // Debug information
+                      final isDebug = true;
+
+                      // Always get the current latest values
+                      final topicsToShow =
+                          isGroupTopics
+                              ? Get.find<GroupsController>().groupsTopicResponse.value.result?.data
+                              : controller.topics.value.result?.data;
+
+                      final currentSelection = controller.selectedTopic.value;
+
+                      if (isDebug) {
+                        print("=========== DROPDOWN REBUILD ===========");
+                        print("isGroupTopics = $isGroupTopics");
+                        print("Current selection = '$currentSelection' (ID: ${controller.selectedTopicId.value})");
+                        print("Available topics: ${topicsToShow?.length ?? 0}");
+                        topicsToShow?.forEach((topic) {
+                          final name = isGroupTopics ? (topic as GroupTopics).name : (topic as Topic).name;
+                          print("  - $name");
+                        });
+                      }
+
+                      // Build a unique key that includes all the relevant state to force rebuild
+                      final keyString =
+                          "topic_dropdown_${isGroupTopics}_${controller.selectedTopic.value}_${DateTime.now().millisecondsSinceEpoch}";
+
+                      if (isDebug) print("Using key: $keyString");
+
+                      return DropdownMenu<String>(
+                        key: ValueKey(keyString),
+                        hintText: "Select a topic",
+                        initialSelection: currentSelection.isNotEmpty ? currentSelection : null,
+                        inputDecorationTheme: InputDecorationTheme(
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(color: AppColors.borderColor),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(color: AppColors.borderColor),
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(color: AppColors.borderColor),
+                          ),
                         ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: AppColors.borderColor),
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: AppColors.borderColor),
-                        ),
-                      ),
-                      width: MediaQuery.of(context).size.width * 0.9,
-                      requestFocusOnTap: true,
-                      enableFilter: true,
-                      trailingIcon: Icon(Icons.keyboard_arrow_down_sharp),
-                      onSelected: (val) {
-                        controller.selectedTopic.value = val as String;
-                        if (isGroupTopics) {
-                          final selectedTopic = Get.find<GroupsController>().groupsTopicResponse.value.result?.data
-                              ?.firstWhere((topic) => topic.name == val, orElse: () => GroupTopics());
-                          controller.selectedTopicId.value = selectedTopic?.id?.toString() ?? '';
-                        } else {
-                          final selectedTopic = controller.topics.value.result?.data?.firstWhere(
-                            (topic) => topic.name == val,
-                            orElse: () => Topic(),
-                          );
-                          controller.selectedTopicId.value = selectedTopic?.id?.toString() ?? '';
-                        }
-                      },
-                      dropdownMenuEntries:
-                          (isGroupTopics
-                                  ? Get.find<GroupsController>().groupsTopicResponse.value.result?.data
-                                  : controller.topics.value.result?.data)
-                              ?.map((topic) {
-                                if (isGroupTopics) {
-                                  final groupTopic = topic as GroupTopics;
-                                  return DropdownMenuEntry<Object>(
-                                    value: groupTopic.name ?? '',
-                                    label: groupTopic.name ?? '',
-                                  );
-                                } else {
-                                  final communityTopic = topic as Topic;
-                                  return DropdownMenuEntry<Object>(
-                                    value: communityTopic.name ?? '',
-                                    label: communityTopic.name ?? '',
-                                  );
-                                }
-                              })
-                              .toList() ??
-                          [],
-                    ),
+                        width: MediaQuery.of(context).size.width * 0.9,
+                        requestFocusOnTap: true,
+                        enableFilter: true,
+                        trailingIcon: Icon(Icons.keyboard_arrow_down_sharp),
+                        onSelected: (val) {
+                          if (val == null) return;
+
+                          if (isDebug) print("CREATE POST PAGE: Topic selected: $val");
+
+                          controller.selectedTopic.value = val;
+                          if (isGroupTopics) {
+                            final selectedTopic = Get.find<GroupsController>().groupsTopicResponse.value.result?.data
+                                ?.firstWhere((topic) => topic.name == val, orElse: () => GroupTopics());
+                            controller.selectedTopicId.value = selectedTopic?.id?.toString() ?? '';
+                          } else {
+                            final selectedTopic = controller.topics.value.result?.data?.firstWhere(
+                              (topic) => topic.name == val,
+                              orElse: () => Topic(),
+                            );
+                            controller.selectedTopicId.value = selectedTopic?.id?.toString() ?? '';
+                          }
+
+                          if (isDebug) print("CREATE POST PAGE: Set topic ID to: ${controller.selectedTopicId.value}");
+                        },
+                        dropdownMenuEntries:
+                            topicsToShow?.map((topic) {
+                              if (isGroupTopics) {
+                                final groupTopic = topic as GroupTopics;
+                                return DropdownMenuEntry<String>(
+                                  value: groupTopic.name ?? '',
+                                  label: groupTopic.name ?? '',
+                                );
+                              } else {
+                                final communityTopic = topic as Topic;
+                                return DropdownMenuEntry<String>(
+                                  value: communityTopic.name ?? '',
+                                  label: communityTopic.name ?? '',
+                                );
+                              }
+                            }).toList() ??
+                            [],
+                      );
+                    }),
                   ],
                 ),
               ),

@@ -176,10 +176,13 @@ class GroupDetailsPage extends GetView<GroupsController> {
                                 Get.find<CommunityController>().getCommunityPostsById(posts.id.toString());
                                 Get.find<CommunityController>().getComments(posts.id.toString());
 
+                                // CRITICAL: Make sure isGroupPost is explicitly set to true
+                                print("GROUP DETAILS PAGE: Navigating to post details with isGroupPost=true");
+
                                 context.push(
                                   '/post-details/${posts.id}',
                                   extra: {
-                                    'isGroupPost': true, // Ensure this is true
+                                    'isGroupPost': true, // Ensure this is set to true
                                     'groupId': controller.currentGroupId.value,
                                     'postId': posts.id.toString(),
                                   },

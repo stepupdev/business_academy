@@ -22,13 +22,10 @@ class PostDetailsPage extends StatefulWidget {
   final bool isGroupPost;
   final String? groupId;
 
-  const PostDetailsPage({
-    super.key,
-    this.isVideo = true,
-    required this.isGroupPost,
-    this.groupId,
-    required this.postId,
-  });
+  PostDetailsPage({super.key, this.isVideo = true, required this.isGroupPost, this.groupId, required this.postId}) {
+    // Add debug print to see the values being passed
+    print("POST DETAILS PAGE CONSTRUCTOR: isGroupPost=$isGroupPost, groupId=$groupId, postId=$postId");
+  }
 
   @override
   PostDetailsPageState createState() => PostDetailsPageState();
@@ -45,6 +42,8 @@ class PostDetailsPageState extends State<PostDetailsPage> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!_isInitialized) {
+      print("POST DETAILS: Initializing with isGroupPost=${widget.isGroupPost}, groupId=${widget.groupId}");
+
       final controller = Get.find<CommunityController>();
       controller.selectedPostId.value = int.tryParse(widget.postId) ?? 0;
       controller.getCommunityPostsById(widget.postId);
@@ -52,9 +51,12 @@ class PostDetailsPageState extends State<PostDetailsPage> {
 
       // Initialize group controller if this is a group post
       if (widget.isGroupPost && widget.groupId != null) {
+        print("POST DETAILS: This is a group post! Loading group details...");
         final groupController = Get.find<GroupsController>();
         groupController.selectedPostId.value = int.tryParse(widget.postId) ?? 0;
         groupController.currentGroupId.value = widget.groupId ?? '';
+        // Preload group topics
+        groupController.fetchGroupsTopic(widget.groupId!);
       }
 
       _isInitialized = true;
@@ -78,12 +80,29 @@ class PostDetailsPageState extends State<PostDetailsPage> {
               return PopupMenuButton<String>(
                 onSelected: (value) {
                   if (value == 'edit') {
+                    // Debug information to verify values
+                    final isGroupPost = widget.isGroupPost;
+                    final groupId = widget.groupId;
+
+                    print("POST DETAILS: Navigating to edit. isGroupPost=$isGroupPost, groupId=$groupId");
+
+                    // Force fetch group topics if needed
+                    if (isGroupPost && groupId != null) {
+                      try {
+                        print("POST DETAILS: Pre-loading group topics for groupId=$groupId");
+                        final groupsController = Get.find<GroupsController>();
+                        groupsController.fetchGroupsTopic(groupId);
+                      } catch (e) {
+                        print("Error pre-loading group topics: $e");
+                      }
+                    }
+
+                    // Navigate with explicit parameters
                     context.push(
                       '/create-post',
-                      extra: {'isGroupTopics': false, 'postId': widget.postId, 'groupId': widget.groupId},
+                      extra: {'isGroupTopics': isGroupPost, 'postId': widget.postId, 'groupId': groupId},
                     );
                   } else if (value == 'delete') {
-                    // Show confirmation dialog for deleting the post
                     showDialog(
                       context: context,
                       builder:
@@ -107,7 +126,7 @@ class PostDetailsPageState extends State<PostDetailsPage> {
                 itemBuilder:
                     (context) => [
                       PopupMenuItem(value: 'edit', child: Text('Edit Post')),
-                      PopupMenuItem(value: 'delete', child: Text('Delete Post')), // Add Delete Post option
+                      PopupMenuItem(value: 'delete', child: Text('Delete Post')),
                     ],
               );
             }
@@ -216,6 +235,7 @@ class PostDetailsPageState extends State<PostDetailsPage> {
                                 time: HelperUtils.formatTime(comment.createdAt ?? DateTime.now()),
                                 content: comment.content ?? '',
                                 replies: comment.replies ?? [],
+                                onLikeTap: () {},
                                 onDelete: () {
                                   // show confirmation dialog
                                   showDialog(

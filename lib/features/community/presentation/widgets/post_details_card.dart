@@ -127,10 +127,12 @@ class _PostDetailsState extends State<PostDetailsCard> {
                   ],
                 ),
                 10.wS,
-                Text(
-                  widget.topic,
-                  style: GoogleFonts.plusJakartaSans(color: Colors.grey, fontSize: 12.sp),
-                  overflow: TextOverflow.ellipsis,
+                Expanded(
+                  child: Text(
+                    widget.topic,
+                    style: GoogleFonts.plusJakartaSans(color: Colors.grey, fontSize: 12.sp),
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
               ],
             ),
