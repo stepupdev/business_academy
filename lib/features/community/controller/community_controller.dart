@@ -440,6 +440,7 @@ class CommunityController extends GetxController {
     videoLinkController.clear();
     selectedImage.value = "";
     selectedTabIndex.value = 0;
+    selectedTopic.value = "";
   }
 
   // Add these new methods to your CommunityController

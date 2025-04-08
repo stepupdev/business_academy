@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:business_application/core/config/app_colors.dart';
 import 'package:business_application/core/config/app_size.dart';
+import 'package:business_application/core/utils/ui_support.dart';
 import 'package:business_application/features/community/controller/community_controller.dart';
 import 'package:business_application/features/community/data/topics_model.dart';
 import 'package:business_application/features/groups/controller/groups_controller.dart';
@@ -44,13 +45,7 @@ class CreatePostPage extends GetView<CommunityController> {
             FilledButton(
               onPressed: () {
                 if (controller.selectedTopicId.value.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text("Please select a topic for your post"),
-                      backgroundColor: Colors.red,
-                      duration: Duration(seconds: 2),
-                    ),
-                  );
+                  Ui.showErrorSnackBar(context, message: "Please select a topic");
                   return;
                 }
 
@@ -212,7 +207,7 @@ class CreatePostPage extends GetView<CommunityController> {
                     20.hS,
                     DropdownMenu(
                       hintText: "Select a topic",
-                      initialSelection: controller.selectedTopic.value,
+                      initialSelection: postId != null ? controller.selectedTopic.value : null,
                       inputDecorationTheme: InputDecorationTheme(
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
