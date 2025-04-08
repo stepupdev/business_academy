@@ -29,7 +29,7 @@ class SplashPageState extends State<SplashPage> {
 
     if (isLoggedIn) {
       print("✅ Redirecting to Home Page...");
-      context.go(AppRoutes.home);
+      context.go(AppRoutes.communityFeed);
       await Get.find<AuthService>().getCurrentUser();
     } else {
       print("❌ Redirecting to Sign-In Page...");

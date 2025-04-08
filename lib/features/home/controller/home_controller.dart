@@ -1,30 +1,76 @@
+import 'package:business_application/core/config/app_router.dart';
+import 'package:business_application/core/config/app_routes.dart';
 import 'package:business_application/features/announcements/presentation/page/announcements_page.dart';
 import 'package:business_application/features/community/controller/community_controller.dart';
 import 'package:business_application/features/menu/controller/menu_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:business_application/features/community/presentation/pages/community_feed_page.dart';
 import 'package:business_application/features/groups/presentation/pages/groups_page.dart';
 import 'package:business_application/features/menu/presentation/pages/menu_page.dart';
 
 class HomeController extends GetxController {
-  var currentIndex = 0;
-  var communityController = Get.find<CommunityController>();
-  var menuController = Get.find<UserMenuController>();
+  var currentIndex = 0.obs;
+  late final List<Widget> screens;
 
-  final List<Widget> screens = [CommunityFeedScreen(), const GroupsPage(), const AnnouncementsPage(), const MenuPage()];
+  // Define tab routes that match your router paths
+  final List<String> tabRoutes = [
+    AppRoutes.communityFeed,
+    AppRoutes.groupsTab,
+    AppRoutes.announcementsTab,
+    AppRoutes.menuTab,
+  ];
 
-  Widget get currentScreen => screens[currentIndex];
+  @override
+  void onInit() {
+    super.onInit();
 
-  void changeTabIndex(int index) {
-    currentIndex = index;
+    // Find controllers only once
+    final communityController = Get.find<CommunityController>();
+    final menuController = Get.find<UserMenuController>();
+
+    // Initialize screens with PageStorageKey to help preserve state
+    screens = [
+      const CommunityFeedScreen(key: PageStorageKey('communityFeed')),
+      const GroupsPage(key: PageStorageKey('groups')),
+      const AnnouncementsPage(key: PageStorageKey('announcements')),
+      const MenuPage(key: PageStorageKey('menu')),
+    ];
+
+    // Listen for tab changes to update resources
+    ever(currentIndex, (index) {
+      if (index == 0) {
+        communityController.getCommunityPosts();
+        communityController.getTopic();
+      } else if (index == 3) {
+        menuController.fetchCommunities();
+        menuController.getUser();
+      }
+    });
+  }
+
+  Widget get currentScreen => screens[currentIndex.value];
+
+  void changeTabIndex(int index, [BuildContext? context]) {
+    if (currentIndex.value == index) return;
+
+    currentIndex.value = index;
+
+    // Update resources based on selected tab
     if (index == 0) {
+      final communityController = Get.find<CommunityController>();
       communityController.getCommunityPosts();
       communityController.getTopic();
     } else if (index == 3) {
+      final menuController = Get.find<UserMenuController>();
       menuController.fetchCommunities();
       menuController.getUser();
     }
-    update();
+
+    // Navigate using GoRouter if context is provided
+    if (context != null) {
+      context.go(tabRoutes[index]);
+    }
   }
 }

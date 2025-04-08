@@ -30,6 +30,71 @@ class CommunityController extends GetxController {
   final RxString selectedImage = "".obs;
   final RxInt selectedTabIndex = 0.obs;
   var filteredPosts = <Posts>[].obs;
+  final ScrollController scrollController = ScrollController();
+  RxDouble scrollOffset = 0.0.obs; // Change to RxDouble for reactivity
+  RxBool shouldRestorePosition = false.obs;
+
+  @override
+  void onInit() {
+    Get.find<AuthService>().getCurrentUser();
+    getCommunityPosts();
+    getTopic();
+
+    Get.find<NotificationController>().checkNotification();
+    selectedTopic.listen((value) {
+      if (value.isNotEmpty) {
+        final topic = topics.value.result?.data?.firstWhere((t) => t.name == value, orElse: () => topics_model.Topic());
+        filterPostsByTopic(value, topicId: topic?.id?.toString());
+      }
+    });
+    scrollController.addListener(() {
+      scrollOffset.value = scrollController.offset;
+    });
+    super.onInit();
+  }
+
+  @override
+  void onClose() {
+    postController.dispose();
+    videoLinkController.dispose();
+    postFocusNode.dispose();
+    scrollController.dispose();
+    super.onClose();
+  }
+
+  static const imageLink =
+      'https://s3-alpha-sig.figma.com/img/f8a3/11ee/624d5c6c6457029c05e89e81ac6882ab?Expires=1743379200&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=hScOEIqEn5wtub6NMJ849GdedyxVifSWD6fHLLn3qrc2E0eDGI7p~onPifLf0OAu29CzZTAYLhj4E8LDFs~koGpLUjNuqqsX4KJEpYFzSTL19RPR479kqW~i4SjjGuSviyb-I-6lQPC2imp7wZjtaobMqDT55ZO-eZaqb67d0qRBhR19vtIKgBRxkks3sSyNguPn3ZYCdUUa5VgUcyhGB2TDiei5~9zO211VLyEKu5uy5~~5-zpXPCdxuLUs0o8VFy65DTgbGfl1oB1r5snWHbPr~c4a32iSA9QvBWTzOf25b~jQnYrGddqxolA1z62I-3ueLavcGkacHO26W8GZjQ__';
+
+  var selectedCommunityId = '1'.obs;
+
+  void saveScrollPosition() {
+    // Save the current scroll position
+    if (scrollController.hasClients) {
+      scrollOffset.value = scrollController.offset;
+      shouldRestorePosition.value = true;
+    }
+  }
+
+  void restoreScrollPosition() {
+    if (shouldRestorePosition.value && scrollOffset.value > 0) {
+      // Use a more reliable approach with WidgetsBinding
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        // Using a small delay to ensure the ListView is fully built
+        Future.delayed(const Duration(milliseconds: 200), () {
+          if (scrollController.hasClients) {
+            try {
+              scrollController.jumpTo(scrollOffset.value);
+              print("Restored scroll position to: ${scrollOffset.value}");
+            } catch (e) {
+              print("Error restoring scroll position: $e");
+            }
+          } else {
+            print("ScrollController has no clients");
+          }
+        });
+      });
+    }
+  }
 
   Future<void> pickImage(ImageSource source) async {
     final picker = ImagePicker();
@@ -49,35 +114,6 @@ class CommunityController extends GetxController {
       selectedImage.value = pickedFile.path;
     }
   }
-
-  @override
-  void onInit() {
-    Get.find<AuthService>().getCurrentUser();
-    getCommunityPosts();
-    getTopic();
-
-    Get.find<NotificationController>().checkNotification();
-    selectedTopic.listen((value) {
-      if (value.isNotEmpty) {
-        final topic = topics.value.result?.data?.firstWhere((t) => t.name == value, orElse: () => topics_model.Topic());
-        filterPostsByTopic(value, topicId: topic?.id?.toString());
-      }
-    });
-    super.onInit();
-  }
-
-  @override
-  void onClose() {
-    postController.dispose();
-    videoLinkController.dispose();
-    postFocusNode.dispose();
-    super.onClose();
-  }
-
-  static const imageLink =
-      'https://s3-alpha-sig.figma.com/img/f8a3/11ee/624d5c6c6457029c05e89e81ac6882ab?Expires=1743379200&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=hScOEIqEn5wtub6NMJ849GdedyxVifSWD6fHLLn3qrc2E0eDGI7p~onPifLf0OAu29CzZTAYLhj4E8LDFs~koGpLUjNuqqsX4KJEpYFzSTL19RPR479kqW~i4SjjGuSviyb-I-6lQPC2imp7wZjtaobMqDT55ZO-eZaqb67d0qRBhR19vtIKgBRxkks3sSyNguPn3ZYCdUUa5VgUcyhGB2TDiei5~9zO211VLyEKu5uy5~~5-zpXPCdxuLUs0o8VFy65DTgbGfl1oB1r5snWHbPr~c4a32iSA9QvBWTzOf25b~jQnYrGddqxolA1z62I-3ueLavcGkacHO26W8GZjQ__';
-
-  var selectedCommunityId = '1'.obs;
 
   void changeCommunity(String communityId) {
     selectedCommunityId.value = communityId;

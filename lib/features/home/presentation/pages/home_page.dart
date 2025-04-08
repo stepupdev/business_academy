@@ -4,52 +4,75 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:business_application/features/home/controller/home_controller.dart';
 import 'package:heroicons/heroicons.dart';
-import 'package:flutter/services.dart'; // Required for SystemNavigator.pop()
+import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+class HomePage extends StatefulWidget {
+  const HomePage({super.key, this.child});
+  final Widget? child;
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  late HomeController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.put(HomeController()); // Initialize once
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // Sync the current navigation state with the bottom tab index
+    final location = GoRouterState.of(context).location;
+    for (int i = 0; i < controller.tabRoutes.length; i++) {
+      if (location == controller.tabRoutes[i]) {
+        controller.currentIndex.value = i;
+        break;
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final dark = Ui.isDarkMode(context);
-    return GetBuilder<HomeController>(
-      init: HomeController(),
-      builder: (controller) {
-        return WillPopScope(
-          onWillPop: () async {
-            if (controller.currentIndex != 0) {
-              // Navigate to the first tab instead of exiting
-              controller.changeTabIndex(0);
-              return false; // Prevent default back action
-            } else {
-              // Show exit confirmation dialog
-              bool exitApp = await _showExitDialog(context);
-              if (exitApp) {
-                SystemNavigator.pop(); // Properly close the app
-              }
-              return false; // Prevent default back action
-            }
-          },
-          child: Scaffold(
-            body: controller.currentScreen,
-            bottomNavigationBar: BottomNavigationBar(
-              backgroundColor: dark ? AppColors.dark : Colors.white,
-              currentIndex: controller.currentIndex,
-              type: BottomNavigationBarType.fixed,
-              unselectedItemColor: dark ? Colors.white : Colors.grey,
-              selectedItemColor: AppColors.primaryColor,
-              showUnselectedLabels: true,
-              onTap: controller.changeTabIndex,
-              items: const [
-                BottomNavigationBarItem(icon: HeroIcon(HeroIcons.home), label: 'Home'),
-                BottomNavigationBarItem(icon: HeroIcon(HeroIcons.users), label: 'Groups'),
-                BottomNavigationBarItem(icon: HeroIcon(HeroIcons.megaphone), label: 'Announcements'),
-                BottomNavigationBarItem(icon: HeroIcon(HeroIcons.bars3), label: 'Menu'),
-              ],
-            ),
-          ),
-        );
+
+    return WillPopScope(
+      onWillPop: () async {
+        if (controller.currentIndex.value != 0) {
+          controller.changeTabIndex(0, context); // Pass context for navigation
+          return false;
+        } else {
+          final exitApp = await _showExitDialog(context);
+          if (exitApp) {
+            SystemNavigator.pop();
+          }
+          return false;
+        }
       },
+      child: Scaffold(
+        body: widget.child, // Show the content passed from the shell route
+        bottomNavigationBar: Obx(() => BottomNavigationBar(
+          backgroundColor: dark ? AppColors.dark : Colors.white,
+          currentIndex: controller.currentIndex.value,
+          type: BottomNavigationBarType.fixed,
+          unselectedItemColor: dark ? Colors.white : Colors.grey,
+          selectedItemColor: AppColors.primaryColor,
+          showUnselectedLabels: true,
+          onTap: (index) => controller.changeTabIndex(index, context), // Pass context for navigation
+          items: const [
+            BottomNavigationBarItem(icon: HeroIcon(HeroIcons.home), label: 'Home'),
+            BottomNavigationBarItem(icon: HeroIcon(HeroIcons.users), label: 'Groups'),
+            BottomNavigationBarItem(icon: HeroIcon(HeroIcons.megaphone), label: 'Announcements'),
+            BottomNavigationBarItem(icon: HeroIcon(HeroIcons.bars3), label: 'Menu'),
+          ],
+        )),
+      ),
     );
   }
 

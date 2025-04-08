@@ -76,7 +76,7 @@ class PostDetailsPageState extends State<PostDetailsPage> {
                               TextButton(onPressed: () => Navigator.of(context).pop(), child: Text('Cancel')),
                               TextButton(
                                 onPressed: () {
-                                  context.push(AppRoutes.home);
+                                  context.push(AppRoutes.communityFeed);
                                   controller.deletePost(widget.postId, context);
                                 },
                                 child: Text('Delete'),
