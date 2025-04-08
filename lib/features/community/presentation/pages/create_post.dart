@@ -15,8 +15,8 @@ import 'package:image_picker/image_picker.dart';
 
 class CreatePostPage extends GetView<CommunityController> {
   final bool isGroupTopics;
-  final String? postId; // Optional postId for editing
-  final String? groupId; // Group ID for group posts
+  final String? postId;
+  final String? groupId;
 
   const CreatePostPage({super.key, required this.isGroupTopics, this.postId, this.groupId});
 
@@ -24,17 +24,17 @@ class CreatePostPage extends GetView<CommunityController> {
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (postId != null) {
-        await controller.getCommunityPostsById(postId!); // Wait for data to load
-        controller.loadPostData(postId!); // Load the post data after fetching
+        await controller.getCommunityPostsById(postId!);
+        controller.loadPostData(postId!);
       } else {
-        controller.loadPostData(""); // For new posts
+        controller.loadPostData("");
       }
     });
 
     return WillPopScope(
       onWillPop: () async {
-        controller.clearPostData(); // Clear data when navigating back
-        return true; // Allow navigation
+        controller.clearPostData();
+        return true;
       },
       child: Scaffold(
         appBar: AppBar(
@@ -43,15 +43,26 @@ class CreatePostPage extends GetView<CommunityController> {
           actions: [
             FilledButton(
               onPressed: () {
+                if (controller.selectedTopicId.value.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text("Please select a topic for your post"),
+                      backgroundColor: Colors.red,
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                  return;
+                }
+
                 if (postId == null || isGroupTopics) {
-                  controller.createNewPosts(groupId: groupId); // Pass groupId for group posts
+                  controller.createNewPosts(groupId: groupId);
                 } else {
                   controller.updatePost(
                     postId: postId ?? "",
                     content: controller.postController.text,
                     topicId: controller.selectedTopicId.value,
                     videoUrl: controller.videoLinkController.text,
-                    groupId: groupId, // Pass groupId for updating group posts
+                    groupId: groupId,
                   );
                   context.pop();
                 }
@@ -61,10 +72,7 @@ class CreatePostPage extends GetView<CommunityController> {
                 backgroundColor: AppColors.primaryColor,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.r)),
               ),
-              child: Text(
-                postId == null ? "Share" : "Update",
-                style: TextStyle(color: Colors.white),
-              ), // Update button text
+              child: Text(postId == null ? "Share" : "Update", style: TextStyle(color: Colors.white)),
             ),
           ],
         ),
