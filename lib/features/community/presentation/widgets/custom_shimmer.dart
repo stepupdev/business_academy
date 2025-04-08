@@ -16,7 +16,7 @@ class CustomShimmer extends StatelessWidget {
         children: [
           Shimmer.fromColors(
             baseColor: dark ? AppColors.dark : Colors.grey[300]!,
-            highlightColor: dark ? AppColors.grey : Colors.grey[100]!,
+            highlightColor: dark ? AppColors.darkerGrey : Colors.grey[100]!,
             child: Container(
               color: dark ? AppColors.grey : Color(0xffE9F0FF),
               padding: const EdgeInsets.all(8.0),
@@ -46,7 +46,7 @@ class CustomShimmer extends StatelessWidget {
                 itemBuilder: (context, index) {
                   return Shimmer.fromColors(
                     baseColor: dark ? AppColors.dark : Colors.grey[300]!,
-                    highlightColor: dark ? AppColors.grey : Colors.grey[100]!,
+                    highlightColor: dark ? AppColors.darkerGrey : Colors.grey[100]!,
                     child: Container(
                       width: 80.w,
                       decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(50)),
@@ -66,7 +66,7 @@ class CustomShimmer extends StatelessWidget {
             itemBuilder: (context, index) {
               return Shimmer.fromColors(
                 baseColor: dark ? AppColors.dark : Colors.grey[300]!,
-                highlightColor: dark ? AppColors.grey : Colors.grey[100]!,
+                highlightColor: dark ? AppColors.darkerGrey : Colors.grey[100]!,
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 16.h),
                   color: dark ? AppColors.dark : Color(0xffE9F0FF),

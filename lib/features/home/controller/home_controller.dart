@@ -1,14 +1,13 @@
-import 'package:business_application/core/config/app_router.dart';
 import 'package:business_application/core/config/app_routes.dart';
 import 'package:business_application/features/announcements/presentation/page/announcements_page.dart';
 import 'package:business_application/features/community/controller/community_controller.dart';
+import 'package:business_application/features/community/presentation/pages/community_feed_page.dart';
+import 'package:business_application/features/groups/presentation/pages/groups_page.dart';
 import 'package:business_application/features/menu/controller/menu_controller.dart';
+import 'package:business_application/features/menu/presentation/pages/menu_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
-import 'package:business_application/features/community/presentation/pages/community_feed_page.dart';
-import 'package:business_application/features/groups/presentation/pages/groups_page.dart';
-import 'package:business_application/features/menu/presentation/pages/menu_page.dart';
 
 class HomeController extends GetxController {
   var currentIndex = 0.obs;
