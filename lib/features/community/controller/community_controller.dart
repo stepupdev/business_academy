@@ -24,12 +24,12 @@ class CommunityController extends GetxController {
   var selectedTopic = ''.obs;
   topics_model.TopicsResponseModel? selectedTopicValue;
   var selectedTopicId = ''.obs;
-  var postController = TextEditingController().obs;
-  var selectedImage = "".obs;
-  final RxInt selectedTabIndex = 0.obs;
+  final TextEditingController postController = TextEditingController(); // No Rx wrapper
   final TextEditingController videoLinkController = TextEditingController();
-  var filteredPosts = <Posts>[].obs;
   final FocusNode postFocusNode = FocusNode();
+  final RxString selectedImage = "".obs;
+  final RxInt selectedTabIndex = 0.obs;
+  var filteredPosts = <Posts>[].obs;
 
   Future<void> pickImage(ImageSource source) async {
     final picker = ImagePicker();
@@ -64,6 +64,14 @@ class CommunityController extends GetxController {
       }
     });
     super.onInit();
+  }
+
+  @override
+  void onClose() {
+    postController.dispose();
+    videoLinkController.dispose();
+    postFocusNode.dispose();
+    super.onClose();
   }
 
   static const imageLink =
@@ -249,7 +257,7 @@ class CommunityController extends GetxController {
     File? selectedFile = selectedImage.value.isNotEmpty ? File(selectedImage.value) : null;
 
     final response = await CommunityRep().communityPosts(
-      content: postController.value.text.trim(),
+      content: postController.text.trim(),
       topicId: selectedTopicId.value,
       imageFile: selectedFile,
       videoUrl: videoLinkController.text.isNotEmpty ? videoLinkController.text : null,
@@ -258,12 +266,7 @@ class CommunityController extends GetxController {
 
     if (response['success'] == true) {
       getCommunityPosts();
-      postController.value.clear();
-      selectedImage.value = "";
-      videoLinkController.clear();
-      selectedTopicId.value = '';
-      selectedTopic.value = '';
-      selectedTabIndex.value = 0;
+      clearPostData();
       scaffoldMessengerKey.currentState!.showSnackBar(
         SnackBar(content: Text(response['message']), backgroundColor: Colors.green),
       );
@@ -353,7 +356,7 @@ class CommunityController extends GetxController {
     final post = communityPostsById.value.result;
 
     if (post != null && post.id.toString() == postId) {
-      postController.value.text = post.content ?? '';
+      postController.text = post.content ?? '';
       selectedImage.value = post.image ?? '';
       videoLinkController.text = post.videoUrl ?? '';
       selectedTopic.value = post.topic?.name ?? '';
@@ -392,5 +395,12 @@ class CommunityController extends GetxController {
     } finally {
       isLoading(false);
     } //
+  }
+
+  void clearPostData() {
+    postController.clear();
+    videoLinkController.clear();
+    selectedImage.value = "";
+    selectedTabIndex.value = 0;
   }
 }
