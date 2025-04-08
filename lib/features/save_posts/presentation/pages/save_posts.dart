@@ -1,4 +1,3 @@
-import 'package:business_application/core/config/app_routes.dart';
 import 'package:business_application/core/config/app_size.dart';
 import 'package:business_application/features/community/controller/community_controller.dart';
 import 'package:business_application/features/save_posts/controller/save_post_controller.dart';
@@ -9,14 +8,33 @@ import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class SavePostsPage extends GetView<SavePostController> {
+class SavePostsPage extends StatefulWidget {
   const SavePostsPage({super.key});
 
   @override
+  State<SavePostsPage> createState() => _SavePostsPageState();
+}
+
+class _SavePostsPageState extends State<SavePostsPage> {
+  late SavePostController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.find<SavePostController>();
+    controller.getSavePosts();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // Restore scroll position when returning from post details
+    controller.restoreScrollPosition();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      controller.getSavePosts();
-    });
     return Scaffold(
       appBar: AppBar(
         title: Text('Saved Posts', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600, fontSize: 18.sp)),
@@ -52,13 +70,20 @@ class SavePostsPage extends GetView<SavePostController> {
             );
           }
           return ListView.builder(
+            controller: controller.scrollController, // Add scroll controller here
             itemCount: controller.savePosts.value.result?.data?.length,
             itemBuilder: (context, index) {
               final post = controller.savePosts.value.result?.data?[index];
               return UserPostWidget(
                 onTap: () {
+                  // Save scroll position before navigating
+                  controller.saveScrollPosition();
+
                   Get.find<CommunityController>().getCommunityPostsById(post?.id.toString() ?? "0");
-                  context.push(AppRoutes.postDetails, extra: {'postId': post?.id});
+                  Get.find<CommunityController>().getComments(post?.id.toString() ?? "0");
+                  Get.find<CommunityController>().selectedPostId.value = post?.id ?? 0;
+
+                  context.push('/post-details/${post?.id}');
                 },
                 name: post?.user?.name ?? "",
                 rank: post?.user?.rank?.name ?? "",
@@ -72,12 +97,34 @@ class SavePostsPage extends GetView<SavePostController> {
                 isLiked: post?.isLiked ?? false,
                 isSaved: post?.isSaved ?? false,
                 onSave: () {
-                  controller.savePosts.refresh();
+                  final communityController = Get.find<CommunityController>();
+                  communityController.selectedPostId.value = post?.id ?? 0;
+
+                  // Update UI optimistically
+                  int postIndex = controller.savePosts.value.result?.data?.indexWhere((p) => p.id == post?.id) ?? -1;
+                  if (postIndex != -1) {
+                    bool currentState = controller.savePosts.value.result!.data![postIndex].isSaved ?? false;
+                    controller.savePosts.value.result!.data![postIndex].isSaved = !currentState;
+                    controller.savePosts.refresh();
+                  }
+
+                  // API call
+                  communityController.savePost(context);
                 },
                 onLike: () {
-                  Get.find<CommunityController>().selectedPostId.value = post?.id ?? 0;
-                  Get.find<CommunityController>().likePosts(context);
-                  controller.getSavePosts(); // Refresh saved posts
+                  final communityController = Get.find<CommunityController>();
+                  communityController.selectedPostId.value = post?.id ?? 0;
+
+                  // Update UI optimistically
+                  int postIndex = controller.savePosts.value.result?.data?.indexWhere((p) => p.id == post?.id) ?? -1;
+                  if (postIndex != -1) {
+                    bool currentState = controller.savePosts.value.result!.data![postIndex].isLiked ?? false;
+                    controller.savePosts.value.result!.data![postIndex].isLiked = !currentState;
+                    controller.savePosts.refresh();
+                  }
+
+                  // Call controller method
+                  communityController.likePosts(context);
                 },
               );
             },

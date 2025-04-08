@@ -164,8 +164,8 @@ class GroupsController extends GetxController {
       filteredPosts.refresh();
     }
 
-    // Send the like request to the server
-    Map<String, dynamic> data = {"type": "App\\Models\\Post", "id": selectedPostId.value};
+    // Send the save request to the server
+    Map<String, dynamic> data = {"post_id": selectedPostId.value}; // CHANGE THIS LINE - was using wrong format
     final response = await CommunityRep().savePost(data, context);
 
     // Revert the state if the server request fails

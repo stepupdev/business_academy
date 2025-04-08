@@ -22,7 +22,13 @@ class PostDetailsPage extends StatefulWidget {
   final bool isGroupPost;
   final String? groupId;
 
-  const PostDetailsPage({super.key, this.isVideo = true, required this.isGroupPost, this.groupId, required this.postId});
+  const PostDetailsPage({
+    super.key,
+    this.isVideo = true,
+    required this.isGroupPost,
+    this.groupId,
+    required this.postId,
+  });
 
   @override
   PostDetailsPageState createState() => PostDetailsPageState();
@@ -40,9 +46,18 @@ class PostDetailsPageState extends State<PostDetailsPage> {
     super.didChangeDependencies();
     if (!_isInitialized) {
       final controller = Get.find<CommunityController>();
-      controller.getCommunityPostsById(widget.postId); // Fetch post details
-      controller.getComments(widget.postId); // Fetch comments
-      _isInitialized = true; // Mark as initialized
+      controller.selectedPostId.value = int.tryParse(widget.postId) ?? 0;
+      controller.getCommunityPostsById(widget.postId);
+      controller.getComments(widget.postId);
+
+      // Initialize group controller if this is a group post
+      if (widget.isGroupPost && widget.groupId != null) {
+        final groupController = Get.find<GroupsController>();
+        groupController.selectedPostId.value = int.tryParse(widget.postId) ?? 0;
+        groupController.currentGroupId.value = widget.groupId ?? '';
+      }
+
+      _isInitialized = true;
     }
   }
 
@@ -63,7 +78,10 @@ class PostDetailsPageState extends State<PostDetailsPage> {
               return PopupMenuButton<String>(
                 onSelected: (value) {
                   if (value == 'edit') {
-                    context.push('/create-post', extra: {'isGroupTopics': false, 'postId': widget.postId, 'groupId' : widget.groupId});
+                    context.push(
+                      '/create-post',
+                      extra: {'isGroupTopics': false, 'postId': widget.postId, 'groupId': widget.groupId},
+                    );
                   } else if (value == 'delete') {
                     // Show confirmation dialog for deleting the post
                     showDialog(
@@ -132,34 +150,28 @@ class PostDetailsPageState extends State<PostDetailsPage> {
                         isLiked: post?.isLiked ?? false,
                         isSaved: post?.isSaved ?? false,
                         onLike: () {
-                          if (widget.isGroupPost) {
-                            final groupsController = Get.find<GroupsController>();
-                            groupsController.selectedPostId.value = post?.id ?? 0;
-                            groupsController.likePosts(context); // Handle group post likes
-                            groupsController.fetchGroupPosts(
-                              groupsController.currentGroupId.value,
-                            ); // Refresh group posts
-                            groupsController.update(); // Ensure UI updates
-                          } else {
-                            controller.selectedPostId.value = post?.id ?? 0;
-                            controller.likePosts(context); // Handle community post likes
-                            controller.communityPostsById.refresh(); // Refresh community post details UI
-                            controller.update(); // Ensure UI updates
-                          }
+                          final postId = post?.id ?? 0;
+                          if (postId == 0) return;
+
+                          // Update UI optimistically - this is still fine in the view
+                          final currentState = controller.communityPostsById.value.result?.isLiked ?? false;
+                          controller.communityPostsById.value.result?.isLiked = !currentState;
+                          controller.communityPostsById.refresh();
+
+                          // Call controller method instead of direct API call
+                          controller.likePostAndSyncState(context, postId, currentState);
                         },
                         onSave: () {
-                          if (widget.isGroupPost) {
-                            final groupsController = Get.find<GroupsController>();
-                            groupsController.selectedPostId.value = post?.id ?? 0;
-                            groupsController.saveGroupPosts(context); // Handle group post saves
-                            groupsController.groupPosts.refresh(); // Refresh group posts UI
-                            groupsController.update(); // Ensure UI updates
-                          } else {
-                            controller.selectedPostId.value = post?.id ?? 0;
-                            controller.savePost(context); // Handle community post saves
-                            controller.communityPostsById.refresh(); // Refresh community post details UI
-                            controller.update(); // Ensure UI updates
-                          }
+                          final postId = post?.id ?? 0;
+                          if (postId == 0) return;
+
+                          // Update UI optimistically - this is still fine in the view
+                          final currentState = controller.communityPostsById.value.result?.isSaved ?? false;
+                          controller.communityPostsById.value.result?.isSaved = !currentState;
+                          controller.communityPostsById.refresh();
+
+                          // Call controller method instead of direct API call
+                          controller.savePostAndSyncState(context, postId, currentState);
                         },
                       ),
                       Divider(height: 1.h),

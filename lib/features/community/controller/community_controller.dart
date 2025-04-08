@@ -6,7 +6,9 @@ import 'package:business_application/features/community/data/community_posts_mod
 import 'package:business_application/features/community/data/posts_by_id_model.dart';
 import 'package:business_application/features/community/data/topics_model.dart' as topics_model;
 import 'package:business_application/features/groups/controller/groups_controller.dart';
+import 'package:business_application/features/my_posts/controller/my_posts_controller.dart';
 import 'package:business_application/features/notification/controller/notification_controller.dart';
+import 'package:business_application/features/save_posts/controller/save_post_controller.dart';
 import 'package:business_application/main.dart';
 import 'package:business_application/repository/community_rep.dart';
 import 'package:flutter/material.dart';
@@ -438,5 +440,117 @@ class CommunityController extends GetxController {
     videoLinkController.clear();
     selectedImage.value = "";
     selectedTabIndex.value = 0;
+  }
+
+  // Add these new methods to your CommunityController
+  void likePostAndSyncState(BuildContext context, int postId, bool currentState) {
+    // Make API call
+    Map<String, dynamic> data = {"type": "App\\Models\\Post", "id": postId};
+    CommunityRep().likePosts(data, context).then((response) {
+      // If API call fails, revert UI
+      if (response['success'] == false) {
+        communityPostsById.value.result?.isLiked = currentState;
+        communityPostsById.refresh();
+      } else {
+        // Update the post state in all relevant controllers
+        _syncPostStateAcrossControllers(postId, 'like', !currentState);
+      }
+    });
+  }
+
+  void savePostAndSyncState(BuildContext context, int postId, bool currentState) {
+    // Make API call
+    Map<String, dynamic> data = {"post_id": postId};
+    CommunityRep().savePost(data, context).then((response) {
+      // If API call fails, revert UI
+      if (response['success'] == false) {
+        communityPostsById.value.result?.isSaved = currentState;
+        communityPostsById.refresh();
+      } else {
+        // Update the post state in all relevant controllers
+        _syncPostStateAcrossControllers(postId, 'save', !currentState);
+      }
+    });
+  }
+
+  // Helper method to sync state across controllers
+  void _syncPostStateAcrossControllers(int postId, String action, bool newState) {
+    // Update in main posts list
+    int postIndex = communityPosts.value.result?.data?.indexWhere((p) => p.id == postId) ?? -1;
+    if (postIndex != -1) {
+      if (action == 'like') {
+        communityPosts.value.result!.data![postIndex].isLiked = newState;
+      } else if (action == 'save') {
+        communityPosts.value.result!.data![postIndex].isSaved = newState;
+      }
+      communityPosts.refresh();
+    }
+
+    // Update in filtered posts list
+    int filteredIndex = filteredPosts.indexWhere((p) => p.id == postId);
+    if (filteredIndex != -1) {
+      if (action == 'like') {
+        filteredPosts[filteredIndex].isLiked = newState;
+      } else if (action == 'save') {
+        filteredPosts[filteredIndex].isSaved = newState;
+      }
+      filteredPosts.refresh();
+    }
+
+    // Update in GroupsController if it's registered
+    try {
+      if (Get.isRegistered<GroupsController>()) {
+        final groupsController = Get.find<GroupsController>();
+        int groupPostIndex = groupsController.groupPosts.indexWhere((p) => p.id == postId);
+        if (groupPostIndex != -1) {
+          if (action == 'like') {
+            groupsController.groupPosts[groupPostIndex].isLiked = newState;
+          } else if (action == 'save') {
+            groupsController.groupPosts[groupPostIndex].isSaved = newState;
+          }
+          groupsController.groupPosts.refresh();
+        }
+      }
+    } catch (e) {
+      print("Error updating group post state: $e");
+    }
+
+    // Update in MyPostsController if available
+    try {
+      if (Get.isRegistered<MyPostsController>()) {
+        final myPostsController = Get.find<MyPostsController>();
+        int myPostIndex = myPostsController.myPosts.value.result?.data?.indexWhere((p) => p.id == postId) ?? -1;
+        if (myPostIndex != -1) {
+          if (action == 'like') {
+            myPostsController.myPosts.value.result!.data![myPostIndex].isLiked = newState;
+          } else if (action == 'save') {
+            myPostsController.myPosts.value.result!.data![myPostIndex].isSaved = newState;
+          }
+          myPostsController.myPosts.refresh();
+        }
+      }
+    } catch (e) {
+      // MyPostsController might not be registered yet
+      print("MyPostsController not available: $e");
+    }
+
+    // Update in SavePostController if available
+    try {
+      if (Get.isRegistered<SavePostController>()) {
+        final savePostController = Get.find<SavePostController>();
+        int savedPostIndex = savePostController.savePosts.value.result?.data?.indexWhere((p) => p.id == postId) ?? -1;
+        if (savedPostIndex != -1) {
+          if (action == 'like') {
+            savePostController.savePosts.value.result!.data![savedPostIndex].isLiked = newState;
+          } else if (action == 'save') {
+            savePostController.savePosts.value.result!.data![savedPostIndex].isSaved = newState;
+          }
+          savePostController.savePosts.refresh();
+        }
+      }
+    } catch (e) {
+      // SavePostController might not be registered yet
+      print("SavePostController not available: $e");
+    }
   }
 }

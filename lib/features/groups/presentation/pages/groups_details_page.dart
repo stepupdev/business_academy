@@ -172,12 +172,14 @@ class GroupDetailsPage extends GetView<GroupsController> {
                             final posts = controller.groupPosts[index]; // Use groupPosts here
                             return UserPostWidget(
                               onTap: () {
+                                Get.find<CommunityController>().selectedPostId.value = posts.id ?? 0;
                                 Get.find<CommunityController>().getCommunityPostsById(posts.id.toString());
                                 Get.find<CommunityController>().getComments(posts.id.toString());
-                                GoRouter.of(context).push(
+
+                                context.push(
                                   '/post-details/${posts.id}',
                                   extra: {
-                                    'isGroupTopics': true,
+                                    'isGroupPost': true, // Ensure this is true
                                     'groupId': controller.currentGroupId.value,
                                     'postId': posts.id.toString(),
                                   },
@@ -196,10 +198,12 @@ class GroupDetailsPage extends GetView<GroupsController> {
                               isLiked: posts.isLiked ?? false,
                               isSaved: posts.isSaved ?? false,
                               onLike: () {
+                                controller.selectedPostId.value = posts.id ?? 0; // Add this line
                                 controller.likePosts(context);
                                 controller.update(); // Ensure UI updates after liking a post
                               },
                               onSave: () {
+                                controller.selectedPostId.value = posts.id ?? 0; // Add this line
                                 controller.saveGroupPosts(context);
                                 controller.update(); // Ensure UI updates after saving a post
                               },
