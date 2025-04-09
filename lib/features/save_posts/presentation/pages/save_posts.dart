@@ -1,3 +1,4 @@
+import 'package:business_application/core/config/app_colors.dart';
 import 'package:business_application/core/config/app_size.dart';
 import 'package:business_application/features/community/controller/community_controller.dart';
 import 'package:business_application/features/save_posts/controller/save_post_controller.dart';
@@ -69,15 +70,15 @@ class _SavePostsPageState extends State<SavePostsPage> {
               ),
             );
           }
-          return ListView.builder(
+          return ListView.separated(
+            separatorBuilder: (_, __) => Container(height: 2.h, color: AppColors.grey),
             controller: controller.scrollController, // Add scroll controller here
-            itemCount: controller.savePosts.value.result?.data?.length,
+            itemCount: controller.savePosts.value.result?.data?.length ?? 0,
             physics: AlwaysScrollableScrollPhysics(),
             itemBuilder: (context, index) {
               final post = controller.savePosts.value.result?.data?[index];
               return UserPostWidget(
                 onTap: () {
-                  // Save scroll position before navigating
                   controller.saveScrollPosition();
 
                   Get.find<CommunityController>().getCommunityPostsById(post?.id.toString() ?? "0");
@@ -101,14 +102,12 @@ class _SavePostsPageState extends State<SavePostsPage> {
                   final postId = post?.id ?? 0;
                   if (postId == 0) return;
 
-                  // Use the updated method
                   controller.handlePostInteraction(postId, 'save', context);
                 },
                 onLike: () {
                   final postId = post?.id ?? 0;
                   if (postId == 0) return;
 
-                  // Use the updated method
                   controller.handlePostInteraction(postId, 'like', context);
                 },
               );

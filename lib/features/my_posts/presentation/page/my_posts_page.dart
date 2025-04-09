@@ -1,3 +1,4 @@
+import 'package:business_application/core/config/app_colors.dart';
 import 'package:business_application/core/config/app_size.dart';
 import 'package:business_application/features/community/controller/community_controller.dart';
 import 'package:business_application/features/my_posts/controller/my_posts_controller.dart';
@@ -71,15 +72,14 @@ class _MyPostsPageState extends State<MyPostsPage> {
           }
           return Obx(() {
             return ListView.separated(
-              separatorBuilder: (_, __) => Container(height: 1.h, color: Colors.grey.shade300),
-              controller: controller.scrollController, // Add scroll controller here
+              separatorBuilder: (_, __) => Container(height: 2.h, color: AppColors.grey),
+              controller: controller.scrollController,
               physics: const AlwaysScrollableScrollPhysics(),
               itemCount: controller.myPosts.value.result?.data?.length ?? 0,
               itemBuilder: (context, index) {
                 final post = controller.myPosts.value.result?.data?[index];
                 return UserPostWidget(
                   onTap: () {
-                    // Save scroll position before navigating
                     controller.saveScrollPosition();
 
                     Get.find<CommunityController>().getCommunityPostsById(post?.id.toString() ?? "0");
@@ -99,7 +99,7 @@ class _MyPostsPageState extends State<MyPostsPage> {
                   commentCount: post?.commentsCount.toString() ?? "",
                   isLiked: post?.isLiked ?? false,
                   isSaved: post?.isSaved ?? false,
-                  postId: post?.id ?? 0, // Ensure postId is set
+                  postId: post?.id ?? 0,
                   onLike: () {
                     final postId = post?.id ?? 0;
                     if (postId == 0) return;
@@ -112,7 +112,6 @@ class _MyPostsPageState extends State<MyPostsPage> {
                     //   controller.myPosts.refresh();
                     // }
 
-                    // Use the new method that handles group posts correctly
                     controller.handlePostInteraction(postId, 'like', context);
                   },
                   onSave: () {

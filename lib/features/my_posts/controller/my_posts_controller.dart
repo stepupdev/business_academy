@@ -1,5 +1,4 @@
 import 'package:business_application/features/community/controller/community_controller.dart';
-import 'package:business_application/features/groups/controller/groups_controller.dart';
 import 'package:business_application/features/my_posts/data/my_posts_model.dart';
 import 'package:business_application/main.dart';
 import 'package:business_application/repository/community_rep.dart';
@@ -10,7 +9,6 @@ class MyPostsController extends GetxController {
   var isLoading = false.obs;
   var myPosts = MyPostResponseModel().obs;
 
-  // Add ScrollController and position tracking variables
   final ScrollController scrollController = ScrollController();
   RxDouble scrollOffset = 0.0.obs;
   RxBool shouldRestorePosition = false.obs;
@@ -19,7 +17,6 @@ class MyPostsController extends GetxController {
   void onInit() {
     getMyPosts();
 
-    // Add scroll listener to track position
     scrollController.addListener(() {
       scrollOffset.value = scrollController.offset;
     });
@@ -33,7 +30,6 @@ class MyPostsController extends GetxController {
     super.onClose();
   }
 
-  // Method to save scroll position before navigation
   void saveScrollPosition() {
     if (scrollController.hasClients) {
       scrollOffset.value = scrollController.offset;
@@ -42,7 +38,6 @@ class MyPostsController extends GetxController {
     }
   }
 
-  // Method to restore scroll position when returning
   void restoreScrollPosition() {
     if (shouldRestorePosition.value && scrollOffset.value > 0) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -75,13 +70,10 @@ class MyPostsController extends GetxController {
     }
   }
 
-  // Update the handlePostInteraction method:
-
   void handlePostInteraction(int postId, String action, BuildContext context) async {
     final communityController = Get.find<CommunityController>();
 
     if (action == 'like') {
-      // Update UI optimistically
       int postIndex = myPosts.value.result?.data?.indexWhere((p) => p.id == postId) ?? -1;
       if (postIndex != -1) {
         bool currentState = myPosts.value.result!.data![postIndex].isLiked ?? false;
@@ -89,10 +81,8 @@ class MyPostsController extends GetxController {
         myPosts.refresh();
       }
 
-      // Process the like action directly
       await communityController.processLike(context, postId);
     } else if (action == 'save') {
-      // Update UI optimistically
       int postIndex = myPosts.value.result?.data?.indexWhere((p) => p.id == postId) ?? -1;
       if (postIndex != -1) {
         bool currentState = myPosts.value.result!.data![postIndex].isSaved ?? false;
@@ -100,7 +90,6 @@ class MyPostsController extends GetxController {
         myPosts.refresh();
       }
 
-      // Process the save action directly
       await communityController.processSave(context, postId);
     }
   }

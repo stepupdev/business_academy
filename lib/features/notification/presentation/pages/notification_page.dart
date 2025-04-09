@@ -92,6 +92,7 @@ class NotificationPage extends GetView<NotificationController> {
                     Get.find<CommunityController>().getComments(notification?.notifiableId.toString() ?? "");
                     Get.find<CommunityController>().selectedPostId.value = notification?.notifiableId ?? 0;
                     GoRouter.of(context).push('/post-details/${notification?.notifiableId}');
+                    controller.checkNotification();
                     // context.push(AppRoutes.postDetails, extra: {'postId': notification?.notifiableId});
                   },
                   child: Padding(
