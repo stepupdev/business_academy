@@ -285,7 +285,9 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen> with Automatic
                           if (index == controller.filteredPosts.length) {
                             return Padding(
                               padding: EdgeInsets.symmetric(vertical: 10.h),
-                              child: CircularProgressIndicator(color: AppColors.primaryColor, strokeWidth: 2),
+                              child: Center(
+                                child: CircularProgressIndicator(color: AppColors.primaryColor, strokeWidth: 2),
+                              ),
                             );
                           }
                           final posts = controller.filteredPosts[index];
@@ -311,7 +313,7 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen> with Automatic
                             postImage: posts.image ?? "",
                             videoUrl: posts.videoUrl ?? "",
                             dp: posts.user?.avatar ?? "",
-                            caption: posts.content ?? "",
+                            caption: controller.cleanHtml(posts.content ?? ""),
                             commentCount: posts.commentsCount?.toString() ?? "0",
                             isLiked: posts.isLiked ?? false,
                             isSaved: posts.isSaved ?? false,

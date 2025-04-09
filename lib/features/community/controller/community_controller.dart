@@ -142,9 +142,9 @@ class CommunityController extends GetxController {
     }
   }
 
-  loadNextPage () async {
-    if(isPaginating.value || nextPageUrl.value.isEmpty) return;
-    try{
+  loadNextPage() async {
+    if (isPaginating.value || nextPageUrl.value.isEmpty) return;
+    try {
       isPaginating(true);
       final response = await CommunityRep().getCommunityPosts(fullUrl: nextPageUrl.value);
       final newPosts = PostsResponseModel.fromJson(response);
@@ -183,6 +183,24 @@ class CommunityController extends GetxController {
         isLoading(false);
       }
     }
+  }
+
+  String cleanHtml(String rawHtml) {
+    String updated = rawHtml;
+
+    // Normalize all <br> tags to \n
+    updated = updated.replaceAll(RegExp(r'<br\s*/?>', caseSensitive: false), '\n');
+
+    // Remove \r (carriage returns) since they are not needed
+    updated = updated.replaceAll('\r', '');
+
+    // Optionally: remove any excessive newlines (like 3+)
+    updated = updated.replaceAll(RegExp(r'\n{3,}'), '\n\n');
+
+    // You can also clean custom tags like <t> if needed
+    updated = updated.replaceAll(RegExp(r'</?t>'), '');
+
+    return updated.trim();
   }
 
   void addComments({
