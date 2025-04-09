@@ -1,9 +1,11 @@
 import 'package:business_application/core/config/app_colors.dart';
 import 'package:business_application/core/config/app_size.dart';
 import 'package:business_application/core/utils/ui_support.dart';
+import 'package:business_application/features/community/controller/community_controller.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
@@ -66,7 +68,10 @@ class _UserPostWidgetState extends State<SearchPostCard> {
   }
 
   void _checkOverflow() {
-    final textSpan = TextSpan(text: widget.caption, style: GoogleFonts.plusJakartaSans());
+    final textSpan = TextSpan(
+      text: Get.find<CommunityController>().cleanHtml(widget.caption),
+      style: GoogleFonts.plusJakartaSans(),
+    );
 
     final textPainter = TextPainter(text: textSpan, maxLines: 3, textDirection: TextDirection.ltr)
       ..layout(maxWidth: MediaQuery.of(context).size.width - 20.w);
@@ -135,7 +140,6 @@ class _UserPostWidgetState extends State<SearchPostCard> {
               ),
             ),
 
-            /// Caption
             15.hS,
             GestureDetector(
               onTap: widget.onTap,
@@ -143,7 +147,7 @@ class _UserPostWidgetState extends State<SearchPostCard> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    widget.caption,
+                    Get.find<CommunityController>().cleanHtml(widget.caption),
                     style: GoogleFonts.plusJakartaSans(color: dark ? Colors.white : Colors.black),
                     maxLines: _isExpanded ? null : 3,
                     overflow: _isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,

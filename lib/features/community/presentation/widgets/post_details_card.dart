@@ -1,10 +1,12 @@
 import 'package:business_application/core/config/app_colors.dart';
 import 'package:business_application/core/config/app_size.dart';
 import 'package:business_application/core/utils/ui_support.dart';
+import 'package:business_application/features/community/controller/community_controller.dart';
 import 'package:business_application/features/video_player/presentation/page/yt_video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class PostDetailsCard extends StatefulWidget {
@@ -69,8 +71,10 @@ class _PostDetailsState extends State<PostDetailsCard> {
   }
 
   void _checkOverflow() {
-    final textSpan = TextSpan(text: widget.caption, style: GoogleFonts.plusJakartaSans());
-
+    final textSpan = TextSpan(
+      text: Get.find<CommunityController>().cleanHtml(widget.caption),
+      style: GoogleFonts.plusJakartaSans(),
+    );
     final textPainter = TextPainter(text: textSpan, maxLines: 3, textDirection: TextDirection.ltr)
       ..layout(maxWidth: MediaQuery.of(context).size.width - 20.w);
 
@@ -143,7 +147,7 @@ class _PostDetailsState extends State<PostDetailsCard> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  widget.caption,
+                  Get.find<CommunityController>().cleanHtml(widget.caption),
                   style: GoogleFonts.plusJakartaSans(color: dark ? Colors.white : Colors.black),
                   maxLines: _isExpanded ? null : 3,
                   overflow: _isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,

@@ -26,7 +26,8 @@ class CommunityController extends GetxController {
   var selectedTopic = ''.obs;
   topics_model.TopicsResponseModel? selectedTopicValue;
   var selectedTopicId = ''.obs;
-  final TextEditingController postController = TextEditingController(); // No Rx wrapper
+  final TextEditingController createPostController = TextEditingController(); // For creating posts
+  final TextEditingController editPostController = TextEditingController(); // For editing posts
   final TextEditingController videoLinkController = TextEditingController();
   final FocusNode postFocusNode = FocusNode();
   final RxString selectedImage = "".obs;
@@ -62,7 +63,9 @@ class CommunityController extends GetxController {
 
   @override
   void onClose() {
-    postController.dispose();
+    // Dispose of both controllers
+    createPostController.dispose();
+    editPostController.dispose();
     videoLinkController.dispose();
     postFocusNode.dispose();
     scrollController.dispose();
@@ -406,7 +409,7 @@ class CommunityController extends GetxController {
     File? selectedFile = selectedImage.value.isNotEmpty ? File(selectedImage.value) : null;
 
     final response = await CommunityRep().communityPosts(
-      content: postController.text.trim(),
+      content: createPostController.text.trim(),
       topicId: selectedTopicId.value,
       imageFile: selectedFile,
       videoUrl: videoLinkController.text.isNotEmpty ? videoLinkController.text : null,
@@ -415,7 +418,7 @@ class CommunityController extends GetxController {
 
     if (response['success'] == true) {
       getCommunityPosts();
-      clearPostData();
+      clearCreatePostData();
       scaffoldMessengerKey.currentState!.showSnackBar(
         SnackBar(content: Text(response['message']), backgroundColor: Colors.green),
       );
@@ -509,7 +512,7 @@ class CommunityController extends GetxController {
 
     if (post != null && post.id.toString() == postId) {
       // Set content, image and video
-      postController.text = post.content ?? '';
+      createPostController.text = post.content ?? '';
       selectedImage.value = post.image ?? '';
       videoLinkController.text = post.videoUrl ?? '';
 
@@ -531,9 +534,26 @@ class CommunityController extends GetxController {
       }
     } else {
       // Clear data for new posts
-      postController.clear();
-      videoLinkController.clear();
-      selectedImage.value = '';
+      clearCreatePostData();
+    }
+  }
+
+  void loadEditPostData(String postId) {
+    final post = communityPostsById.value.result;
+    if (post != null && post.id.toString() == postId) {
+      // Set content, image, and video
+      editPostController.text = post.content ?? '';
+      selectedImage.value = post.image ?? '';
+      videoLinkController.text = post.videoUrl ?? '';
+
+      // Set topic
+      selectedTopic.value = post.topic?.name ?? '';
+      selectedTopicId.value = post.topic?.id?.toString() ?? '';
+
+      // Update the tab index
+      selectedTabIndex.value = (post.videoUrl != null && post.videoUrl!.isNotEmpty) ? 1 : 0;
+    } else {
+      clearEditPostData();
     }
   }
 
@@ -563,28 +583,21 @@ class CommunityController extends GetxController {
     } //
   }
 
-  void clearPostData() {
-    postController.clear();
+  void clearCreatePostData() {
+    createPostController.clear();
     videoLinkController.clear();
     selectedImage.value = "";
     selectedTabIndex.value = 0;
     selectedTopic.value = "";
   }
 
-  // void likeCommentsAndSyncState(BuildContext context, int commentId, bool currentState) {
-  //   // Make API call
-  //   Map<String, dynamic> data = {"type": "App\\Models\\Comment", "id": commentId};
-  //   CommunityRep().likePosts(data, context).then((response) {
-  //     // If API call fails, revert UI
-  //     if (response['success'] == false) {
-  //       comments.value.result?.data?.firstWhere((comment) => comment.id == commentId).isLiked = currentState;
-  //       comments.refresh();
-  //     } else {
-  //       // Update the comment state in all relevant controllers
-  //       _syncPostStateAcrossControllers(commentId, 'like', !currentState);
-  //     }
-  //   });
-  // }
+  void clearEditPostData() {
+    editPostController.clear();
+    videoLinkController.clear();
+    selectedImage.value = "";
+    selectedTabIndex.value = 0;
+    selectedTopic.value = "";
+  }
 
   // Add these new methods to your CommunityController
   void likePostAndSyncState(BuildContext context, int postId, bool currentState) {

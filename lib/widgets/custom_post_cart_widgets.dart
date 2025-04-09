@@ -77,7 +77,7 @@ class _UserPostWidgetState extends State<UserPostWidget> {
   }
 
   void _checkOverflow() {
-    final textSpan = TextSpan(text: widget.caption, style: GoogleFonts.plusJakartaSans());
+    final textSpan = TextSpan(text: Get.find<CommunityController>().cleanHtml(widget.caption), style: GoogleFonts.plusJakartaSans());
 
     final textPainter = TextPainter(text: textSpan, maxLines: 3, textDirection: TextDirection.ltr)
       ..layout(maxWidth: MediaQuery.of(context).size.width - 20.w);
@@ -157,7 +157,7 @@ class _UserPostWidgetState extends State<UserPostWidget> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    widget.caption,
+                    Get.find<CommunityController>().cleanHtml(widget.caption),
                     style: GoogleFonts.plusJakartaSans(color: dark ? Colors.white : Colors.black),
                     maxLines: _isExpanded ? null : 3,
                     overflow: _isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,

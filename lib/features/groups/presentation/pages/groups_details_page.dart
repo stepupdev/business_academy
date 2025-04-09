@@ -33,7 +33,7 @@ class GroupDetailsPage extends GetView<GroupsController> {
           if (controller.isLoading.value) {
             return Center(child: CircularProgressIndicator());
           }
-          if (controller.groupPosts.value.isEmpty) {
+          if (controller.groupPosts.isEmpty) {
             return Center(
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 20.h),

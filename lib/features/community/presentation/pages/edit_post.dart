@@ -33,55 +33,41 @@ class EditPostPage extends GetView<CommunityController> {
         print("groupId = $groupId");
       }
 
-      // Only load data if the controller's postController is empty
-      if (controller.postController.text.isEmpty) {
-        controller.selectedTopic.value = "";
-        controller.selectedTopicId.value = "";
+      // Clear the edit post data
+      controller.clearEditPostData();
 
-        // Load topics first
-        if (isGroupTopics && groupId != null) {
-          if (isDebug) print("EDIT POST PAGE: Loading group topics for group ID $groupId");
-          final groupsController = Get.find<GroupsController>();
-          await groupsController.fetchGroupsTopic(groupId!);
-
-          if (isDebug) {
-            final topics = groupsController.groupsTopicResponse.value.result?.data ?? [];
-            print("EDIT POST PAGE: Loaded ${topics.length} group topics:");
-            topics.forEach((topic) {
-              print("  - ${topic.name} (ID: ${topic.id})");
-            });
-          }
-        } else {
-          if (isDebug) print("EDIT POST PAGE: Loading community topics");
-          await controller.getTopic();
-
-          if (isDebug) {
-            final topics = controller.topics.value.result?.data ?? [];
-            print("EDIT POST PAGE: Loaded ${topics.length} community topics");
-          }
-        }
-
-        // Load post data
-        if (isDebug) print("EDIT POST PAGE: Loading post with ID $postId");
-        await controller.getCommunityPostsById(postId);
-
-        final topicName = controller.communityPostsById.value.result?.topic?.name ?? '';
-        final topicId = controller.communityPostsById.value.result?.topic?.id?.toString() ?? '';
+      // Load topics first
+      if (isGroupTopics && groupId != null) {
+        if (isDebug) print("EDIT POST PAGE: Loading group topics for group ID $groupId");
+        final groupsController = Get.find<GroupsController>();
+        await groupsController.fetchGroupsTopic(groupId!);
 
         if (isDebug) {
-          print("EDIT POST PAGE: Post has topic: $topicName (ID: $topicId)");
+          final topics = groupsController.groupsTopicResponse.value.result?.data ?? [];
+          print("EDIT POST PAGE: Loaded ${topics.length} group topics:");
+          topics.forEach((topic) {
+            print("  - ${topic.name} (ID: ${topic.id})");
+          });
         }
+      } else {
+        if (isDebug) print("EDIT POST PAGE: Loading community topics");
+        await controller.getTopic();
 
-        controller.selectedTopic.value = topicName;
-        controller.selectedTopicId.value = topicId;
-
-        controller.loadPostData(postId);
+        if (isDebug) {
+          final topics = controller.topics.value.result?.data ?? [];
+          print("EDIT POST PAGE: Loaded ${topics.length} community topics");
+        }
       }
+
+      // Load post data
+      if (isDebug) print("EDIT POST PAGE: Loading post with ID $postId");
+      await controller.getCommunityPostsById(postId);
+      controller.loadEditPostData(postId);
     });
 
     return WillPopScope(
       onWillPop: () async {
-        controller.clearPostData();
+        controller.clearEditPostData();
         return true;
       },
       child: Scaffold(
@@ -98,7 +84,7 @@ class EditPostPage extends GetView<CommunityController> {
 
                 controller.updatePost(
                   postId: postId,
-                  content: controller.postController.text,
+                  content: controller.editPostController.text,
                   topicId: controller.selectedTopicId.value,
                   videoUrl: controller.videoLinkController.text,
                   groupId: isGroupTopics ? groupId : null,
@@ -125,7 +111,7 @@ class EditPostPage extends GetView<CommunityController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     TextFormField(
-                      controller: controller.postController,
+                      controller: controller.editPostController, // Use editPostController
                       focusNode: controller.postFocusNode,
                       maxLines: 5,
                       decoration: InputDecoration(
@@ -139,13 +125,6 @@ class EditPostPage extends GetView<CommunityController> {
                           borderSide: BorderSide(color: AppColors.primaryColor, width: 0.5),
                         ),
                       ),
-                      onChanged: (value) {
-                        // Update the controller's text to retain changes
-                        controller.postController.text = value;
-                        controller.postController.selection = TextSelection.fromPosition(
-                          TextPosition(offset: controller.postController.text.length),
-                        );
-                      },
                       onTapOutside: (event) => FocusScope.of(context).unfocus(),
                     ),
                     20.hS,

@@ -31,6 +31,7 @@ class CreatePostPage extends GetView<CommunityController> {
         print("groupId = $groupId (This identifies which group's topics to load)");
       }
 
+      controller.clearCreatePostData();
       controller.selectedTopic.value = "";
       controller.selectedTopicId.value = "";
 
@@ -60,7 +61,7 @@ class CreatePostPage extends GetView<CommunityController> {
 
     return WillPopScope(
       onWillPop: () async {
-        controller.clearPostData();
+        controller.clearCreatePostData();
         return true;
       },
       child: Scaffold(
@@ -98,7 +99,7 @@ class CreatePostPage extends GetView<CommunityController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     TextFormField(
-                      controller: controller.postController,
+                      controller: controller.createPostController,
                       focusNode: controller.postFocusNode,
                       maxLines: 5,
                       decoration: InputDecoration(
