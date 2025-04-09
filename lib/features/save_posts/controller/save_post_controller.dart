@@ -81,8 +81,8 @@ class SavePostController extends GetxController {
       // Update UI optimistically
       int postIndex = savePosts.value.result?.data?.indexWhere((p) => p.id == postId) ?? -1;
       if (postIndex != -1) {
-        bool currentState = savePosts.value.result!.data![postIndex].isLiked ?? false;
-        savePosts.value.result!.data![postIndex].isLiked = !currentState;
+        bool currentState = savePosts.value.result!.data![postIndex].post?.isLiked ?? false;
+        savePosts.value.result!.data![postIndex].post?.isLiked = !currentState;
         savePosts.refresh();
       }
 
@@ -92,8 +92,8 @@ class SavePostController extends GetxController {
       // Update UI optimistically
       int postIndex = savePosts.value.result?.data?.indexWhere((p) => p.id == postId) ?? -1;
       if (postIndex != -1) {
-        bool currentState = savePosts.value.result!.data![postIndex].isSaved ?? false;
-        savePosts.value.result!.data![postIndex].isSaved = !currentState;
+        bool currentState = savePosts.value.result!.data![postIndex].post?.isSaved ?? false;
+        savePosts.value.result!.data![postIndex].post?.isSaved = !currentState;
         savePosts.refresh();
       }
 

@@ -643,9 +643,9 @@ class CommunityController extends GetxController {
         int savedPostIndex = savePostController.savePosts.value.result?.data?.indexWhere((p) => p.id == postId) ?? -1;
         if (savedPostIndex != -1) {
           if (action == 'like') {
-            savePostController.savePosts.value.result!.data![savedPostIndex].isLiked = newState;
+            savePostController.savePosts.value.result!.data![savedPostIndex].post?.isLiked = newState;
           } else if (action == 'save') {
-            savePostController.savePosts.value.result!.data![savedPostIndex].isSaved = newState;
+            savePostController.savePosts.value.result!.data![savedPostIndex].post?.isSaved = newState;
           }
           savePostController.savePosts.refresh();
         }

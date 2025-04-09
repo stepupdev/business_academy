@@ -13,4 +13,5 @@ class AppRoutes {
   static const String search = '/search';
   static const String groupDetails = '/group-details';
   static const String myPosts = '/my-posts';
+  static const String editPost = '/edit-post';
 }

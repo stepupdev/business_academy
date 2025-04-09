@@ -4,6 +4,7 @@ import 'package:business_application/features/auth/presentation/pages/signin_pag
 import 'package:business_application/features/community/presentation/pages/community_feed_page.dart';
 import 'package:business_application/features/community/presentation/pages/create_post.dart';
 import 'package:business_application/features/community/presentation/pages/post_details_page.dart';
+import 'package:business_application/features/community/presentation/pages/edit_post.dart';
 import 'package:business_application/features/groups/presentation/pages/groups_details_page.dart';
 import 'package:business_application/features/groups/presentation/pages/groups_page.dart';
 import 'package:business_application/features/home/presentation/pages/home_page.dart';
@@ -46,31 +47,31 @@ class AppRouter {
         routes: [
           GoRoute(
             path: AppRoutes.communityFeed,
-            pageBuilder: (context, state) => NoTransitionPage(
-              key: state.pageKey,
-              child: const CommunityFeedScreen(key: PageStorageKey('communityFeed')),
-            ),
+            pageBuilder:
+                (context, state) => NoTransitionPage(
+                  key: state.pageKey,
+                  child: const CommunityFeedScreen(key: PageStorageKey('communityFeed')),
+                ),
           ),
           GoRoute(
             path: AppRoutes.groupsTab,
-            pageBuilder: (context, state) => NoTransitionPage(
-              key: state.pageKey,
-              child: const GroupsPage(key: PageStorageKey('groups')),
-            ),
+            pageBuilder:
+                (context, state) =>
+                    NoTransitionPage(key: state.pageKey, child: const GroupsPage(key: PageStorageKey('groups'))),
           ),
           GoRoute(
             path: AppRoutes.announcementsTab,
-            pageBuilder: (context, state) => NoTransitionPage(
-              key: state.pageKey,
-              child: const AnnouncementsPage(key: PageStorageKey('announcements')),
-            ),
+            pageBuilder:
+                (context, state) => NoTransitionPage(
+                  key: state.pageKey,
+                  child: const AnnouncementsPage(key: PageStorageKey('announcements')),
+                ),
           ),
           GoRoute(
             path: AppRoutes.menuTab,
-            pageBuilder: (context, state) => NoTransitionPage(
-              key: state.pageKey,
-              child: const MenuPage(key: PageStorageKey('menu')),
-            ),
+            pageBuilder:
+                (context, state) =>
+                    NoTransitionPage(key: state.pageKey, child: const MenuPage(key: PageStorageKey('menu'))),
           ),
         ],
       ),
@@ -81,12 +82,8 @@ class AppRouter {
         pageBuilder: (context, state) {
           final extra = state.extra as Map<String, dynamic>? ?? {};
           final bool isGroup = extra['isGroupTopics'] as bool? ?? false;
-          final String? postId = extra['postId'] as String?;
           final String? groupId = extra['groupId'] as String?;
-          return MaterialPage(
-            key: state.pageKey,
-            child: CreatePostPage(isGroupTopics: isGroup, postId: postId, groupId: groupId),
-          );
+          return MaterialPage(key: state.pageKey, child: CreatePostPage(isGroupTopics: isGroup, groupId: groupId));
         },
         parentNavigatorKey: _rootNavigatorKey, // Important! This makes it show above the shell
       ),
@@ -102,10 +99,7 @@ class AppRouter {
             key: state.pageKey,
             child: PostDetailsPage(postId: postId!, isGroupPost: isGroupPost, groupId: groupId),
             transitionsBuilder: (context, animation, secondaryAnimation, child) {
-              return FadeTransition(
-                opacity: animation,
-                child: child,
-              );
+              return FadeTransition(opacity: animation, child: child);
             },
           );
         },
@@ -139,6 +133,20 @@ class AppRouter {
       GoRoute(
         path: AppRoutes.myPosts,
         pageBuilder: (context, state) => MaterialPage(key: state.pageKey, child: MyPostsPage()),
+        parentNavigatorKey: _rootNavigatorKey,
+      ),
+      GoRoute(
+        path: AppRoutes.editPost,
+        pageBuilder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>? ?? {};
+          final bool isGroup = extra['isGroupTopics'] as bool? ?? false;
+          final String postId = extra['postId'] as String;
+          final String? groupId = extra['groupId'] as String?;
+          return MaterialPage(
+            key: state.pageKey,
+            child: EditPostPage(isGroupTopics: isGroup, postId: postId, groupId: groupId),
+          );
+        },
         parentNavigatorKey: _rootNavigatorKey,
       ),
     ],

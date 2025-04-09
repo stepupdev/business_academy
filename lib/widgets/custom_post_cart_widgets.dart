@@ -95,10 +95,11 @@ class _UserPostWidgetState extends State<UserPostWidget> {
     return GestureDetector(
       onTap: widget.onTap,
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 16.h),
+        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 12.h),
         color: dark ? AppColors.dark : Colors.white,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             /// User Info
             GestureDetector(
@@ -113,6 +114,8 @@ class _UserPostWidgetState extends State<UserPostWidget> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text(widget.name, style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600)),
                           5.wS,
@@ -128,19 +131,19 @@ class _UserPostWidgetState extends State<UserPostWidget> {
                               style: GoogleFonts.plusJakartaSans(color: Colors.white, fontSize: 10.sp),
                             ),
                           ),
+                          10.wS,
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.2.w,
+                            child: Text(
+                              widget.topic,
+                              style: GoogleFonts.plusJakartaSans(color: Colors.grey, fontSize: 12.sp),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
                         ],
                       ),
                       Text(dateTime!, style: GoogleFonts.plusJakartaSans(color: Colors.grey)),
                     ],
-                  ),
-                  10.wS,
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.2.w,
-                    child: Text(
-                      widget.topic,
-                      style: GoogleFonts.plusJakartaSans(color: Colors.grey, fontSize: 12.sp),
-                      overflow: TextOverflow.ellipsis,
-                    ),
                   ),
                 ],
               ),
@@ -237,7 +240,7 @@ class _UserPostWidgetState extends State<UserPostWidget> {
                         Get.find<CommunityController>().communityPostsById.refresh();
                       },
                   child: Container(
-                    padding: EdgeInsets.only(right: 20.w, top: 20.h, bottom: 10.h), // Increased hit area
+                    padding: EdgeInsets.only(right: 20.w, left: 20.h), // Increased hit area
                     child: Icon(
                       widget.isLiked ? Icons.favorite : Icons.favorite_border,
                       color:
@@ -270,7 +273,7 @@ class _UserPostWidgetState extends State<UserPostWidget> {
                         Get.find<CommunityController>().communityPostsById.refresh();
                       },
                   child: Container(
-                    padding: EdgeInsets.only(right: 20.w, top: 20.h, bottom: 10.h), // Increased hit area
+                    padding: EdgeInsets.only(right: 20.w, left: 20.h), // Increased hit area
                     child: Icon(
                       widget.isSaved ? Icons.bookmark : Icons.bookmark_border,
                       color:

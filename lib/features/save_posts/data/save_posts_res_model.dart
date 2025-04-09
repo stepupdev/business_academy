@@ -58,9 +58,45 @@ class Result {
 
 class Datum {
     int? id;
+    int? userId;
+    int? postId;
+    Post? post;
+    DateTime? createdAt;
+    DateTime? updatedAt;
+
+    Datum({
+        this.id,
+        this.userId,
+        this.postId,
+        this.post,
+        this.createdAt,
+        this.updatedAt,
+    });
+
+    factory Datum.fromJson(Map<String, dynamic> json) => Datum(
+        id: json["id"],
+        userId: json["user_id"],
+        postId: json["post_id"],
+        post: json["post"] == null ? null : Post.fromJson(json["post"]),
+        createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
+        updatedAt: json["updated_at"] == null ? null : DateTime.parse(json["updated_at"]),
+    );
+
+    Map<String, dynamic> toJson() => {
+        "id": id,
+        "user_id": userId,
+        "post_id": postId,
+        "post": post?.toJson(),
+        "created_at": createdAt?.toIso8601String(),
+        "updated_at": updatedAt?.toIso8601String(),
+    };
+}
+
+class Post {
+    int? id;
     String? content;
     dynamic image;
-    String? videoUrl;
+    dynamic videoUrl;
     int? commentsCount;
     User? user;
     Topic? topic;
@@ -69,7 +105,7 @@ class Datum {
     DateTime? createdAt;
     DateTime? updatedAt;
 
-    Datum({
+    Post({
         this.id,
         this.content,
         this.image,
@@ -83,7 +119,7 @@ class Datum {
         this.updatedAt,
     });
 
-    factory Datum.fromJson(Map<String, dynamic> json) => Datum(
+    factory Post.fromJson(Map<String, dynamic> json) => Post(
         id: json["id"],
         content: json["content"],
         image: json["image"],
@@ -116,16 +152,12 @@ class Topic {
     int? id;
     String? name;
     dynamic icon;
-    DateTime? createdAt;
-    DateTime? updatedAt;
     dynamic postsCount;
 
     Topic({
         this.id,
         this.name,
         this.icon,
-        this.createdAt,
-        this.updatedAt,
         this.postsCount,
     });
 
@@ -133,8 +165,6 @@ class Topic {
         id: json["id"],
         name: json["name"],
         icon: json["icon"],
-        createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
-        updatedAt: json["updated_at"] == null ? null : DateTime.parse(json["updated_at"]),
         postsCount: json["posts_count"],
     );
 
@@ -142,8 +172,6 @@ class Topic {
         "id": id,
         "name": name,
         "icon": icon,
-        "created_at": createdAt?.toIso8601String(),
-        "updated_at": updatedAt?.toIso8601String(),
         "posts_count": postsCount,
     };
 }
@@ -153,18 +181,20 @@ class User {
     String? name;
     String? email;
     String? avatar;
+    List<String>? communityIds;
+    Rank? rank;
     DateTime? createdAt;
     DateTime? updatedAt;
-    Rank? rank;
 
     User({
         this.id,
         this.name,
         this.email,
         this.avatar,
+        this.communityIds,
+        this.rank,
         this.createdAt,
         this.updatedAt,
-        this.rank,
     });
 
     factory User.fromJson(Map<String, dynamic> json) => User(
@@ -172,9 +202,10 @@ class User {
         name: json["name"],
         email: json["email"],
         avatar: json["avatar"],
+        communityIds: json["community_ids"] == null ? [] : List<String>.from(json["community_ids"]!.map((x) => x)),
+        rank: json["rank"] == null ? null : Rank.fromJson(json["rank"]),
         createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
         updatedAt: json["updated_at"] == null ? null : DateTime.parse(json["updated_at"]),
-        rank: json["rank"] == null ? null : Rank.fromJson(json["rank"]),
     );
 
     Map<String, dynamic> toJson() => {
@@ -182,9 +213,10 @@ class User {
         "name": name,
         "email": email,
         "avatar": avatar,
+        "community_ids": communityIds == null ? [] : List<dynamic>.from(communityIds!.map((x) => x)),
+        "rank": rank?.toJson(),
         "created_at": createdAt?.toIso8601String(),
         "updated_at": updatedAt?.toIso8601String(),
-        "rank": rank?.toJson(),
     };
 }
 
@@ -192,31 +224,23 @@ class Rank {
     int? id;
     String? name;
     int? position;
-    DateTime? createdAt;
-    DateTime? updatedAt;
 
     Rank({
         this.id,
         this.name,
         this.position,
-        this.createdAt,
-        this.updatedAt,
     });
 
     factory Rank.fromJson(Map<String, dynamic> json) => Rank(
         id: json["id"],
         name: json["name"],
         position: json["position"],
-        createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
-        updatedAt: json["updated_at"] == null ? null : DateTime.parse(json["updated_at"]),
     );
 
     Map<String, dynamic> toJson() => {
         "id": id,
         "name": name,
         "position": position,
-        "created_at": createdAt?.toIso8601String(),
-        "updated_at": updatedAt?.toIso8601String(),
     };
 }
 

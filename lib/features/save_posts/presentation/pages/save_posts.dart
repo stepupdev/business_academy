@@ -76,7 +76,7 @@ class _SavePostsPageState extends State<SavePostsPage> {
             itemCount: controller.savePosts.value.result?.data?.length ?? 0,
             physics: AlwaysScrollableScrollPhysics(),
             itemBuilder: (context, index) {
-              final post = controller.savePosts.value.result?.data?[index];
+              final post = controller.savePosts.value.result?.data?[index].post;
               return UserPostWidget(
                 onTap: () {
                   controller.saveScrollPosition();

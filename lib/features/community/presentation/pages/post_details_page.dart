@@ -1,5 +1,4 @@
 import 'package:business_application/core/config/app_colors.dart';
-import 'package:business_application/core/config/app_routes.dart';
 import 'package:business_application/core/config/app_size.dart';
 import 'package:business_application/core/services/auth_services.dart';
 import 'package:business_application/core/utils/helper_utils.dart';
@@ -99,7 +98,7 @@ class PostDetailsPageState extends State<PostDetailsPage> {
 
                     // Navigate with explicit parameters
                     context.push(
-                      '/create-post',
+                      '/edit-post',
                       extra: {'isGroupTopics': isGroupPost, 'postId': widget.postId, 'groupId': groupId},
                     );
                   } else if (value == 'delete') {

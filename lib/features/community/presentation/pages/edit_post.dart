@@ -14,11 +14,12 @@ import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
-class CreatePostPage extends GetView<CommunityController> {
+class EditPostPage extends GetView<CommunityController> {
   final bool isGroupTopics;
+  final String postId;
   final String? groupId;
 
-  const CreatePostPage({super.key, required this.isGroupTopics, this.groupId});
+  const EditPostPage({super.key, required this.isGroupTopics, required this.postId, this.groupId});
 
   @override
   Widget build(BuildContext context) {
@@ -26,35 +27,55 @@ class CreatePostPage extends GetView<CommunityController> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (isDebug) {
-        print("\n\n=========== CREATE POST PAGE DIAGNOSTICS ===========");
-        print("isGroupTopics = $isGroupTopics (This controls which topics are shown)");
-        print("groupId = $groupId (This identifies which group's topics to load)");
+        print("\n\n=========== EDIT POST PAGE DIAGNOSTICS ===========");
+        print("isGroupTopics = $isGroupTopics");
+        print("postId = $postId");
+        print("groupId = $groupId");
       }
 
-      controller.selectedTopic.value = "";
-      controller.selectedTopicId.value = "";
+      // Only load data if the controller's postController is empty
+      if (controller.postController.text.isEmpty) {
+        controller.selectedTopic.value = "";
+        controller.selectedTopicId.value = "";
 
-      // Load topics
-      if (isGroupTopics && groupId != null) {
-        if (isDebug) print("CREATE POST PAGE: Loading group topics for group ID $groupId");
-        final groupsController = Get.find<GroupsController>();
-        await groupsController.fetchGroupsTopic(groupId!);
+        // Load topics first
+        if (isGroupTopics && groupId != null) {
+          if (isDebug) print("EDIT POST PAGE: Loading group topics for group ID $groupId");
+          final groupsController = Get.find<GroupsController>();
+          await groupsController.fetchGroupsTopic(groupId!);
+
+          if (isDebug) {
+            final topics = groupsController.groupsTopicResponse.value.result?.data ?? [];
+            print("EDIT POST PAGE: Loaded ${topics.length} group topics:");
+            topics.forEach((topic) {
+              print("  - ${topic.name} (ID: ${topic.id})");
+            });
+          }
+        } else {
+          if (isDebug) print("EDIT POST PAGE: Loading community topics");
+          await controller.getTopic();
+
+          if (isDebug) {
+            final topics = controller.topics.value.result?.data ?? [];
+            print("EDIT POST PAGE: Loaded ${topics.length} community topics");
+          }
+        }
+
+        // Load post data
+        if (isDebug) print("EDIT POST PAGE: Loading post with ID $postId");
+        await controller.getCommunityPostsById(postId);
+
+        final topicName = controller.communityPostsById.value.result?.topic?.name ?? '';
+        final topicId = controller.communityPostsById.value.result?.topic?.id?.toString() ?? '';
 
         if (isDebug) {
-          final topics = groupsController.groupsTopicResponse.value.result?.data ?? [];
-          print("CREATE POST PAGE: Loaded ${topics.length} group topics:");
-          topics.forEach((topic) {
-            print("  - ${topic.name} (ID: ${topic.id})");
-          });
+          print("EDIT POST PAGE: Post has topic: $topicName (ID: $topicId)");
         }
-      } else {
-        if (isDebug) print("CREATE POST PAGE: Loading community topics");
-        await controller.getTopic();
 
-        if (isDebug) {
-          final topics = controller.topics.value.result?.data ?? [];
-          print("CREATE POST PAGE: Loaded ${topics.length} community topics");
-        }
+        controller.selectedTopic.value = topicName;
+        controller.selectedTopicId.value = topicId;
+
+        controller.loadPostData(postId);
       }
     });
 
@@ -65,7 +86,7 @@ class CreatePostPage extends GetView<CommunityController> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("Create Post"),
+          title: const Text("Edit Post"),
           actionsPadding: EdgeInsets.symmetric(horizontal: 10),
           actions: [
             FilledButton(
@@ -75,7 +96,13 @@ class CreatePostPage extends GetView<CommunityController> {
                   return;
                 }
 
-                controller.createNewPosts(groupId: isGroupTopics ? groupId : null);
+                controller.updatePost(
+                  postId: postId,
+                  content: controller.postController.text,
+                  topicId: controller.selectedTopicId.value,
+                  videoUrl: controller.videoLinkController.text,
+                  groupId: isGroupTopics ? groupId : null,
+                );
                 context.pop();
               },
               style: FilledButton.styleFrom(
@@ -83,7 +110,7 @@ class CreatePostPage extends GetView<CommunityController> {
                 backgroundColor: AppColors.primaryColor,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.r)),
               ),
-              child: const Text("Share", style: TextStyle(color: Colors.white)),
+              child: const Text("Update", style: TextStyle(color: Colors.white)),
             ),
           ],
         ),
@@ -102,7 +129,7 @@ class CreatePostPage extends GetView<CommunityController> {
                       focusNode: controller.postFocusNode,
                       maxLines: 5,
                       decoration: InputDecoration(
-                        hintText: "Write something...",
+                        hintText: "Edit your post...",
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide: BorderSide(color: AppColors.borderColor, width: 0.5),
@@ -112,6 +139,13 @@ class CreatePostPage extends GetView<CommunityController> {
                           borderSide: BorderSide(color: AppColors.primaryColor, width: 0.5),
                         ),
                       ),
+                      onChanged: (value) {
+                        // Update the controller's text to retain changes
+                        controller.postController.text = value;
+                        controller.postController.selection = TextSelection.fromPosition(
+                          TextPosition(offset: controller.postController.text.length),
+                        );
+                      },
                       onTapOutside: (event) => FocusScope.of(context).unfocus(),
                     ),
                     20.hS,
@@ -137,7 +171,11 @@ class CreatePostPage extends GetView<CommunityController> {
                                             decoration: BoxDecoration(
                                               borderRadius: BorderRadius.circular(12),
                                               image: DecorationImage(
-                                                image: FileImage(File(controller.selectedImage.value)),
+                                                image:
+                                                    controller.selectedImage.value.contains("http")
+                                                        ? NetworkImage(controller.selectedImage.value)
+                                                        : FileImage(File(controller.selectedImage.value))
+                                                            as ImageProvider,
                                                 fit: BoxFit.cover,
                                               ),
                                             ),
@@ -216,28 +254,15 @@ class CreatePostPage extends GetView<CommunityController> {
                     ),
                     20.hS,
                     Obx(() {
-                      final isDebug = true;
                       final topicsToShow =
                           isGroupTopics
                               ? Get.find<GroupsController>().groupsTopicResponse.value.result?.data
                               : controller.topics.value.result?.data;
 
-                      final currentSelection = controller.selectedTopic.value;
-
-                      if (isDebug) {
-                        print("=========== DROPDOWN REBUILD ===========");
-                        print("isGroupTopics = $isGroupTopics");
-                        print("Current selection = '$currentSelection' (ID: ${controller.selectedTopicId.value})");
-                        print("Available topics: ${topicsToShow?.length ?? 0}");
-                        topicsToShow?.forEach((topic) {
-                          final name = isGroupTopics ? (topic as GroupTopics).name : (topic as Topic).name;
-                          print("  - $name");
-                        });
-                      }
-
                       return DropdownMenu<String>(
                         hintText: "Select a topic",
-                        initialSelection: currentSelection.isNotEmpty ? currentSelection : null,
+                        initialSelection:
+                            controller.selectedTopic.value.isNotEmpty ? controller.selectedTopic.value : null,
                         inputDecorationTheme: InputDecorationTheme(
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -259,8 +284,6 @@ class CreatePostPage extends GetView<CommunityController> {
                         onSelected: (val) {
                           if (val == null) return;
 
-                          if (isDebug) print("CREATE POST PAGE: Topic selected: $val");
-
                           controller.selectedTopic.value = val;
                           if (isGroupTopics) {
                             final selectedTopic = Get.find<GroupsController>().groupsTopicResponse.value.result?.data
@@ -273,8 +296,6 @@ class CreatePostPage extends GetView<CommunityController> {
                             );
                             controller.selectedTopicId.value = selectedTopic?.id?.toString() ?? '';
                           }
-
-                          if (isDebug) print("CREATE POST PAGE: Set topic ID to: ${controller.selectedTopicId.value}");
                         },
                         dropdownMenuEntries:
                             topicsToShow?.map((topic) {
