@@ -181,7 +181,6 @@ class CommunityController extends GetxController {
       isLoading(true);
       final response = await CommunityRep().deleteComment(id, context);
       print("delete comments response $response");
-      getComments(selectedPostId.value.toString());
     } catch (e) {
       isLoading(false);
       print(e);
@@ -289,6 +288,31 @@ class CommunityController extends GetxController {
     } finally {
       commentLoading(false);
     }
+  }
+
+  void likeCommentsAndSyncState(BuildContext context, int commentId, bool currentState) {
+    // Make API call
+    Map<String, dynamic> data = {"type": "App\\Models\\Comment", "id": commentId};
+    CommunityRep().likePosts(data, context).then((response) {
+      // If API call fails, revert UI
+      if (response['success'] == false) {
+        // Revert the like state for both comments and replies
+        comments.update((val) {
+          for (var comment in val?.result?.data ?? []) {
+            if (comment.id == commentId) {
+              comment.isLiked = currentState;
+            } else {
+              for (var reply in comment.replies ?? []) {
+                if (reply.id == commentId) {
+                  reply.isLiked = currentState;
+                }
+              }
+            }
+          }
+        });
+      }
+      comments.refresh();
+    });
   }
 
   createNewPosts({String? groupId}) async {
@@ -459,6 +483,21 @@ class CommunityController extends GetxController {
     selectedTabIndex.value = 0;
     selectedTopic.value = "";
   }
+
+  // void likeCommentsAndSyncState(BuildContext context, int commentId, bool currentState) {
+  //   // Make API call
+  //   Map<String, dynamic> data = {"type": "App\\Models\\Comment", "id": commentId};
+  //   CommunityRep().likePosts(data, context).then((response) {
+  //     // If API call fails, revert UI
+  //     if (response['success'] == false) {
+  //       comments.value.result?.data?.firstWhere((comment) => comment.id == commentId).isLiked = currentState;
+  //       comments.refresh();
+  //     } else {
+  //       // Update the comment state in all relevant controllers
+  //       _syncPostStateAcrossControllers(commentId, 'like', !currentState);
+  //     }
+  //   });
+  // }
 
   // Add these new methods to your CommunityController
   void likePostAndSyncState(BuildContext context, int postId, bool currentState) {

@@ -23,10 +23,9 @@ class CreatePostPage extends GetView<CommunityController> {
 
   @override
   Widget build(BuildContext context) {
-    // Set up debug flag to track execution flow
     final isDebug = true;
-    // Create a key for forcing the dropdown to refresh
-    final forceRefreshKey = GlobalKey();
+    // // Create a key for forcing the dropdown to refresh
+    // final forceRefreshKey = GlobalKey();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (isDebug) {
@@ -36,7 +35,6 @@ class CreatePostPage extends GetView<CommunityController> {
         print("groupId = $groupId (This identifies which group's topics to load)");
       }
 
-      // Clear any existing selections to avoid conflicts
       controller.selectedTopic.value = "";
       controller.selectedTopicId.value = "";
 
@@ -63,12 +61,10 @@ class CreatePostPage extends GetView<CommunityController> {
         }
       }
 
-      // Now handle post data if this is an edit
       if (postId != null) {
         if (isDebug) print("CREATE POST PAGE: Loading post with ID $postId");
         await controller.getCommunityPostsById(postId!);
 
-        // Extract topic information from the post
         final topicName = controller.communityPostsById.value.result?.topic?.name ?? '';
         final topicId = controller.communityPostsById.value.result?.topic?.id?.toString() ?? '';
 
@@ -77,11 +73,9 @@ class CreatePostPage extends GetView<CommunityController> {
           print("CREATE POST PAGE: isGroupTopics=$isGroupTopics");
         }
 
-        // Set the topic AFTER both topics list and post data are loaded
         controller.selectedTopic.value = topicName;
         controller.selectedTopicId.value = topicId;
 
-        // Load other post data
         controller.loadPostData(postId!);
       }
     });
@@ -104,11 +98,9 @@ class CreatePostPage extends GetView<CommunityController> {
                 }
 
                 if (postId == null) {
-                  // Creating a new post (group or regular)
                   controller.createNewPosts(groupId: isGroupTopics ? groupId : null);
                   context.pop();
                 } else {
-                  // Editing an existing post
                   controller.updatePost(
                     postId: postId ?? "",
                     content: controller.postController.text,
@@ -263,10 +255,7 @@ class CreatePostPage extends GetView<CommunityController> {
                     ),
                     20.hS,
                     Obx(() {
-                      // Debug information
                       final isDebug = true;
-
-                      // Always get the current latest values
                       final topicsToShow =
                           isGroupTopics
                               ? Get.find<GroupsController>().groupsTopicResponse.value.result?.data
@@ -285,7 +274,6 @@ class CreatePostPage extends GetView<CommunityController> {
                         });
                       }
 
-                      // Build a unique key that includes all the relevant state to force rebuild
                       final keyString =
                           "topic_dropdown_${isGroupTopics}_${controller.selectedTopic.value}_${DateTime.now().millisecondsSinceEpoch}";
 

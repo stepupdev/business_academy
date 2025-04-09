@@ -1,10 +1,13 @@
 import 'package:business_application/core/config/app_colors.dart';
 import 'package:business_application/core/config/app_size.dart';
+import 'package:business_application/core/services/auth_services.dart';
 import 'package:business_application/core/utils/helper_utils.dart';
+import 'package:business_application/core/utils/ui_support.dart';
 import 'package:business_application/features/community/data/comments_response_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:get/get.dart';
 
 class CommentWidget extends StatelessWidget {
   final String avatarUrl;
@@ -14,8 +17,12 @@ class CommentWidget extends StatelessWidget {
   final String content;
   final List<CommentsResult> replies;
   final VoidCallback? onLikeTap;
+  final bool isLiked;
+  final Function(int reply) onReplyTap;
+  final bool isReplyLiked;
   final VoidCallback? onReply;
   final VoidCallback? onDelete;
+  final Function(String reply) onReplyDelete;
 
   const CommentWidget({
     super.key,
@@ -25,13 +32,20 @@ class CommentWidget extends StatelessWidget {
     required this.rank,
     required this.content,
     required this.onLikeTap,
+    required this.isLiked,
+    required this.onReplyTap,
+    required this.isReplyLiked,
     required this.replies,
     required this.onDelete,
+    required this.onReplyDelete,
     this.onReply,
   });
 
   @override
   Widget build(BuildContext context) {
+    final dark = Ui.isDarkMode(context);
+    final currentUser = Get.find<AuthService>().currentUser.value.result?.user?.name;
+
     return Padding(
       padding: EdgeInsets.all(16.dm),
       child: Column(
@@ -74,15 +88,23 @@ class CommentWidget extends StatelessWidget {
                           child: Text(time, style: GoogleFonts.plusJakartaSans(fontSize: 10.sp, color: Colors.grey)),
                         ),
                         10.wS,
-                          InkWell(
-                            onTap: onLikeTap,
-                            child: Text('Like', style: TextStyle(color: Colors.blue, fontSize: 12.sp)),
+                        IconButton(
+                          onPressed: onLikeTap,
+                          icon: Icon(
+                            isLiked ? Icons.favorite : Icons.favorite_border,
+                            color:
+                                isLiked
+                                    ? Colors.red
+                                    : dark
+                                    ? AppColors.darkGrey
+                                    : AppColors.dark,
                           ),
-                        if (onReply != null)
-                          TextButton(
-                            onPressed: onReply,
-                            child: Text('Reply', style: TextStyle(color: Colors.blue, fontSize: 12.sp)),
-                          ),
+                        ),
+                        // if (onReply != null)
+                        TextButton(
+                          onPressed: onReply,
+                          child: Text('Reply', style: TextStyle(color: Colors.blue, fontSize: 12.sp)),
+                        ),
                       ],
                     ),
                   ],
@@ -96,6 +118,9 @@ class CommentWidget extends StatelessWidget {
                     onDelete?.call();
                   }
                 },
+                // Show delete icon only if the comment belongs to the current user
+                enabled: currentUser != null && currentUser == userName,
+                child: Icon(Icons.more_vert, color: currentUser != userName ? Colors.transparent : Colors.grey),
               ),
             ],
           ),
@@ -156,6 +181,19 @@ class CommentWidget extends StatelessWidget {
                                             style: GoogleFonts.plusJakartaSans(fontSize: 10.sp, color: Colors.grey),
                                           ),
                                         ),
+                                        // reply like
+                                        IconButton(
+                                          onPressed: () => onReplyTap(reply.id ?? 0), // Pass the correct reply ID
+                                          icon: Icon(
+                                            (reply.isLiked ?? false) ? Icons.favorite : Icons.favorite_border,
+                                            color:
+                                                (reply.isLiked ?? false)
+                                                    ? Colors.red
+                                                    : dark
+                                                    ? AppColors.darkGrey
+                                                    : AppColors.dark,
+                                          ),
+                                        ),
                                         TextButton(
                                           onPressed: onReply,
                                           child: Text('Reply', style: TextStyle(color: Colors.blue, fontSize: 11.sp)),
@@ -167,9 +205,14 @@ class CommentWidget extends StatelessWidget {
                             ),
                             PopupMenuButton(
                               itemBuilder: (context) => [PopupMenuItem(value: 'delete', child: Text('Delete'))],
+                              enabled: currentUser != null && currentUser == reply.user?.name,
+                              child: Icon(
+                                Icons.more_vert,
+                                color: currentUser != reply.user?.name ? Colors.transparent : Colors.grey,
+                              ),
                               onSelected: (value) {
                                 if (value == 'delete') {
-                                  onDelete?.call();
+                                  onReplyDelete(reply.id.toString());
                                 }
                               },
                             ),

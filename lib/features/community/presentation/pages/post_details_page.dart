@@ -221,7 +221,7 @@ class PostDetailsPageState extends State<PostDetailsPage> {
                           return Center(child: CircularProgressIndicator());
                         }
                         return SizedBox(
-                          height: 400.h, // Define a fixed height for the ListView
+                          height: MediaQuery.of(context).size.height * 0.5,
                           child: ListView.builder(
                             shrinkWrap: true,
                             physics: AlwaysScrollableScrollPhysics(), // Allow smooth scrolling
@@ -235,7 +235,26 @@ class PostDetailsPageState extends State<PostDetailsPage> {
                                 time: HelperUtils.formatTime(comment.createdAt ?? DateTime.now()),
                                 content: comment.content ?? '',
                                 replies: comment.replies ?? [],
-                                onLikeTap: () {},
+                                isLiked: comment.isLiked ?? false,
+                                onLikeTap: () {
+                                  final commentId = comment.id ?? 0;
+                                  if (commentId == 0) return;
+
+                                  final currentState = comment.isLiked ?? false;
+                                  comment.isLiked = !currentState;
+                                  controller.comments.refresh();
+                                  controller.likeCommentsAndSyncState(context, commentId, currentState);
+                                },
+                                isReplyLiked: comment.replies?.any((reply) => reply.isLiked ?? false) ?? false,
+                                onReplyTap: (replyId) {
+                                  if (replyId == 0) return;
+
+                                  final currentState =
+                                      comment.replies?.firstWhere((reply) => reply.id == replyId).isLiked ?? false;
+                                  comment.replies?.firstWhere((reply) => reply.id == replyId).isLiked = !currentState;
+                                  controller.comments.refresh();
+                                  controller.likeCommentsAndSyncState(context, replyId, currentState);
+                                },
                                 onDelete: () {
                                   // show confirmation dialog
                                   showDialog(
@@ -254,7 +273,38 @@ class PostDetailsPageState extends State<PostDetailsPage> {
                                                 Navigator.of(context).pop();
                                                 // Call the delete comment method
                                                 controller.selectedPostId.value = post?.id ?? 0;
-                                                controller.deleteComments(comment.id.toString(), context);
+                                                controller.deleteComments(comment.id.toString(), context).then((_) {
+                                                  controller.getComments(
+                                                    post?.id.toString() ?? "",
+                                                  ); // Refresh comments after deletion
+                                                });
+                                              },
+                                              child: Text('Delete'),
+                                            ),
+                                          ],
+                                        ),
+                                  );
+                                },
+                                onReplyDelete: (value) {
+                                  print("here is the reply id: ${value}");
+                                  // show confirmation dialog
+                                  showDialog(
+                                    context: context,
+                                    builder:
+                                        (context) => AlertDialog(
+                                          title: Text('Delete Reply'),
+                                          content: Text('Are you sure you want to delete this reply?'),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () => Navigator.of(context).pop(),
+                                              child: Text('Cancel'),
+                                            ),
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                                controller.selectedPostId.value = post?.id ?? 0;
+                                                controller.deleteComments(value, context);
+                                                controller.getComments(post?.id.toString() ?? "");
                                               },
                                               child: Text('Delete'),
                                             ),
@@ -263,10 +313,14 @@ class PostDetailsPageState extends State<PostDetailsPage> {
                                   );
                                 },
                                 onReply: () {
-                                  setState(() {
-                                    _isReplying = true;
-                                    _replyingTo = comment.id;
-                                  });
+                                  print("here is the comment id: ${comment.id}");
+                                  print("Here is the parent id: ${comment.parentId}");
+                                  if (mounted) {
+                                    setState(() {
+                                      _isReplying = true;
+                                      _replyingTo = comment.id!; // Set the parent comment ID
+                                    });
+                                  }
                                   Future.delayed(Duration(milliseconds: 100), () => _commentFocusNode.requestFocus());
                                 },
                               );
@@ -295,53 +349,78 @@ class PostDetailsPageState extends State<PostDetailsPage> {
                       ),
                       10.wS,
                       Expanded(
-                        child: TextFormField(
-                          onTapOutside: (event) => FocusScope.of(context).unfocus(),
-                          controller: _commentController,
-                          focusNode: _commentFocusNode,
-                          decoration: InputDecoration(
-                            fillColor: dark ? AppColors.dark : Colors.white,
-                            filled: true,
-                            hintText:
-                                _isReplying
-                                    ? 'Replying to ${controller.comments.value.result?.data?.firstWhere((element) => element.id == _replyingTo).user?.name ?? ''}'
-                                    : 'Add comment',
-                            contentPadding: EdgeInsets.symmetric(horizontal: 20.w),
-                            hintStyle: TextStyle(
-                              color: Colors.grey.shade500,
-                              fontSize: 12.sp,
-                              overflow: TextOverflow.ellipsis,
+                        child: Stack(
+                          alignment: Alignment.centerRight,
+                          children: [
+                            TextFormField(
+                              onTapOutside: (_) => FocusScope.of(context).unfocus(),
+                              controller: _commentController,
+                              focusNode: _commentFocusNode,
+                              decoration: InputDecoration(
+                                fillColor: dark ? AppColors.dark : Colors.white,
+                                filled: true,
+                                hintText:
+                                    _isReplying
+                                        ? 'Replying to ${controller.comments.value.result?.data?.firstWhere((element) => element.id == _replyingTo).user?.name ?? ''}'
+                                        : 'Add comment',
+                                contentPadding: EdgeInsets.symmetric(horizontal: 20.w),
+                                hintStyle: TextStyle(
+                                  color: Colors.grey.shade500,
+                                  fontSize: 12.sp,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(30.0),
+                                  borderSide: BorderSide(color: AppColors.borderColor),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(30.0),
+                                  borderSide: BorderSide(color: AppColors.borderColor),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(30.0),
+                                  borderSide: BorderSide(color: AppColors.borderColor),
+                                ),
+                              ),
                             ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30.0),
-                              borderSide: BorderSide(color: AppColors.borderColor),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30.0),
-                              borderSide: BorderSide(color: AppColors.borderColor),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30.0),
-                              borderSide: BorderSide(color: AppColors.borderColor),
-                            ),
-                          ),
+                            if (_isReplying)
+                              Padding(
+                                padding: EdgeInsets.only(right: 10),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      _isReplying = false;
+                                      _replyingTo = null;
+                                      _commentController.clear();
+                                      _commentFocusNode.unfocus();
+                                    });
+                                  },
+                                  child: Icon(Icons.close, size: 20.sp, color: Colors.grey),
+                                ),
+                              ),
+                          ],
                         ),
                       ),
+
                       10.wS,
                       IconButton(
                         onPressed: () {
                           print("here is the _replyto: $_replyingTo");
+                          print("Parent id is ${_replyingTo?.toString()}");
                           controller.selectedPostId.value = post?.id ?? 0;
                           controller.addComments(
                             context: context,
                             postId: controller.selectedPostId.value.toString(),
                             comments: _commentController.text.trim(),
-                            parentId: _isReplying ? _replyingTo.toString() : "",
+                            parentId:
+                                (_isReplying && _replyingTo != null)
+                                    ? _replyingTo.toString()
+                                    : "", // Pass parentId for replies
                           );
                           _commentController.clear();
                           setState(() {
                             _isReplying = false;
-                            _replyingTo = null;
+                            _replyingTo = null; // Reset the parent comment ID after adding the reply
                           });
                         },
                         icon: SvgPicture.asset(
