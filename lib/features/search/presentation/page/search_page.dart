@@ -3,6 +3,7 @@ import 'package:business_application/core/config/app_size.dart';
 import 'package:business_application/core/utils/ui_support.dart';
 import 'package:business_application/features/community/controller/community_controller.dart';
 import 'package:business_application/features/search/controller/search_controller.dart';
+import 'package:business_application/features/search/presentation/widgets/search_post_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -29,12 +30,18 @@ class SearchPage extends GetView<SearchedController> {
             children: [
               Row(
                 children: [
-                  IconButton(icon: HeroIcon(HeroIcons.arrowLeft), onPressed: () => Navigator.of(context).pop()),
+                  IconButton(
+                    icon: HeroIcon(HeroIcons.arrowLeft),
+                    onPressed: () {
+                      controller.search.value.result?.data?.clear(); // Clear search results
+                      Navigator.of(context).pop();
+                    },
+                  ),
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: TextFormField(
-                        onTapOutside: (event) => FocusScope.of(context).unfocus(),
+                        // onTapOutside: (event) => FocusScope.of(context).unfocus(),
                         onEditingComplete: () {
                           searchQuery = searchController.text;
                           if (searchQuery.isNotEmpty) {
@@ -172,24 +179,42 @@ class SearchPage extends GetView<SearchedController> {
                         ),
                         15.hS,
                         Expanded(
-                          child: ListView.builder(
+                          child: ListView.separated(
+                            separatorBuilder: (_, __) => Container(height: 2.h, color: AppColors.grey),
                             itemCount: controller.search.value.result?.data?.length ?? 0,
                             itemBuilder: (context, index) {
                               final result = controller.search.value.result?.data?[index];
-                              return ListTile(
-                                leading: CircleAvatar(
-                                  radius: 25,
-                                  backgroundImage: NetworkImage(result?.user?.avatar ?? ""),
-                                ),
-                                title: Text(result?.user?.name ?? ""),
-                                subtitle: Text(result?.content ?? "", maxLines: 2, overflow: TextOverflow.ellipsis),
+                              return SearchPostCard(
+                                dp: result?.user?.avatar ?? "",
+                                name: result?.user?.name ?? "",
+                                time: result?.createdAt ?? DateTime.now(),
+                                topic: result?.topic?.name ?? "",
+                                rank: result?.user?.rank?.name ?? "",
                                 onTap: () {
                                   Get.find<CommunityController>().getCommunityPostsById(result?.id.toString() ?? "");
                                   Get.find<CommunityController>().getComments(result?.id.toString() ?? "");
                                   Get.find<CommunityController>().selectedPostId.value = result?.id ?? 0;
                                   GoRouter.of(context).push('/post-details/${result?.id}');
                                 },
+                                postImage: result?.image ?? "",
+                                commentCount: result?.commentsCount.toString() ?? "",
+                                videoUrl: result?.videoUrl ?? "",
+                                caption: result?.content ?? "",
                               );
+                              // return ListTile(
+                              //   leading: CircleAvatar(
+                              //     radius: 25,
+                              //     backgroundImage: NetworkImage(result?.user?.avatar ?? ""),
+                              //   ),
+                              //   title: Text(result?.user?.name ?? ""),
+                              //   subtitle: Text(result?.content ?? "", maxLines: 2, overflow: TextOverflow.ellipsis),
+                              //   onTap: () {
+                              //     Get.find<CommunityController>().getCommunityPostsById(result?.id.toString() ?? "");
+                              //     Get.find<CommunityController>().getComments(result?.id.toString() ?? "");
+                              //     Get.find<CommunityController>().selectedPostId.value = result?.id ?? 0;
+                              //     GoRouter.of(context).push('/post-details/${result?.id}');
+                              //   },
+                              // );
                             },
                           ),
                         ),
