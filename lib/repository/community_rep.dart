@@ -31,8 +31,6 @@ class CommunityRep {
     print("response: $response");
     if (response['success'] == true) {
       Ui.showSuccessSnackBar(context, message: response['message']);
-    } else {
-      Ui.showErrorSnackBar(context, message: response['message']);
     }
     return response;
   }
@@ -236,16 +234,11 @@ class CommunityRep {
 
   Future changeCommunity(Map<String, dynamic> body, BuildContext context) async {
     APIManager _manager = APIManager();
-    final response = await _manager.postAPICallWithHeader(
-      "${ApiUrl.communities}/change",
-      body,
-      {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
-      },
-      context,
-    );
+    final response = await _manager.postAPICallWithHeader("${ApiUrl.communities}/change", body, {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
+    }, context);
     print("response: $response");
     if (response['success'] == true) {
       Ui.showSuccessSnackBar(context, message: response['message']);

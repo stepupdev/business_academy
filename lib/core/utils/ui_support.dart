@@ -9,7 +9,7 @@ class Ui {
         behavior: SnackBarBehavior.floating,
         margin: const EdgeInsets.all(20),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        duration: const Duration(seconds: 5),
+        duration: const Duration(seconds: 2),
       ),
     );
   }
@@ -18,7 +18,7 @@ class Ui {
     return Theme.of(context).brightness == Brightness.dark;
   }
 
-  static void showErrorSnackBar(BuildContext context,{required String message}) {
+  static void showErrorSnackBar(BuildContext context, {required String message}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message, style: const TextStyle(color: Colors.white)),
@@ -26,7 +26,7 @@ class Ui {
         behavior: SnackBarBehavior.floating,
         margin: const EdgeInsets.all(20),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        duration: const Duration(seconds: 5),
+        duration: const Duration(seconds: 2),
       ),
     );
   }

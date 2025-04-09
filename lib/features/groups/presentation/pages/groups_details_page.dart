@@ -30,11 +30,30 @@ class GroupDetailsPage extends GetView<GroupsController> {
       body: RefreshIndicator(
         onRefresh: () => controller.fetchGroupPosts(controller.currentGroupId.value),
         child: Obx(() {
+          if (controller.isLoading.value) {
+            return Center(child: CircularProgressIndicator());
+          }
+          if (controller.groupPosts.value.isEmpty) {
+            return Center(
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 20.h),
+                child: Text(
+                  'No posts available for this group.',
+                  style: TextStyle(color: Colors.grey, fontSize: 14.sp, fontWeight: FontWeight.w500),
+                ),
+              ),
+            );
+          }
           return SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Image.asset('assets/logo/logoname.png', height: 200, width: double.infinity, fit: BoxFit.contain),
+                Image.network(
+                  controller.groupsDetails.value.result?.imageUrl ?? "",
+                  height: 200,
+                  width: double.infinity,
+                  fit: BoxFit.contain,
+                ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Column(

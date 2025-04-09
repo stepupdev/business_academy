@@ -172,6 +172,28 @@ class CommunityController extends GetxController {
       "content": comments,
       "parent_id": parentId,
     }, context);
+
+    if (response['success'] == true) {
+      // Increment the comments count for the selected post
+      communityPostsById.update((post) {
+        if (post?.result != null && post!.result!.commentsCount != null) {
+          post.result!.commentsCount = (post.result!.commentsCount! + 1);
+        }
+      });
+
+      // Update the comments count in the main posts list
+      int postIndex = communityPosts.value.result?.data?.indexWhere((post) => post.id == selectedPostId.value) ?? -1;
+      if (postIndex != -1) {
+        communityPosts.update((posts) {
+          posts?.result?.data?[postIndex].commentsCount = (posts.result!.data![postIndex].commentsCount! + 1);
+        });
+      }
+
+      // Refresh the comments and post details
+      communityPostsById.refresh();
+      communityPosts.refresh();
+    }
+
     print("comments response $response");
     getComments(postId);
   }
@@ -180,6 +202,29 @@ class CommunityController extends GetxController {
     try {
       isLoading(true);
       final response = await CommunityRep().deleteComment(id, context);
+
+      if (response['success'] == true) {
+        // Decrement the comments count for the selected post
+        communityPostsById.update((post) {
+          if (post?.result != null && post!.result!.commentsCount != null) {
+            post.result!.commentsCount = (post.result!.commentsCount! - 1).clamp(0, double.infinity).toInt();
+          }
+        });
+
+        // Update the comments count in the main posts list
+        int postIndex = communityPosts.value.result?.data?.indexWhere((post) => post.id == selectedPostId.value) ?? -1;
+        if (postIndex != -1) {
+          communityPosts.update((posts) {
+            posts?.result?.data?[postIndex].commentsCount =
+                (posts.result!.data![postIndex].commentsCount! - 1).clamp(0, double.infinity).toInt();
+          });
+        }
+        // Refresh the comments and post details
+        communityPostsById.refresh();
+        comments.refresh();
+        communityPosts.refresh();
+      }
+
       print("delete comments response $response");
     } catch (e) {
       isLoading(false);
@@ -450,7 +495,7 @@ class CommunityController extends GetxController {
     }
   }
 
-  void deletePost(String postId, BuildContext context) async {
+  Future<void> deletePost(String postId, BuildContext context) async {
     try {
       isLoading(true);
       final response = await CommunityRep().deletePost(postId, context);

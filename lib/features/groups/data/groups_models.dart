@@ -52,6 +52,7 @@ class Datum {
     int? id;
     String? name;
     dynamic icon;
+    String? imageUrl;
     DateTime? createdAt;
     DateTime? updatedAt;
 
@@ -59,6 +60,7 @@ class Datum {
         this.id,
         this.name,
         this.icon,
+        this.imageUrl,
         this.createdAt,
         this.updatedAt,
     });
@@ -67,16 +69,16 @@ class Datum {
         id: json["id"],
         name: json["name"],
         icon: json["icon"],
+        imageUrl: json["image_url"],
         createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
         updatedAt: json["updated_at"] == null ? null : DateTime.parse(json["updated_at"]),
     );
-
-  get topic => null;
 
     Map<String, dynamic> toJson() => {
         "id": id,
         "name": name,
         "icon": icon,
+        "image_url": imageUrl,
         "created_at": createdAt?.toIso8601String(),
         "updated_at": updatedAt?.toIso8601String(),
     };
