@@ -36,6 +36,11 @@ class CommunityController extends GetxController {
   RxDouble scrollOffset = 0.0.obs; // Change to RxDouble for reactivity
   RxBool shouldRestorePosition = false.obs;
 
+  // pagination state variable
+  var currentPage = 1.obs;
+  var nextPageUrl = ''.obs;
+  var isPaginating = false.obs;
+
   @override
   void onInit() {
     Get.find<AuthService>().getCurrentUser();
@@ -127,11 +132,30 @@ class CommunityController extends GetxController {
       final response = await CommunityRep().getCommunityPosts();
       communityPosts(PostsResponseModel.fromJson(response));
       filteredPosts.assignAll(communityPosts.value.result?.data ?? []);
+      currentPage.value = communityPosts.value.result?.meta?.currentPage ?? 1;
+      nextPageUrl.value = communityPosts.value.result?.links?.next ?? "";
     } catch (e) {
       isLoading(false);
       print(e);
     } finally {
       isLoading(false);
+    }
+  }
+
+  loadNextPage () async {
+    if(isPaginating.value || nextPageUrl.value.isEmpty) return;
+    try{
+      isPaginating(true);
+      final response = await CommunityRep().getCommunityPosts(fullUrl: nextPageUrl.value);
+      final newPosts = PostsResponseModel.fromJson(response);
+      communityPosts.value.result?.data?.addAll(newPosts.result?.data ?? []);
+      filteredPosts.addAll(newPosts.result?.data ?? []);
+      currentPage.value = newPosts.result?.meta?.currentPage ?? 1;
+      nextPageUrl.value = newPosts.result?.links?.next ?? "";
+    } catch (e) {
+      print(e);
+    } finally {
+      isPaginating(false);
     }
   }
 

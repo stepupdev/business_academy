@@ -36,6 +36,11 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen> with Automatic
   void initState() {
     super.initState();
     controller = Get.find<CommunityController>();
+    controller.scrollController.addListener(() {
+      if (controller.scrollController.position.pixels >= controller.scrollController.position.maxScrollExtent - 300) {
+        controller.loadNextPage();
+      }
+    });
   }
 
   @override
@@ -274,9 +279,15 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen> with Automatic
                         key: PageStorageKey('communityFeedList'),
                         controller: controller.scrollController,
                         physics: const AlwaysScrollableScrollPhysics(),
-                        itemCount: controller.filteredPosts.length,
+                        itemCount: controller.filteredPosts.length + (controller.isPaginating.value ? 1 : 0),
                         separatorBuilder: (_, __) => Container(height: 2.h, color: AppColors.grey),
                         itemBuilder: (context, index) {
+                          if (index == controller.filteredPosts.length) {
+                            return Padding(
+                              padding: EdgeInsets.symmetric(vertical: 10.h),
+                              child: CircularProgressIndicator(color: AppColors.primaryColor, strokeWidth: 2),
+                            );
+                          }
                           final posts = controller.filteredPosts[index];
                           return UserPostWidget(
                             onTap: () {

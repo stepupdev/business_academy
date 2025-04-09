@@ -10,9 +10,9 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
 class CommunityRep {
-  Future getCommunityPosts({Map<String, dynamic>? params}) async {
+  Future getCommunityPosts({Map<String, dynamic>? params, String? fullUrl}) async {
     APIManager _manager = APIManager();
-    final uri = Uri.parse(ApiUrl.communityPosts).replace(queryParameters: params);
+    final uri = fullUrl != null ? Uri.parse(fullUrl) : Uri.parse(ApiUrl.communityPosts).replace(queryParameters: params);
     print("Fetching posts with URI: ${uri.toString()}");
     final response = await _manager.getWithHeader(uri.toString(), {
       "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
