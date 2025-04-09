@@ -16,10 +16,6 @@ class SearchPage extends GetView<SearchedController> {
 
   @override
   Widget build(BuildContext context) {
-    String searchQuery = '';
-    final TextEditingController searchController = TextEditingController();
-    final List<String> searchHistory = ['Flutter', 'Dart', 'Firebase'];
-    var topics = Get.find<CommunityController>().topics.value;
     final dark = Ui.isDarkMode(context);
 
     return Scaffold(
@@ -33,7 +29,9 @@ class SearchPage extends GetView<SearchedController> {
                   IconButton(
                     icon: HeroIcon(HeroIcons.arrowLeft),
                     onPressed: () {
-                      controller.search.value.result?.data?.clear(); // Clear search results
+                      controller.search.value.result?.data?.clear();
+                      controller.searchKeyword.value = '';
+                      controller.searchTextController.value.clear();
                       Navigator.of(context).pop();
                     },
                   ),
@@ -43,18 +41,20 @@ class SearchPage extends GetView<SearchedController> {
                       child: TextFormField(
                         // onTapOutside: (event) => FocusScope.of(context).unfocus(),
                         onEditingComplete: () {
-                          searchQuery = searchController.text;
-                          if (searchQuery.isNotEmpty) {
-                            if (!searchHistory.contains(searchQuery)) {
-                              if (searchHistory.length >= 4) {
-                                searchHistory.removeAt(0);
+                          controller.searchKeyword.value = controller.searchTextController.value.text;
+                          if (controller.searchKeyword.value.isNotEmpty) {
+                            if (!controller.searchHistory.contains(controller.searchKeyword.value)) {
+                              if (controller.searchHistory.length >= 4) {
+                                controller.searchHistory.removeAt(0);
                               }
-                              searchHistory.add(searchQuery);
+                              controller.searchHistory.add(controller.searchKeyword.value);
                             }
-                            controller.searching(searchQuery);
+                            controller.searching(controller.searchKeyword.value);
                           }
+                          controller.searchTextController.value.text =
+                              controller.searchKeyword.value; // Restore the keyword
                         },
-                        controller: searchController,
+                        controller: controller.searchTextController.value,
                         decoration: InputDecoration(
                           hintText: 'Search...',
                           contentPadding: EdgeInsets.symmetric(horizontal: 20.w),
@@ -86,12 +86,12 @@ class SearchPage extends GetView<SearchedController> {
                   child: ListView.separated(
                     scrollDirection: Axis.horizontal,
                     separatorBuilder: (context, index) => SizedBox(width: 5.w),
-                    itemCount: topics.result?.data?.length ?? 0,
+                    itemCount: controller.topics.value.result?.data?.length ?? 0,
                     itemBuilder: (context, index) {
-                      final topic = topics.result?.data?[index];
+                      final topic = controller.topics.value.result?.data?[index];
                       return InkWell(
                         onTap: () {
-                          controller.searching(searchQuery, topicId: topic?.id.toString());
+                          controller.searching(controller.searchKeyword.value, topicId: topic?.id.toString());
                         },
                         child: IntrinsicHeight(
                           child: Container(
@@ -161,7 +161,7 @@ class SearchPage extends GetView<SearchedController> {
                                 style: GoogleFonts.plusJakartaSans(color: Colors.grey),
                                 children: [
                                   TextSpan(
-                                    text: '"$searchQuery"',
+                                    text: '"${controller.searchKeyword.value}"',
                                     style: GoogleFonts.plusJakartaSans(
                                       fontWeight: FontWeight.w600,
                                       color: AppColors.primaryColor,
@@ -201,20 +201,6 @@ class SearchPage extends GetView<SearchedController> {
                                 videoUrl: result?.videoUrl ?? "",
                                 caption: result?.content ?? "",
                               );
-                              // return ListTile(
-                              //   leading: CircleAvatar(
-                              //     radius: 25,
-                              //     backgroundImage: NetworkImage(result?.user?.avatar ?? ""),
-                              //   ),
-                              //   title: Text(result?.user?.name ?? ""),
-                              //   subtitle: Text(result?.content ?? "", maxLines: 2, overflow: TextOverflow.ellipsis),
-                              //   onTap: () {
-                              //     Get.find<CommunityController>().getCommunityPostsById(result?.id.toString() ?? "");
-                              //     Get.find<CommunityController>().getComments(result?.id.toString() ?? "");
-                              //     Get.find<CommunityController>().selectedPostId.value = result?.id ?? 0;
-                              //     GoRouter.of(context).push('/post-details/${result?.id}');
-                              //   },
-                              // );
                             },
                           ),
                         ),
