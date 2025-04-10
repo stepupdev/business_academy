@@ -36,7 +36,7 @@ class SavePostController extends GetxController {
     if (scrollController.hasClients) {
       scrollOffset.value = scrollController.offset;
       shouldRestorePosition.value = true;
-      print("SavePosts: Saved scroll position: ${scrollOffset.value}");
+      debugPrint("SavePosts: Saved scroll position: ${scrollOffset.value}");
     }
   }
 
@@ -48,9 +48,9 @@ class SavePostController extends GetxController {
           if (scrollController.hasClients) {
             try {
               scrollController.jumpTo(scrollOffset.value);
-              print("SavePosts: Restored scroll position to: ${scrollOffset.value}");
+              debugPrint("SavePosts: Restored scroll position to: ${scrollOffset.value}");
             } catch (e) {
-              print("SavePosts: Error restoring scroll position: $e");
+              debugPrint("SavePosts: Error restoring scroll position: $e");
             }
           }
         });
@@ -66,7 +66,7 @@ class SavePostController extends GetxController {
         savePosts(SavePostResponseModel.fromJson(response));
       }
     } catch (e) {
-      print(e);
+      debugPrint("Error fetching saved posts: $e");
     } finally {
       isLoading(false);
     }

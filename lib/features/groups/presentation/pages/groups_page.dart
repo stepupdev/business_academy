@@ -88,7 +88,7 @@ class GroupsPage extends GetView<GroupsController> {
                             // Use GoRouter for navigation to match your app's routing system
                             context.push(AppRoutes.groupDetails);
                           } catch (e) {
-                            print("Error navigating to group details: $e");
+                            debugPrint("Error navigating to group details: $e");
                           } finally {
                             controller.isLoading(false);
                           }

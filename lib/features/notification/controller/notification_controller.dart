@@ -23,7 +23,7 @@ class NotificationController extends GetxController {
       var response = await NotificationRep().getNotifications();
       notifications(NotificationResponseModel.fromJson(response));
     } catch (e) {
-      print(e);
+      debugPrint("Error fetching notifications: $e");
     } finally {
       isLoading(false);
     }
@@ -39,7 +39,7 @@ class NotificationController extends GetxController {
 
       return hasNewNotification.value;
     } catch (e) {
-      print(e);
+      debugPrint("Error checking notification: $e");
       return false;
     }
   }
@@ -48,10 +48,10 @@ class NotificationController extends GetxController {
     isLoading(true);
     try {
       var response = await NotificationRep().markNotification(id, context);
-      print("Notification: $response");
+      debugPrint("Notification: $response");
       fetchNotifications(); // Refresh notifications after marking as read
     } catch (e) {
-      print(e);
+      debugPrint("Error marking notification as read: $e");
     } finally {
       isLoading(false);
     }
@@ -63,7 +63,7 @@ class NotificationController extends GetxController {
 
     try {
       var response = await NotificationRep().markReadUnreadNotification(id, context);
-      print("Notification: $response");
+      debugPrint("Notification: $response");
 
       // Update the specific notification in the list
       var notificationIndex = notifications.value.result?.data?.indexWhere((n) => n.id.toString() == id);
@@ -74,7 +74,7 @@ class NotificationController extends GetxController {
         checkNotification();
       }
     } catch (e) {
-      print(e);
+      debugPrint("Error marking notification as read/unread: $e");
     } finally {
       notificationLoading[id] = false; // Reset loading for the specific notification
       notificationLoading.refresh(); // Notify listeners about the change
@@ -85,12 +85,12 @@ class NotificationController extends GetxController {
     isLoading(true);
     try {
       var response = await NotificationRep().markAllNotification(context);
-      print("Notification: $response");
+      debugPrint("Notification: $response");
 
       notifications.refresh();
       checkNotification();
     } catch (e) {
-      print(e);
+      debugPrint("Error marking all notifications as read: $e");
     } finally {
       isLoading(false);
     }

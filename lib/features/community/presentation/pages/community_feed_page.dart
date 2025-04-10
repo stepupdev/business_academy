@@ -48,11 +48,11 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen> with Automatic
     super.didChangeDependencies();
 
     // Add a print statement to verify this is being called
-    print("didChangeDependencies called in CommunityFeedScreen");
+    debugPrint("didChangeDependencies called in CommunityFeedScreen");
 
     // Try to restore scroll position when coming back to this screen
     if (controller.shouldRestorePosition.value) {
-      print("Attempting to restore position to: ${controller.scrollOffset.value}");
+      debugPrint("Attempting to restore position to: ${controller.scrollOffset.value}");
       controller.restoreScrollPosition();
     }
   }
@@ -251,27 +251,25 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen> with Automatic
                   Divider(color: AppColors.darkerGrey, thickness: 0.3),
                   Obx(() {
                     if (controller.filteredPosts.isEmpty) {
-                      return Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.forum_outlined, size: 80.sp, color: Colors.grey.shade400),
-                            10.hS,
-                            Text(
-                              "No Posts Available",
-                              style: GoogleFonts.plusJakartaSans(
-                                fontSize: 20.sp,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.grey.shade600,
-                              ),
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.forum_outlined, size: 80.sp, color: Colors.grey.shade400),
+                          10.hS,
+                          Text(
+                            "No Posts Available",
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 20.sp,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey.shade600,
                             ),
-                            5.hS,
-                            Text(
-                              "Try selecting a different topic.",
-                              style: GoogleFonts.plusJakartaSans(fontSize: 14.sp, color: Colors.grey.shade500),
-                            ),
-                          ],
-                        ),
+                          ),
+                          5.hS,
+                          Text(
+                            "Try selecting a different topic.",
+                            style: GoogleFonts.plusJakartaSans(fontSize: 14.sp, color: Colors.grey.shade500),
+                          ),
+                        ],
                       );
                     }
                     return Expanded(

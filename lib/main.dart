@@ -28,7 +28,7 @@ void startNotificationChecker() async {
       bool hasNewNotifications = await Get.find<NotificationController>().checkNotification();
 
       if (hasNewNotifications) {
-        print("🔔 New notification received!");
+        debugPrint("🔔 New notification received!");
       }
     }
   });

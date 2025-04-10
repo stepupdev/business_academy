@@ -196,7 +196,7 @@ class GroupDetailsPage extends GetView<GroupsController> {
                                 Get.find<CommunityController>().getComments(posts.id.toString());
 
                                 // CRITICAL: Make sure isGroupPost is explicitly set to true
-                                print("GROUP DETAILS PAGE: Navigating to post details with isGroupPost=true");
+                                debugPrint("GROUP DETAILS PAGE: Navigating to post details with isGroupPost=true");
 
                                 context.push(
                                   '/post-details/${posts.id}',
@@ -257,7 +257,7 @@ class GroupDetailsPage extends GetView<GroupsController> {
         controller.fetchGroupPosts(groupId),
       ]);
     } catch (e) {
-      print("Error loading data: $e");
+      debugPrint("Error loading data: $e");
     } finally {
       controller.isLoading(false);
     }

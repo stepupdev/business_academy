@@ -23,7 +23,7 @@ class PostDetailsPage extends StatefulWidget {
 
   PostDetailsPage({super.key, this.isVideo = true, required this.isGroupPost, this.groupId, required this.postId}) {
     // Add debug print to see the values being passed
-    print("POST DETAILS PAGE CONSTRUCTOR: isGroupPost=$isGroupPost, groupId=$groupId, postId=$postId");
+    debugPrint("POST DETAILS PAGE CONSTRUCTOR: isGroupPost=$isGroupPost, groupId=$groupId, postId=$postId");
   }
 
   @override
@@ -41,7 +41,7 @@ class PostDetailsPageState extends State<PostDetailsPage> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!_isInitialized) {
-      print("POST DETAILS: Initializing with isGroupPost=${widget.isGroupPost}, groupId=${widget.groupId}");
+      debugPrint("POST DETAILS: Initializing with isGroupPost=${widget.isGroupPost}, groupId=${widget.groupId}");
 
       final controller = Get.find<CommunityController>();
       controller.selectedPostId.value = int.tryParse(widget.postId) ?? 0;
@@ -50,7 +50,7 @@ class PostDetailsPageState extends State<PostDetailsPage> {
 
       // Initialize group controller if this is a group post
       if (widget.isGroupPost && widget.groupId != null) {
-        print("POST DETAILS: This is a group post! Loading group details...");
+        debugPrint("POST DETAILS: This is a group post! Loading group details...");
         final groupController = Get.find<GroupsController>();
         groupController.selectedPostId.value = int.tryParse(widget.postId) ?? 0;
         groupController.currentGroupId.value = widget.groupId ?? '';
@@ -83,16 +83,16 @@ class PostDetailsPageState extends State<PostDetailsPage> {
                     final isGroupPost = widget.isGroupPost;
                     final groupId = widget.groupId;
 
-                    print("POST DETAILS: Navigating to edit. isGroupPost=$isGroupPost, groupId=$groupId");
+                    debugPrint("POST DETAILS: Navigating to edit. isGroupPost=$isGroupPost, groupId=$groupId");
 
                     // Force fetch group topics if needed
                     if (isGroupPost && groupId != null) {
                       try {
-                        print("POST DETAILS: Pre-loading group topics for groupId=$groupId");
+                        debugPrint("POST DETAILS: Pre-loading group topics for groupId=$groupId");
                         final groupsController = Get.find<GroupsController>();
                         groupsController.fetchGroupsTopic(groupId);
                       } catch (e) {
-                        print("Error pre-loading group topics: $e");
+                        debugPrint("Error pre-loading group topics: $e");
                       }
                     }
 
@@ -287,7 +287,7 @@ class PostDetailsPageState extends State<PostDetailsPage> {
                                   );
                                 },
                                 onReplyDelete: (value) {
-                                  print("here is the reply id: ${value}");
+                                  debugPrint("here is the reply id: ${value}");
                                   // show confirmation dialog
                                   showDialog(
                                     context: context,
@@ -314,8 +314,8 @@ class PostDetailsPageState extends State<PostDetailsPage> {
                                   );
                                 },
                                 onReply: () {
-                                  print("here is the comment id: ${comment.id}");
-                                  print("Here is the parent id: ${comment.parentId}");
+                                  debugPrint("here is the comment id: ${comment.id}");
+                                  debugPrint("Here is the parent id: ${comment.parentId}");
                                   if (mounted) {
                                     setState(() {
                                       _isReplying = true;
@@ -406,8 +406,8 @@ class PostDetailsPageState extends State<PostDetailsPage> {
                       10.wS,
                       IconButton(
                         onPressed: () {
-                          print("here is the _replyto: $_replyingTo");
-                          print("Parent id is ${_replyingTo?.toString()}");
+                          debugPrint("here is the _replyto: $_replyingTo");
+                          debugPrint("Parent id is ${_replyingTo?.toString()}");
                           controller.selectedPostId.value = post?.id ?? 0;
                           controller.addComments(
                             context: context,

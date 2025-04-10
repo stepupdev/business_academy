@@ -138,7 +138,7 @@ class MenuPage extends GetView<UserMenuController> {
                                                       : null,
                                               onTap: () {
                                                 final communityId = community?.id?.toString() ?? "";
-                                                print("Community ID: $communityId");
+                                                debugPrint("Community ID: $communityId");
                                                 controller.changeCommunity(communityId, context);
                                                 controller.getUser();
                                                 controller.communities.refresh();

@@ -14,13 +14,13 @@ class APIManager {
     Map<String, String> headerData,
     BuildContext context,
   ) async {
-    print("Calling API: $url");
-    print("Calling parameters: $param");
+    debugPrint("Calling API: $url");
+    debugPrint("Calling parameters: $param");
 
     var responseJson;
     try {
       final response = await http.post(Uri.parse(url), body: jsonEncode(param), headers: headerData);
-      print("api provider bro bro bro bro ${response.body}");
+      debugPrint("api provider bro bro bro bro ${response.body}");
       var data = jsonDecode(response.body);
 
       if (response.statusCode == 422) {
@@ -34,7 +34,7 @@ class APIManager {
       }
       responseJson = _response(response);
 
-      print("hlw bro ++++++++++++++++++++$responseJson");
+      debugPrint("hlw bro ++++++++++++++++++++$responseJson");
     } on SocketException catch (_) {
       throw FetchDataException('No Internet connection');
     }
@@ -42,13 +42,13 @@ class APIManager {
   }
 
   Future<dynamic> putAPICallWithHeader(String url, Map<String, dynamic> param, Map<String, String> headerData) async {
-    print("Calling API: $url");
-    print("Calling parameters: $param");
+    debugPrint("Calling API: $url");
+    debugPrint("Calling parameters: $param");
 
     var responseJson;
     try {
       final response = await http.post(Uri.parse(url), body: jsonEncode(param), headers: headerData);
-      print("api provider bro bro bro bro ${response.body}");
+      debugPrint("api provider bro bro bro bro ${response.body}");
       var data = jsonDecode(response.body);
       if (response.statusCode == 422) {
         Ui.showErrorSnackBar(scaffoldMessengerKey.currentContext!, message: data["message"]);
@@ -57,7 +57,7 @@ class APIManager {
       }
       responseJson = _response(response);
 
-      print("hlw bro ++++++++++++++++++++$responseJson");
+      debugPrint("hlw bro ++++++++++++++++++++$responseJson");
     } on SocketException catch (_) {
       throw FetchDataException('No Internet connection');
     }
@@ -65,18 +65,18 @@ class APIManager {
   }
 
   Future<dynamic> postAPICall(String url, var param, {var header}) async {
-    print("Calling API: $url");
-    print("Calling parameters: $param");
+    debugPrint("Calling API: $url");
+    debugPrint("Calling parameters: $param");
 
     var responseJson;
     try {
       final response = await http.post(Uri.parse(url), body: param, headers: header);
-      print("status code is ${response.statusCode}");
-      print("status  ${response}");
+      debugPrint("status code is ${response.statusCode}");
+      debugPrint("status  ${response}");
       if (response.statusCode == 200) {
         responseJson = _response(response);
-        print('APIManager.postAPICall');
-        print(responseJson);
+        debugPrint('APIManager.postAPICall');
+        debugPrint(responseJson);
       } else if (response.statusCode == 404) {
         responseJson = _response(response);
       } else if (response.statusCode == 405) {
@@ -97,28 +97,28 @@ class APIManager {
     Map<String, String> headerData,
     String parameterName,
   ) async {
-    print("Calling API: $url");
-    print("Calling parameters: ${param}");
-    print(images);
-    print(headerData);
+    debugPrint("Calling API: $url");
+    debugPrint("Calling parameters: ${param}");
+    debugPrint(images);
+    debugPrint("Calling parameterName: $parameterName");
 
     var responseJson;
     try {
       var request = http.MultipartRequest('POST', Uri.parse(url));
       request.fields.addAll(param);
 
-      print('fgdf');
+      debugPrint('fgdf');
 
       if (images.isNotEmpty) {
-        print('APIManager.multipartPostAPI');
+        debugPrint('APIManager.multipartPostAPI');
         for (var item in images) {
-          print(item.runtimeType);
+          debugPrint("item is $item");
           String fileName = item.path.split("/").last;
           var stream = http.ByteStream(item.openRead());
 
           stream.cast();
 
-          print(stream);
+          debugPrint("stream is $stream");
           // get file length
 
           var length = await item.length(); //imageFile is your image file
@@ -130,17 +130,17 @@ class APIManager {
         }
       }
       if (headerData.isNotEmpty) {
-        print('APIManager.multipartPostAPI 2');
+        debugPrint('APIManager.multipartPostAPI 2');
         request.headers.addAll(headerData);
       }
-      print('APIManager.multipartPostAPI 3');
+      debugPrint('APIManager.multipartPostAPI 3');
       http.StreamedResponse streamedResponse = await request.send();
-      print('APIManager.multipartPostAPI 4');
+      debugPrint('APIManager.multipartPostAPI 4');
       var response = await http.Response.fromStream(streamedResponse);
 
-      print(response.statusCode);
+      debugPrint("status code is ${response.statusCode}");
       responseJson = _response(response);
-      print(responseJson);
+      debugPrint(responseJson);
     } on SocketException catch (_) {
       throw FetchDataException('No Internet connection');
     }
@@ -148,11 +148,11 @@ class APIManager {
   }
 
   Future<dynamic> get(String url) async {
-    print("Calling API: $url");
+    debugPrint("Calling API: $url");
     var responseJson;
     try {
       final response = await http.get(Uri.parse(url));
-      print(response.body);
+      debugPrint(response.body);
       responseJson = _response(response);
     } on SocketException catch (_) {
       throw FetchDataException('No Internet connection');
@@ -168,9 +168,9 @@ class APIManager {
   }) async {
     // string to uri
     var uri = Uri.parse(url);
-    print("my list is $list");
-    print("my body is $body");
-    print("my url is $url");
+    debugPrint("my list is $list");
+    debugPrint("my body is $body");
+    debugPrint("my url is $url");
 
     // create multipart request
     var request = http.MultipartRequest("POST", uri);
@@ -186,20 +186,20 @@ class APIManager {
 
     // send
     http.Response response = await http.Response.fromStream(await request.send());
-    print(response.statusCode);
-    print(response.body);
+    debugPrint("status code is ${response.statusCode}");
+    debugPrint(response.body);
 
     var bb = jsonDecode(response.body);
-    print("my array multipart response is $bb");
+    debugPrint("my array multipart response is $bb");
     return bb;
   }
 
   Future<dynamic> getWithHeader(String url, Map<String, String> headerData) async {
-    print("Calling API: $url");
+    debugPrint("Calling API: $url");
     var responseJson;
     try {
       final response = await http.get(Uri.parse(url), headers: headerData);
-      print("my getWithHeader method data response ${response.body}");
+      debugPrint("my getWithHeader method data response ${response.body}");
       responseJson = _response(response);
     } on SocketException catch (_) {
       throw FetchDataException('No Internet connection');
@@ -208,9 +208,9 @@ class APIManager {
   }
 
   dynamic _response(http.Response response) {
-    print('APIManager._response');
-    print(response);
-    print(response.statusCode);
+    debugPrint('APIManager._response');
+    debugPrint("response is ${response.body}");
+    debugPrint("status code is ${response.statusCode}");
     switch (response.statusCode) {
       case 200:
         var responseJson = json.decode(response.body.toString());
@@ -236,12 +236,12 @@ class APIManager {
   }
 
   Future<dynamic> deleteAPICallWithHeader(BuildContext context, String url, {Map<String, String>? headerData}) async {
-    print("Calling DELETE API: $url");
+    debugPrint("Calling DELETE API: $url");
 
     var responseJson;
     try {
       final response = await http.delete(Uri.parse(url), headers: headerData);
-      print("API Response: ${response.body}");
+      debugPrint("API Response: ${response.body}");
 
       var data = jsonDecode(response.body);
       if (response.statusCode == 422 || response.statusCode == 400) {
@@ -252,7 +252,7 @@ class APIManager {
       }
 
       responseJson = _response(response);
-      print("Processed Response: $responseJson");
+      debugPrint("Processed Response: $responseJson");
     } on SocketException catch (_) {
       throw FetchDataException('No Internet connection');
     }

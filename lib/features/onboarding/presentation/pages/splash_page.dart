@@ -25,14 +25,14 @@ class SplashPageState extends State<SplashPage> {
     await Future.delayed(const Duration(seconds: 2)); // Splash delay
 
     bool isLoggedIn = await AuthUtlity.checkUserLogin();
-    print("🔹 Is User Logged In? $isLoggedIn");
+    debugPrint("🔹 Is User Logged In? $isLoggedIn");
 
     if (isLoggedIn) {
-      print("✅ Redirecting to Home Page...");
+      debugPrint("✅ Redirecting to Home Page...");
       context.go(AppRoutes.communityFeed);
       await Get.find<AuthService>().getCurrentUser();
     } else {
-      print("❌ Redirecting to Sign-In Page...");
+      debugPrint("❌ Redirecting to Sign-In Page...");
       context.go(AppRoutes.signIn);
     }
   }

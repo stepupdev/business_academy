@@ -27,7 +27,7 @@ class SearchedController extends GetxController {
       final response = await CommunityRep().search(query, topicQuery: topicId);
       search(SearchResponseModel.fromJson(response));
     } catch (e) {
-      print(e);
+      debugPrint("Error: $e");
     } finally {
       isLoading(false);
     }

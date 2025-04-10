@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:business_application/features/auth/data/login_response_model.dart';
+import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -13,7 +14,7 @@ class AuthUtlity {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('user_id', userId);
     await prefs.setString('token', token);
-    print("✅ Token Saved: $token");  // Debug log
+    debugPrint("✅ Token Saved: $token"); // Debug log
   }
 
   /// ✅ **Retrieve token and log it**
@@ -22,11 +23,11 @@ class AuthUtlity {
     String? token = prefs.getString('token');
 
     if (token == null || token.isEmpty) {
-      print("⚠️ No token found in storage.");
+      debugPrint("⚠️ No token found in storage.");
       return null;
     }
 
-    print("✅ Retrieved Token: $token");
+    debugPrint("✅ Retrieved Token: $token");
     return token;
   }
 
@@ -35,7 +36,7 @@ class AuthUtlity {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('user-data', jsonEncode(model.toJson()));
     userInfo = model;
-    print("✅ User info saved.");
+    debugPrint("✅ User info saved.");
   }
 
   /// ✅ **Retrieve user info with proper handling**
@@ -44,42 +45,41 @@ class AuthUtlity {
     String? value = prefs.getString('user-data');
 
     if (value == null) {
-      print("⚠️ No user data found.");
+      debugPrint("⚠️ No user data found.");
       return null;
     }
 
-    print("✅ Retrieved User Info: $value");
+    debugPrint("✅ Retrieved User Info: $value");
     return LoginResponseModel.fromJson(jsonDecode(value));
   }
 
   /// ✅ **Check login status before opening the app**
-static Future<bool> checkUserLogin() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
+  static Future<bool> checkUserLogin() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
 
-  bool hasUserData = prefs.containsKey('user-data');
-  String? token = prefs.getString('token');
+    bool hasUserData = prefs.containsKey('user-data');
+    String? token = prefs.getString('token');
 
-  print("🔍 Checking Login State...");
-  print("📌 Has User Data: $hasUserData");
-  print("📌 Retrieved Token: $token");
+    debugPrint("🔍 Checking Login State...");
+    debugPrint("📌 Has User Data: $hasUserData");
+    debugPrint("📌 Retrieved Token: $token");
 
-  // 🔹 Check Google Sign-In
-  GoogleSignIn googleSignIn = GoogleSignIn();
-  GoogleSignInAccount? googleUser = await googleSignIn.signInSilently();
+    // 🔹 Check Google Sign-In
+    GoogleSignIn googleSignIn = GoogleSignIn();
+    GoogleSignInAccount? googleUser = await googleSignIn.signInSilently();
 
-  if (token != null && token.isNotEmpty) {
-    print("✅ User is logged in with token.");
-    userInfo = await getUserInfo() ?? LoginResponseModel();
-    return true;
+    if (token != null && token.isNotEmpty) {
+      debugPrint("✅ User is logged in with token.");
+      userInfo = await getUserInfo() ?? LoginResponseModel();
+      return true;
+    }
+
+    if (googleUser != null) {
+      debugPrint("✅ User is logged in with Google Sign-In.");
+      return true;
+    }
+
+    debugPrint("❌ User is NOT logged in.");
+    return false;
   }
-
-  if (googleUser != null) {
-    print("✅ User is logged in with Google Sign-In.");
-    return true;
-  }
-
-  print("❌ User is NOT logged in.");
-  return false;
-}
-
 }

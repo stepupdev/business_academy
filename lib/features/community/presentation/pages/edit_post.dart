@@ -27,10 +27,10 @@ class EditPostPage extends GetView<CommunityController> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (isDebug) {
-        print("\n\n=========== EDIT POST PAGE DIAGNOSTICS ===========");
-        print("isGroupTopics = $isGroupTopics");
-        print("postId = $postId");
-        print("groupId = $groupId");
+        debugPrint("\n\n=========== EDIT POST PAGE DIAGNOSTICS ===========");
+        debugPrint("isGroupTopics = $isGroupTopics");
+        debugPrint("postId = $postId");
+        debugPrint("groupId = $groupId");
       }
 
       // Clear the edit post data
@@ -38,29 +38,29 @@ class EditPostPage extends GetView<CommunityController> {
 
       // Load topics first
       if (isGroupTopics && groupId != null) {
-        if (isDebug) print("EDIT POST PAGE: Loading group topics for group ID $groupId");
+        if (isDebug) debugPrint("EDIT POST PAGE: Loading group topics for group ID $groupId");
         final groupsController = Get.find<GroupsController>();
         await groupsController.fetchGroupsTopic(groupId!);
 
         if (isDebug) {
           final topics = groupsController.groupsTopicResponse.value.result?.data ?? [];
-          print("EDIT POST PAGE: Loaded ${topics.length} group topics:");
+          debugPrint("EDIT POST PAGE: Loaded ${topics.length} group topics:");
           topics.forEach((topic) {
-            print("  - ${topic.name} (ID: ${topic.id})");
+            debugPrint("  - ${topic.name} (ID: ${topic.id})");
           });
         }
       } else {
-        if (isDebug) print("EDIT POST PAGE: Loading community topics");
+        if (isDebug) debugPrint("EDIT POST PAGE: Loading community topics");
         await controller.getTopic();
 
         if (isDebug) {
           final topics = controller.topics.value.result?.data ?? [];
-          print("EDIT POST PAGE: Loaded ${topics.length} community topics");
+          debugPrint("EDIT POST PAGE: Loaded ${topics.length} community topics");
         }
       }
 
       // Load post data
-      if (isDebug) print("EDIT POST PAGE: Loading post with ID $postId");
+      if (isDebug) debugPrint("EDIT POST PAGE: Loading post with ID $postId");
       await controller.getCommunityPostsById(postId);
       controller.loadEditPostData(postId);
     });

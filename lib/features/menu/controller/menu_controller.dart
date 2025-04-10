@@ -31,7 +31,7 @@ class UserMenuController extends GetxController {
       var response = await CommunityRep().getUser();
       user(UserResponseModel.fromJson(response));
     } catch (e) {
-      print(e);
+      debugPrint("Error fetching user: $e");
     } finally {
       isLoading(false);
     }
@@ -43,7 +43,7 @@ class UserMenuController extends GetxController {
       var response = await CommunityRep().fetchCommunities();
       communities(CommunitiesResponseModel.fromJson(response));
     } catch (e) {
-      print(e);
+      debugPrint("Error fetching communities: $e");
     } finally {
       isLoading(false);
     }
@@ -54,11 +54,11 @@ class UserMenuController extends GetxController {
     try {
       Map<String, dynamic> data = {"community_id": id};
       var response = CommunityRep().changeCommunity(data, context);
-      print("response: $response");
+      debugPrint("response: $response");
       getUser();
       fetchCommunities();
     } catch (e) {
-      print(e);
+      debugPrint("Error changing community: $e");
     } finally {
       isLoading(false);
     }

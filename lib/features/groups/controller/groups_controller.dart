@@ -66,19 +66,19 @@ class GroupsController extends GetxController {
   Future<bool> fetchGroupPosts(String groupId) async {
     try {
       isLoading(true);
-      print("Fetching posts for group: $groupId");
+      debugPrint("Fetching posts for group: $groupId");
 
       if (groupId.isEmpty) {
-        print("Group ID is empty!");
+        debugPrint("Group ID is empty!");
         return false;
       }
 
       final response = await CommunityRep().getCommunityPosts(params: {'group_id': groupId});
-      print("Group posts response: $response");
+      debugPrint("Group posts response: $response");
 
       final postsModel = PostsResponseModel.fromJson(response);
       groupPosts.assignAll(postsModel.result?.data ?? []);
-      print("Loaded ${groupPosts.length} posts for group $groupId"); // Debug line
+      debugPrint("Loaded ${groupPosts.length} posts for group $groupId"); // Debug line
       return true;
     } catch (e) {
       return false;
@@ -95,7 +95,7 @@ class GroupsController extends GetxController {
         final response = await CommunityRep().getCommunityPosts(params: {'group_id': currentGroupId.value});
         groupPosts.assignAll(PostsResponseModel.fromJson(response).result?.data ?? []);
       } catch (e) {
-        print("Error fetching all group posts: $e");
+        debugPrint("Error fetching all group posts: $e");
       } finally {
         isLoading(false);
       }
@@ -107,7 +107,7 @@ class GroupsController extends GetxController {
         );
         groupPosts.assignAll(PostsResponseModel.fromJson(response).result?.data ?? []);
       } catch (e) {
-        print("Error fetching group posts by topic: $e");
+        debugPrint("Error fetching group posts by topic: $e");
       } finally {
         isLoading(false);
       }

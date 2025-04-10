@@ -1,4 +1,5 @@
 import 'package:business_application/features/auth/data/login_response_model.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
@@ -134,7 +135,7 @@ class AuthService extends GetxService {
   getCurrentUser() {
     if (_box.hasData('currentUser')) {
       currentUser.value = LoginResponseModel.fromJson(_box.read('currentUser'));
-      print("${_box.read('currentUser')}");
+      debugPrint("${_box.read('currentUser')}");
     }
   }
 
@@ -154,6 +155,6 @@ class AuthService extends GetxService {
   // Future<void> getDeviceToken() async {
   //   deviceToken.value = await FirebaseMessaging.instance.getToken() ?? '';
   //
-  //   print('AuthService.getDeviceToken:${deviceToken.value}');
+  //   debugPrint('AuthService.getDeviceToken:${deviceToken.value}');
   // }
 }

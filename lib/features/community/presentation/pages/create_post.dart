@@ -26,9 +26,9 @@ class CreatePostPage extends GetView<CommunityController> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (isDebug) {
-        print("\n\n=========== CREATE POST PAGE DIAGNOSTICS ===========");
-        print("isGroupTopics = $isGroupTopics (This controls which topics are shown)");
-        print("groupId = $groupId (This identifies which group's topics to load)");
+        debugPrint("\n\n=========== CREATE POST PAGE DIAGNOSTICS ===========");
+        debugPrint("isGroupTopics = $isGroupTopics (This controls which topics are shown)");
+        debugPrint("groupId = $groupId (This identifies which group's topics to load)");
       }
 
       controller.clearCreatePostData();
@@ -37,24 +37,24 @@ class CreatePostPage extends GetView<CommunityController> {
 
       // Load topics
       if (isGroupTopics && groupId != null) {
-        if (isDebug) print("CREATE POST PAGE: Loading group topics for group ID $groupId");
+        if (isDebug) debugPrint("CREATE POST PAGE: Loading group topics for group ID $groupId");
         final groupsController = Get.find<GroupsController>();
         await groupsController.fetchGroupsTopic(groupId!);
 
         if (isDebug) {
           final topics = groupsController.groupsTopicResponse.value.result?.data ?? [];
-          print("CREATE POST PAGE: Loaded ${topics.length} group topics:");
+          debugPrint("CREATE POST PAGE: Loaded ${topics.length} group topics:");
           topics.forEach((topic) {
-            print("  - ${topic.name} (ID: ${topic.id})");
+            debugPrint("  - ${topic.name} (ID: ${topic.id})");
           });
         }
       } else {
-        if (isDebug) print("CREATE POST PAGE: Loading community topics");
+        if (isDebug) debugPrint("CREATE POST PAGE: Loading community topics");
         await controller.getTopic();
 
         if (isDebug) {
           final topics = controller.topics.value.result?.data ?? [];
-          print("CREATE POST PAGE: Loaded ${topics.length} community topics");
+          debugPrint("CREATE POST PAGE: Loaded ${topics.length} community topics");
         }
       }
     });
@@ -226,13 +226,13 @@ class CreatePostPage extends GetView<CommunityController> {
                       final currentSelection = controller.selectedTopic.value;
 
                       if (isDebug) {
-                        print("=========== DROPDOWN REBUILD ===========");
-                        print("isGroupTopics = $isGroupTopics");
-                        print("Current selection = '$currentSelection' (ID: ${controller.selectedTopicId.value})");
-                        print("Available topics: ${topicsToShow?.length ?? 0}");
+                        debugPrint("=========== DROPDOWN REBUILD ===========");
+                        debugPrint("isGroupTopics = $isGroupTopics");
+                        debugPrint("Current selection = '$currentSelection' (ID: ${controller.selectedTopicId.value})");
+                        debugPrint("Available topics: ${topicsToShow?.length ?? 0}");
                         topicsToShow?.forEach((topic) {
                           final name = isGroupTopics ? (topic as GroupTopics).name : (topic as Topic).name;
-                          print("  - $name");
+                          debugPrint("  - $name");
                         });
                       }
 
@@ -260,7 +260,7 @@ class CreatePostPage extends GetView<CommunityController> {
                         onSelected: (val) {
                           if (val == null) return;
 
-                          if (isDebug) print("CREATE POST PAGE: Topic selected: $val");
+                          if (isDebug) debugPrint("CREATE POST PAGE: Topic selected: $val");
 
                           controller.selectedTopic.value = val;
                           if (isGroupTopics) {
@@ -275,7 +275,8 @@ class CreatePostPage extends GetView<CommunityController> {
                             controller.selectedTopicId.value = selectedTopic?.id?.toString() ?? '';
                           }
 
-                          if (isDebug) print("CREATE POST PAGE: Set topic ID to: ${controller.selectedTopicId.value}");
+                          if (isDebug)
+                            debugPrint("CREATE POST PAGE: Set topic ID to: ${controller.selectedTopicId.value}");
                         },
                         dropdownMenuEntries:
                             topicsToShow?.map((topic) {

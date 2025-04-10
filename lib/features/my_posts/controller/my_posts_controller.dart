@@ -34,7 +34,7 @@ class MyPostsController extends GetxController {
     if (scrollController.hasClients) {
       scrollOffset.value = scrollController.offset;
       shouldRestorePosition.value = true;
-      print("MyPosts: Saved scroll position: ${scrollOffset.value}");
+      debugPrint("MyPosts: Saved scroll position: ${scrollOffset.value}");
     }
   }
 
@@ -45,9 +45,9 @@ class MyPostsController extends GetxController {
           if (scrollController.hasClients) {
             try {
               scrollController.jumpTo(scrollOffset.value);
-              print("MyPosts: Restored scroll position to: ${scrollOffset.value}");
+              debugPrint("MyPosts: Restored scroll position to: ${scrollOffset.value}");
             } catch (e) {
-              print("MyPosts: Error restoring scroll position: $e");
+              debugPrint("MyPosts: Error restoring scroll position: $e");
             }
           }
         });

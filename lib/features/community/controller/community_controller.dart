@@ -94,12 +94,12 @@ class CommunityController extends GetxController {
           if (scrollController.hasClients) {
             try {
               scrollController.jumpTo(scrollOffset.value);
-              print("Restored scroll position to: ${scrollOffset.value}");
+              debugPrint("Restored scroll position to: ${scrollOffset.value}");
             } catch (e) {
-              print("Error restoring scroll position: $e");
+              debugPrint("Error restoring scroll position: $e");
             }
           } else {
-            print("ScrollController has no clients");
+            debugPrint("ScrollController has no clients");
           }
         });
       });
@@ -139,7 +139,7 @@ class CommunityController extends GetxController {
       nextPageUrl.value = communityPosts.value.result?.links?.next ?? "";
     } catch (e) {
       isLoading(false);
-      print(e);
+      debugPrint("Error fetching community posts: $e");
     } finally {
       isLoading(false);
     }
@@ -156,7 +156,7 @@ class CommunityController extends GetxController {
       currentPage.value = newPosts.result?.meta?.currentPage ?? 1;
       nextPageUrl.value = newPosts.result?.links?.next ?? "";
     } catch (e) {
-      print(e);
+      debugPrint("Error loading next page: $e");
     } finally {
       isPaginating(false);
     }
@@ -170,7 +170,7 @@ class CommunityController extends GetxController {
         communityPosts(PostsResponseModel.fromJson(response));
         filteredPosts.assignAll(communityPosts.value.result?.data ?? []);
       } catch (e) {
-        print("Error fetching all posts: $e");
+        debugPrint("Error fetching all posts: $e");
       } finally {
         isLoading(false);
       }
@@ -181,7 +181,7 @@ class CommunityController extends GetxController {
         communityPosts(PostsResponseModel.fromJson(response));
         filteredPosts.assignAll(communityPosts.value.result?.data ?? []);
       } catch (e) {
-        print("Error fetching posts by topic: $e");
+        debugPrint("Error fetching posts by topic: $e");
       } finally {
         isLoading(false);
       }
@@ -239,7 +239,7 @@ class CommunityController extends GetxController {
       communityPosts.refresh();
     }
 
-    print("comments response $response");
+    debugPrint("comments response $response");
     getComments(postId);
   }
 
@@ -270,10 +270,10 @@ class CommunityController extends GetxController {
         communityPosts.refresh();
       }
 
-      print("delete comments response $response");
+      debugPrint("delete comments response $response");
     } catch (e) {
       isLoading(false);
-      print(e);
+      debugPrint("Error deleting comment: $e");
     } finally {
       isLoading(false);
     }
@@ -374,7 +374,7 @@ class CommunityController extends GetxController {
       comments(CommentsResponseModel.fromJson(response));
     } catch (e) {
       commentLoading(false);
-      print(e);
+      debugPrint("Error fetching comments: $e");
     } finally {
       commentLoading(false);
     }
@@ -469,7 +469,7 @@ class CommunityController extends GetxController {
         );
       }
     } catch (e) {
-      print("Error updating post: $e");
+      debugPrint("Error updating post: $e");
     } finally {
       isLoading(false);
     }
@@ -482,7 +482,7 @@ class CommunityController extends GetxController {
       communityPostsById(PostByIdResponseModel.fromJson(response));
       getComments(id);
     } catch (e) {
-      print("Error fetching post by ID: $e");
+      debugPrint("Error fetching post by ID: $e");
     } finally {
       isLoading(false);
     }
@@ -498,7 +498,7 @@ class CommunityController extends GetxController {
       selectedTopic.value = "All";
     } catch (e) {
       isLoading(false);
-      print(e);
+      debugPrint("Error fetching topics: $e");
     } finally {
       isLoading(false);
     }
@@ -508,7 +508,7 @@ class CommunityController extends GetxController {
     final post = communityPostsById.value.result;
     final isDebug = true;
 
-    if (isDebug) print("COMMUNITY CONTROLLER: Loading post data for ID: $postId");
+    if (isDebug) debugPrint("COMMUNITY CONTROLLER: Loading post data for ID: $postId");
 
     if (post != null && post.id.toString() == postId) {
       // Set content, image and video
@@ -521,9 +521,13 @@ class CommunityController extends GetxController {
         selectedTopic.value = post.topic?.name ?? '';
         selectedTopicId.value = post.topic?.id?.toString() ?? '';
         if (isDebug)
-          print("COMMUNITY CONTROLLER: Setting topic from post: ${selectedTopic.value}, ID: ${selectedTopicId.value}");
+          debugPrint(
+            "COMMUNITY CONTROLLER: Setting topic from post: ${selectedTopic.value}, ID: ${selectedTopicId.value}",
+          );
       } else if (isDebug) {
-        print("COMMUNITY CONTROLLER: Keeping existing topic: ${selectedTopic.value}, ID: ${selectedTopicId.value}");
+        debugPrint(
+          "COMMUNITY CONTROLLER: Keeping existing topic: ${selectedTopic.value}, ID: ${selectedTopicId.value}",
+        );
       }
 
       // Update the tab index based on whether there's a video URL or image
@@ -574,10 +578,10 @@ class CommunityController extends GetxController {
         );
         getCommunityPosts(); // Refresh posts after deletion
       } else {
-        print("Error deleting post: ${response['message']}");
+        debugPrint("Error deleting post: ${response['message']}");
       }
     } catch (e) {
-      print("Error deleting post: $e");
+      debugPrint("Error deleting post: $e");
     } finally {
       isLoading(false);
     } //
@@ -669,7 +673,7 @@ class CommunityController extends GetxController {
         }
       }
     } catch (e) {
-      print("Error updating group post state: $e");
+      debugPrint("Error updating group post state: $e");
     }
 
     // Update in MyPostsController if available
@@ -688,7 +692,7 @@ class CommunityController extends GetxController {
       }
     } catch (e) {
       // MyPostsController might not be registered yet
-      print("MyPostsController not available: $e");
+      debugPrint("MyPostsController not available: $e");
     }
 
     // Update in SavePostController if available
@@ -707,7 +711,7 @@ class CommunityController extends GetxController {
       }
     } catch (e) {
       // SavePostController might not be registered yet
-      print("SavePostController not available: $e");
+      debugPrint("SavePostController not available: $e");
     }
   }
 

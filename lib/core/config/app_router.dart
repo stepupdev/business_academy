@@ -94,7 +94,9 @@ class AppRouter {
           final bool isGroupPost = extra['isGroupPost'] as bool? ?? false;
           final String? postId = state.params['postId'];
           final String? groupId = extra['groupId'] as String?;
-          print("ROUTER: Creating PostDetailsPage with postId: $postId, isGroupPost: $isGroupPost, groupId: $groupId");
+          debugPrint(
+            "ROUTER: Creating PostDetailsPage with postId: $postId, isGroupPost: $isGroupPost, groupId: $groupId",
+          );
           return CustomTransitionPage<void>(
             key: state.pageKey,
             child: PostDetailsPage(postId: postId!, isGroupPost: isGroupPost, groupId: groupId),

@@ -12,12 +12,13 @@ import 'package:http/http.dart' as http;
 class CommunityRep {
   Future getCommunityPosts({Map<String, dynamic>? params, String? fullUrl}) async {
     APIManager _manager = APIManager();
-    final uri = fullUrl != null ? Uri.parse(fullUrl) : Uri.parse(ApiUrl.communityPosts).replace(queryParameters: params);
-    print("Fetching posts with URI: ${uri.toString()}");
+    final uri =
+        fullUrl != null ? Uri.parse(fullUrl) : Uri.parse(ApiUrl.communityPosts).replace(queryParameters: params);
+    debugPrint("Fetching posts with URI: ${uri.toString()}");
     final response = await _manager.getWithHeader(uri.toString(), {
       "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
     });
-    print("Posts response: $response");
+    debugPrint("Posts response: $response");
     return response;
   }
 
@@ -28,7 +29,7 @@ class CommunityRep {
       'Accept': 'application/json',
       "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
     }, context);
-    print("response: $response");
+    debugPrint("response: $response");
     if (response['success'] == true) {
       Ui.showSuccessSnackBar(context, message: response['message']);
     }
@@ -42,7 +43,7 @@ class CommunityRep {
       "${ApiUrl.comments}/$commentId/delete",
       headerData: {"Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}"},
     );
-    print("response: $response");
+    debugPrint("response: $response");
     return response;
   }
 
@@ -53,7 +54,7 @@ class CommunityRep {
       'Accept': 'application/json',
       "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
     }, context);
-    print("response: $response");
+    debugPrint("response: $response");
     return response;
   }
 
@@ -64,7 +65,7 @@ class CommunityRep {
       'Accept': 'application/json',
       "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
     }, context);
-    print("response: $response");
+    debugPrint("response: $response");
     return response;
   }
 
@@ -73,7 +74,7 @@ class CommunityRep {
     final response = await _manager.getWithHeader("${ApiUrl.communityPosts}/$id/comments", {
       "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
     });
-    print("response: $response");
+    debugPrint("response: $response");
     return response;
   }
 
@@ -82,7 +83,7 @@ class CommunityRep {
     final response = await _manager.getWithHeader("${ApiUrl.communityPosts}/$id", {
       "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
     });
-    print("response: $response");
+    debugPrint("response: $response");
     return response;
   }
 
@@ -124,8 +125,8 @@ class CommunityRep {
     http.StreamedResponse streamedResponse = await request.send();
     final response = await http.Response.fromStream(streamedResponse);
 
-    print("Response: ${response.statusCode}");
-    print("Body: ${response.body}");
+    debugPrint("Response: ${response.statusCode}");
+    debugPrint("Body: ${response.body}");
 
     return jsonDecode(response.body);
   }
@@ -137,7 +138,7 @@ class CommunityRep {
       "${ApiUrl.communityPosts}/delete/$postId",
       headerData: {"Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}"},
     );
-    print("response: $response");
+    debugPrint("response: $response");
     return response;
   }
 
@@ -181,8 +182,8 @@ class CommunityRep {
     http.StreamedResponse streamedResponse = await request.send();
     final response = await http.Response.fromStream(streamedResponse);
 
-    print("Response: ${response.statusCode}");
-    print("Body: ${response.body}");
+    debugPrint("Response: ${response.statusCode}");
+    debugPrint("Body: ${response.body}");
 
     return jsonDecode(response.body);
   }
@@ -192,7 +193,7 @@ class CommunityRep {
     final response = await _manager.getWithHeader(ApiUrl.topics, {
       "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
     });
-    print("response: $response");
+    debugPrint("response: $response");
     return response;
   }
 
@@ -201,7 +202,7 @@ class CommunityRep {
     final response = await _manager.getWithHeader(ApiUrl.myPosts, {
       "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
     });
-    print("response: $response");
+    debugPrint("response: $response");
     return response;
   }
 
@@ -210,7 +211,7 @@ class CommunityRep {
     final response = await _manager.getWithHeader(ApiUrl.savePosts, {
       "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
     });
-    print("response: $response");
+    debugPrint("response: $response");
     return response;
   }
 
@@ -219,7 +220,7 @@ class CommunityRep {
     final response = await _manager.getWithHeader(ApiUrl.user, {
       "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
     });
-    print("response: $response");
+    debugPrint("response: $response");
     return response;
   }
 
@@ -228,7 +229,7 @@ class CommunityRep {
     final response = await _manager.getWithHeader(ApiUrl.communities, {
       "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
     });
-    print("response: $response");
+    debugPrint("response: $response");
     return response;
   }
 
@@ -239,7 +240,7 @@ class CommunityRep {
       'Accept': 'application/json',
       "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
     }, context);
-    print("response: $response");
+    debugPrint("response: $response");
     if (response['success'] == true) {
       Ui.showSuccessSnackBar(context, message: response['message']);
     } else {
@@ -260,7 +261,7 @@ class CommunityRep {
     final response = await _manager.getWithHeader(uri.toString(), {
       "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
     });
-    print("response: $response");
+    debugPrint("response: $response");
     return response;
   }
 }

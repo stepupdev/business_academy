@@ -26,25 +26,25 @@ class AuthController extends GetxController {
       if (user != null) {
         GoogleSignInAuthentication googleSignInAuthentication = await user.authentication;
         String? token = googleSignInAuthentication.accessToken;
-        print("access Token === $token");
-        print("id token ------ ${googleSignInAuthentication.accessToken}");
+        debugPrint("access Token === $token");
+        debugPrint("id token ------ ${googleSignInAuthentication.accessToken}");
         if (token != null) {
           userToken.value = token;
-          print("User token: ${userToken.value}");
+          debugPrint("User token: ${userToken.value}");
         }
         AuthRepository().signInWithGoogle(userToken.value).then((value) async {
           loginResponseModel(LoginResponseModel.fromJson(value));
-          print("Login response model: ${loginResponseModel.value.result?.user?.name}");
+          debugPrint("Login response model: ${loginResponseModel.value.result?.user?.name}");
           if (loginResponseModel.value.success == true) {
             var data = LoginResponseModel.fromJson(value);
             await Get.find<AuthService>().setUser(data);
-            print("Login successful");
+            debugPrint("Login successful");
 
             // ✅ Save User Token & Info
             await AuthUtlity.saveUserIdAndToken(data.result!.user!.id.toString(), data.result!.token!);
             await AuthUtlity.saveUserInfo(data);
 
-            print("✅ User logged in successfully.");
+            debugPrint("✅ User logged in successfully.");
             context.go('/home'); // Navigate to Home
             await Get.find<AuthService>().getCurrentUser();
           } else {
@@ -54,7 +54,7 @@ class AuthController extends GetxController {
       }
     } catch (error) {
       isLoading.value = false;
-      print("Error: $error");
+      debugPrint("Error: $error");
       return null;
     } finally {
       isLoading.value = false;
