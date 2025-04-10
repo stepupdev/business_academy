@@ -105,6 +105,8 @@ class _SavePostsPageState extends State<SavePostsPage> {
                   controller.handlePostInteraction(postId, 'save', context);
                 },
                 onLike: () {
+                  debugPrint("post id is ${post?.id}");
+
                   final postId = post?.id ?? 0;
                   if (postId == 0) return;
 

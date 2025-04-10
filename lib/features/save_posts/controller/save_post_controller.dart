@@ -79,7 +79,10 @@ class SavePostController extends GetxController {
 
     if (action == 'like') {
       // Update UI optimistically
-      int postIndex = savePosts.value.result?.data?.indexWhere((p) => p.id == postId) ?? -1;
+      debugPrint("Like action triggered for postId: $postId, action: $action");
+      int postIndex = savePosts.value.result?.data?.indexWhere((p) => p.post?.id == postId) ?? -1;
+      // find the post using the postId
+      debugPrint("Post index found: $postIndex");
       if (postIndex != -1) {
         bool currentState = savePosts.value.result!.data![postIndex].post?.isLiked ?? false;
         savePosts.value.result!.data![postIndex].post?.isLiked = !currentState;
@@ -90,7 +93,7 @@ class SavePostController extends GetxController {
       await communityController.processLike(context, postId);
     } else if (action == 'save') {
       // Update UI optimistically
-      int postIndex = savePosts.value.result?.data?.indexWhere((p) => p.id == postId) ?? -1;
+      int postIndex = savePosts.value.result?.data?.indexWhere((p) => p.post?.id == postId) ?? -1;
       if (postIndex != -1) {
         bool currentState = savePosts.value.result!.data![postIndex].post?.isSaved ?? false;
         savePosts.value.result!.data![postIndex].post?.isSaved = !currentState;
