@@ -26,10 +26,6 @@ class GroupsPage extends GetView<GroupsController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 8.0),
-                child: Text("My Groups", style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w700)),
-              ),
               20.hS,
               Obx(() {
                 if (controller.isLoading.value) {
@@ -37,6 +33,7 @@ class GroupsPage extends GetView<GroupsController> {
                 }
                 if (controller.groups.value.result?.data?.isEmpty ?? true) {
                   return Center(
+                    heightFactor: 3.5,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -49,11 +46,6 @@ class GroupsPage extends GetView<GroupsController> {
                             fontWeight: FontWeight.bold,
                             color: Colors.grey.shade600,
                           ),
-                        ),
-                        5.hS,
-                        Text(
-                          "Join or create a group to see it here.",
-                          style: GoogleFonts.plusJakartaSans(fontSize: 14.sp, color: Colors.grey.shade500),
                         ),
                       ],
                     ),

@@ -1,7 +1,7 @@
 import 'package:business_application/features/community/data/community_posts_model.dart';
 import 'package:business_application/features/groups/data/groups_by_id_model.dart';
 import 'package:business_application/features/groups/data/groups_models.dart';
-import 'package:business_application/features/groups/data/groups_topic_response_model.dart';
+import 'package:business_application/features/groups/data/groups_topic_response_model.dart' as groups_topic;
 import 'package:business_application/repository/community_rep.dart';
 import 'package:business_application/repository/groups_rep.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +12,7 @@ class GroupsController extends GetxController {
   var groups = GroupsResponseModel().obs;
   var groupsDetails = GroupsByIdResponseModel().obs;
   var selectedPostId = 0.obs;
-  var groupsTopicResponse = GroupsTopicResponseModel().obs;
+  var groupsTopicResponse = groups_topic.GroupsTopicResponseModel().obs;
 
   var selectedTopic = ''.obs;
   var filteredPosts = <Posts>[].obs;
@@ -23,10 +23,12 @@ class GroupsController extends GetxController {
   void onInit() {
     fetchGroups();
     selectedTopic.listen((value) {
-      if (value.isNotEmpty && value != "All") {
-        filterPostsByTopic(value);
-      } else {
-        filteredPosts.assignAll(groups.value.result?.data?.cast<Posts>() ?? []);
+      if (value.isNotEmpty) {
+        final gropTopic = groupsTopicResponse.value.result?.data?.firstWhere(
+          (topic) => topic.name == value,
+          orElse: () => groups_topic.GroupTopics(),
+        );
+        filterPostsByTopic(value, topicId: gropTopic?.id.toString());
       }
     });
     super.onInit();
@@ -46,7 +48,8 @@ class GroupsController extends GetxController {
   Future<bool> fetchGroupsTopic(String id) async {
     try {
       var response = await GroupsRep().getGroupsTopic(id);
-      groupsTopicResponse(GroupsTopicResponseModel.fromJson(response));
+      groupsTopicResponse(groups_topic.GroupsTopicResponseModel.fromJson(response));
+      groupsTopicResponse.value.result?.data?.insert(0, groups_topic.GroupTopics(id: 0, name: "All"));
       return true;
     } catch (e) {
       return false;

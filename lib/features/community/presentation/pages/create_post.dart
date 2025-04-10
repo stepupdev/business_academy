@@ -14,50 +14,75 @@ import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
-class CreatePostPage extends GetView<CommunityController> {
+class CreatePostPage extends StatefulWidget {
   final bool isGroupTopics;
   final String? groupId;
 
   const CreatePostPage({super.key, required this.isGroupTopics, this.groupId});
 
   @override
-  Widget build(BuildContext context) {
-    final isDebug = true;
+  State<CreatePostPage> createState() => _CreatePostPageState();
+}
 
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (isDebug) {
-        debugPrint("\n\n=========== CREATE POST PAGE DIAGNOSTICS ===========");
-        debugPrint("isGroupTopics = $isGroupTopics (This controls which topics are shown)");
-        debugPrint("groupId = $groupId (This identifies which group's topics to load)");
-      }
+class _CreatePostPageState extends State<CreatePostPage> {
+  @override
+  void initState() {
+    super.initState();
 
+    Future.microtask(() {
+      final controller = Get.find<CommunityController>();
       controller.clearCreatePostData();
       controller.selectedTopic.value = "";
       controller.selectedTopicId.value = "";
 
       // Load topics
-      if (isGroupTopics && groupId != null) {
-        if (isDebug) debugPrint("CREATE POST PAGE: Loading group topics for group ID $groupId");
+      if (widget.isGroupTopics && widget.groupId != null) {
         final groupsController = Get.find<GroupsController>();
-        await groupsController.fetchGroupsTopic(groupId!);
-
-        if (isDebug) {
-          final topics = groupsController.groupsTopicResponse.value.result?.data ?? [];
-          debugPrint("CREATE POST PAGE: Loaded ${topics.length} group topics:");
-          topics.forEach((topic) {
-            debugPrint("  - ${topic.name} (ID: ${topic.id})");
-          });
-        }
+        groupsController.fetchGroupsTopic(widget.groupId!);
       } else {
-        if (isDebug) debugPrint("CREATE POST PAGE: Loading community topics");
-        await controller.getTopic();
-
-        if (isDebug) {
-          final topics = controller.topics.value.result?.data ?? [];
-          debugPrint("CREATE POST PAGE: Loaded ${topics.length} community topics");
-        }
+        controller.getTopic();
       }
     });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = Get.find<CommunityController>();
+
+    // WidgetsBinding.instance.addPostFrameCallback((_) async {
+    //   if (isDebug) {
+    //     debugPrint("\n\n=========== CREATE POST PAGE DIAGNOSTICS ===========");
+    //     debugPrint("isGroupTopics = ${widget.isGroupTopics} (This controls which topics are shown)");
+    //     debugPrint("groupId = ${widget.groupId} (This identifies which group's topics to load)");
+    //   }
+
+    //   controller.clearCreatePostData();
+    //   controller.selectedTopic.value = "";
+    //   controller.selectedTopicId.value = "";
+
+    //   // Load topics
+    //   if (widget.isGroupTopics && widget.groupId != null) {
+    //     if (isDebug) debugPrint("CREATE POST PAGE: Loading group topics for group ID ${widget.groupId}");
+    //     final groupsController = Get.find<GroupsController>();
+    //     await groupsController.fetchGroupsTopic(widget.groupId!);
+
+    //     if (isDebug) {
+    //       final topics = groupsController.groupsTopicResponse.value.result?.data ?? [];
+    //       debugPrint("CREATE POST PAGE: Loaded ${topics.length} group topics:");
+    //       topics.forEach((topic) {
+    //         debugPrint("  - ${topic.name} (ID: ${topic.id})");
+    //       });
+    //     }
+    //   } else {
+    //     if (isDebug) debugPrint("CREATE POST PAGE: Loading community topics");
+    //     await controller.getTopic();
+
+    //     if (isDebug) {
+    //       final topics = controller.topics.value.result?.data ?? [];
+    //       debugPrint("CREATE POST PAGE: Loaded ${topics.length} community topics");
+    //     }
+    //   }
+    // });
 
     return WillPopScope(
       onWillPop: () async {
@@ -71,12 +96,20 @@ class CreatePostPage extends GetView<CommunityController> {
           actions: [
             FilledButton(
               onPressed: () {
+                if (controller.createPostController.value.text.isEmpty) {
+                  Ui.showErrorSnackBar(context, message: "Please write something");
+                  return;
+                }
+                if (controller.createPostController.value.text.length < 10) {
+                  Ui.showErrorSnackBar(context, message: "Post must be at least 10 characters");
+                  return;
+                }
                 if (controller.selectedTopicId.value.isEmpty) {
                   Ui.showErrorSnackBar(context, message: "Please select a topic");
                   return;
                 }
 
-                controller.createNewPosts(groupId: isGroupTopics ? groupId : null);
+                controller.createNewPosts(groupId: widget.isGroupTopics ? widget.groupId : null);
                 context.pop();
               },
               style: FilledButton.styleFrom(
@@ -219,7 +252,7 @@ class CreatePostPage extends GetView<CommunityController> {
                     Obx(() {
                       final isDebug = true;
                       final topicsToShow =
-                          isGroupTopics
+                          widget.isGroupTopics
                               ? Get.find<GroupsController>().groupsTopicResponse.value.result?.data
                               : controller.topics.value.result?.data;
 
@@ -227,18 +260,17 @@ class CreatePostPage extends GetView<CommunityController> {
 
                       if (isDebug) {
                         debugPrint("=========== DROPDOWN REBUILD ===========");
-                        debugPrint("isGroupTopics = $isGroupTopics");
+                        debugPrint("isGroupTopics = ${widget.isGroupTopics}");
                         debugPrint("Current selection = '$currentSelection' (ID: ${controller.selectedTopicId.value})");
                         debugPrint("Available topics: ${topicsToShow?.length ?? 0}");
                         topicsToShow?.forEach((topic) {
-                          final name = isGroupTopics ? (topic as GroupTopics).name : (topic as Topic).name;
+                          final name = widget.isGroupTopics ? (topic as GroupTopics).name : (topic as Topic).name;
                           debugPrint("  - $name");
                         });
                       }
 
                       return DropdownMenu<String>(
                         hintText: "Select a topic",
-                        initialSelection: currentSelection.isNotEmpty ? currentSelection : null,
                         inputDecorationTheme: InputDecorationTheme(
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -263,7 +295,7 @@ class CreatePostPage extends GetView<CommunityController> {
                           if (isDebug) debugPrint("CREATE POST PAGE: Topic selected: $val");
 
                           controller.selectedTopic.value = val;
-                          if (isGroupTopics) {
+                          if (widget.isGroupTopics) {
                             final selectedTopic = Get.find<GroupsController>().groupsTopicResponse.value.result?.data
                                 ?.firstWhere((topic) => topic.name == val, orElse: () => GroupTopics());
                             controller.selectedTopicId.value = selectedTopic?.id?.toString() ?? '';
@@ -280,7 +312,7 @@ class CreatePostPage extends GetView<CommunityController> {
                         },
                         dropdownMenuEntries:
                             topicsToShow?.map((topic) {
-                              if (isGroupTopics) {
+                              if (widget.isGroupTopics) {
                                 final groupTopic = topic as GroupTopics;
                                 return DropdownMenuEntry<String>(
                                   value: groupTopic.name ?? '',

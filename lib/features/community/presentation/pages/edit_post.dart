@@ -14,7 +14,7 @@ import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
-class EditPostPage extends GetView<CommunityController> {
+class EditPostPage extends StatefulWidget {
   final bool isGroupTopics;
   final String postId;
   final String? groupId;
@@ -22,25 +22,34 @@ class EditPostPage extends GetView<CommunityController> {
   const EditPostPage({super.key, required this.isGroupTopics, required this.postId, this.groupId});
 
   @override
-  Widget build(BuildContext context) {
+  State<EditPostPage> createState() => _EditPostPageState();
+}
+
+class _EditPostPageState extends State<EditPostPage> {
+  final CommunityController controller = Get.find<CommunityController>();
+
+  @override
+  void initState() {
+    super.initState();
+
     final isDebug = true;
 
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
+    Future.microtask(() async {
       if (isDebug) {
         debugPrint("\n\n=========== EDIT POST PAGE DIAGNOSTICS ===========");
-        debugPrint("isGroupTopics = $isGroupTopics");
-        debugPrint("postId = $postId");
-        debugPrint("groupId = $groupId");
+        debugPrint("isGroupTopics = ${widget.isGroupTopics}");
+        debugPrint("postId = ${widget.postId}");
+        debugPrint("groupId = ${widget.groupId}");
       }
 
       // Clear the edit post data
       controller.clearEditPostData();
 
       // Load topics first
-      if (isGroupTopics && groupId != null) {
-        if (isDebug) debugPrint("EDIT POST PAGE: Loading group topics for group ID $groupId");
+      if (widget.isGroupTopics && widget.groupId != null) {
+        if (isDebug) debugPrint("EDIT POST PAGE: Loading group topics for group ID ${widget.groupId}");
         final groupsController = Get.find<GroupsController>();
-        await groupsController.fetchGroupsTopic(groupId!);
+        await groupsController.fetchGroupsTopic(widget.groupId!);
 
         if (isDebug) {
           final topics = groupsController.groupsTopicResponse.value.result?.data ?? [];
@@ -60,11 +69,13 @@ class EditPostPage extends GetView<CommunityController> {
       }
 
       // Load post data
-      if (isDebug) debugPrint("EDIT POST PAGE: Loading post with ID $postId");
-      await controller.getCommunityPostsById(postId);
-      controller.loadEditPostData(postId);
+      if (isDebug) debugPrint("EDIT POST PAGE: Loading post with ID ${widget.postId}");
+      controller.loadEditPostData(widget.postId);
     });
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
         controller.clearEditPostData();
@@ -77,17 +88,27 @@ class EditPostPage extends GetView<CommunityController> {
           actions: [
             FilledButton(
               onPressed: () {
-                if (controller.selectedTopicId.value.isEmpty) {
+                if (controller.editSelectedTopicId.value.isEmpty) {
                   Ui.showErrorSnackBar(context, message: "Please select a topic");
                   return;
                 }
 
+                if (controller.editPostController.text.isEmpty) {
+                  Ui.showErrorSnackBar(context, message: "Please enter post content");
+                  return;
+                }
+
+                if (controller.editPostController.text.length < 10) {
+                  Ui.showErrorSnackBar(context, message: "Post content must be at least 10 characters");
+                  return;
+                }
+
                 controller.updatePost(
-                  postId: postId,
+                  postId: widget.postId,
                   content: controller.editPostController.text,
-                  topicId: controller.selectedTopicId.value,
-                  videoUrl: controller.videoLinkController.text,
-                  groupId: isGroupTopics ? groupId : null,
+                  topicId: controller.editSelectedTopicId.value,
+                  videoUrl: controller.editVideoController.text,
+                  groupId: widget.isGroupTopics ? widget.groupId : null,
                 );
                 context.pop();
               },
@@ -111,7 +132,7 @@ class EditPostPage extends GetView<CommunityController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     TextFormField(
-                      controller: controller.editPostController, // Use editPostController
+                      controller: controller.editPostController,
                       focusNode: controller.postFocusNode,
                       maxLines: 5,
                       decoration: InputDecoration(
@@ -142,7 +163,7 @@ class EditPostPage extends GetView<CommunityController> {
                           if (controller.selectedTabIndex.value == 0) ...[
                             Obx(
                               () =>
-                                  controller.selectedImage.value.isNotEmpty
+                                  controller.editSelectedImage.value.isNotEmpty
                                       ? Stack(
                                         children: [
                                           Container(
@@ -151,9 +172,9 @@ class EditPostPage extends GetView<CommunityController> {
                                               borderRadius: BorderRadius.circular(12),
                                               image: DecorationImage(
                                                 image:
-                                                    controller.selectedImage.value.contains("http")
-                                                        ? NetworkImage(controller.selectedImage.value)
-                                                        : FileImage(File(controller.selectedImage.value))
+                                                    controller.editSelectedImage.value.contains("http")
+                                                        ? NetworkImage(controller.editSelectedImage.value)
+                                                        : FileImage(File(controller.editSelectedImage.value))
                                                             as ImageProvider,
                                                 fit: BoxFit.cover,
                                               ),
@@ -163,7 +184,7 @@ class EditPostPage extends GetView<CommunityController> {
                                             top: 8,
                                             right: 8,
                                             child: GestureDetector(
-                                              onTap: () => controller.selectedImage.value = '',
+                                              onTap: () => controller.editSelectedImage.value = '',
                                               child: Container(
                                                 decoration: BoxDecoration(
                                                   color: Colors.grey.shade600,
@@ -182,7 +203,7 @@ class EditPostPage extends GetView<CommunityController> {
                               children: [
                                 Flexible(
                                   child: ElevatedButton.icon(
-                                    onPressed: () => controller.pickImage(ImageSource.camera),
+                                    onPressed: () => controller.pickEditImage(ImageSource.camera),
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: const Color(0xFFE9F0FF),
                                       fixedSize: Size(165.w, 50.h),
@@ -195,7 +216,7 @@ class EditPostPage extends GetView<CommunityController> {
                                 10.wS,
                                 Flexible(
                                   child: ElevatedButton.icon(
-                                    onPressed: () => controller.pickImage(ImageSource.gallery),
+                                    onPressed: () => controller.pickEditImage(ImageSource.gallery),
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: const Color(0xFFE9F0FF),
                                       fixedSize: Size(165.w, 50.h),
@@ -213,7 +234,7 @@ class EditPostPage extends GetView<CommunityController> {
                             ),
                           ] else if (controller.selectedTabIndex.value == 1) ...[
                             TextFormField(
-                              controller: controller.videoLinkController,
+                              controller: controller.editVideoController,
                               decoration: InputDecoration(
                                 hintText: "Enter video link...",
                                 enabledBorder: OutlineInputBorder(
@@ -234,14 +255,14 @@ class EditPostPage extends GetView<CommunityController> {
                     20.hS,
                     Obx(() {
                       final topicsToShow =
-                          isGroupTopics
+                          widget.isGroupTopics
                               ? Get.find<GroupsController>().groupsTopicResponse.value.result?.data
                               : controller.topics.value.result?.data;
 
                       return DropdownMenu<String>(
                         hintText: "Select a topic",
                         initialSelection:
-                            controller.selectedTopic.value.isNotEmpty ? controller.selectedTopic.value : null,
+                            controller.editSelectedTopic.value.isNotEmpty ? controller.editSelectedTopic.value : null,
                         inputDecorationTheme: InputDecorationTheme(
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -263,22 +284,26 @@ class EditPostPage extends GetView<CommunityController> {
                         onSelected: (val) {
                           if (val == null) return;
 
-                          controller.selectedTopic.value = val;
-                          if (isGroupTopics) {
-                            final selectedTopic = Get.find<GroupsController>().groupsTopicResponse.value.result?.data
+                          controller.editSelectedTopic.value = val;
+                          if (widget.isGroupTopics) {
+                            final editSelectedTopic = Get.find<GroupsController>()
+                                .groupsTopicResponse
+                                .value
+                                .result
+                                ?.data
                                 ?.firstWhere((topic) => topic.name == val, orElse: () => GroupTopics());
-                            controller.selectedTopicId.value = selectedTopic?.id?.toString() ?? '';
+                            controller.editSelectedTopicId.value = editSelectedTopic?.id?.toString() ?? '';
                           } else {
                             final selectedTopic = controller.topics.value.result?.data?.firstWhere(
                               (topic) => topic.name == val,
                               orElse: () => Topic(),
                             );
-                            controller.selectedTopicId.value = selectedTopic?.id?.toString() ?? '';
+                            controller.editSelectedTopicId.value = selectedTopic?.id?.toString() ?? '';
                           }
                         },
                         dropdownMenuEntries:
                             topicsToShow?.map((topic) {
-                              if (isGroupTopics) {
+                              if (widget.isGroupTopics) {
                                 final groupTopic = topic as GroupTopics;
                                 return DropdownMenuEntry<String>(
                                   value: groupTopic.name ?? '',

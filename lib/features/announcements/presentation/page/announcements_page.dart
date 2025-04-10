@@ -11,23 +11,31 @@ class AnnouncementsPage extends StatelessWidget {
     return Scaffold(
       // appBar: AppBar(title: const Text('Announcements')),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.construction, size: 100.sp, color: dark ? Colors.orangeAccent : Colors.blueAccent),
-            SizedBox(height: 20.h),
-            Text(
-              "Announcements Coming Soon",
-              style: TextStyle(fontSize: 24.sp, fontWeight: FontWeight.bold, color: dark ? Colors.white : Colors.black),
-            ),
-            SizedBox(height: 10.h),
-            Text(
-              "Stay tuned! The announcements feature will be published soon.",
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16.sp, color: dark ? Colors.grey[400] : Colors.grey[700]),
-            ),
-            SizedBox(height: 30.h),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.construction, size: 100.sp, color: dark ? Colors.orangeAccent : Colors.blueAccent),
+              SizedBox(height: 20.h),
+              Text(
+                textAlign: TextAlign.center,
+                "Announcements Coming Soon",
+                style: TextStyle(
+                  fontSize: 24.sp,
+                  fontWeight: FontWeight.bold,
+                  color: dark ? Colors.white : Colors.black,
+                ),
+              ),
+              SizedBox(height: 10.h),
+              Text(
+                "Stay tuned! The announcements feature will be published soon.",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16.sp, color: dark ? Colors.grey[400] : Colors.grey[700]),
+              ),
+              SizedBox(height: 30.h),
+            ],
+          ),
         ),
       ),
     );

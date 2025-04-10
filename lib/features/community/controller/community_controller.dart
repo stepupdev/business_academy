@@ -23,14 +23,18 @@ class CommunityController extends GetxController {
   var selectedPostId = 0.obs;
   var communityPostsById = PostByIdResponseModel().obs;
   var topics = topics_model.TopicsResponseModel().obs;
-  var selectedTopic = ''.obs;
   topics_model.TopicsResponseModel? selectedTopicValue;
+  var selectedTopic = ''.obs;
   var selectedTopicId = ''.obs;
+  var editSelectedTopic = ''.obs;
+  var editSelectedTopicId = ''.obs;
   final TextEditingController createPostController = TextEditingController(); // For creating posts
   final TextEditingController editPostController = TextEditingController(); // For editing posts
   final TextEditingController videoLinkController = TextEditingController();
+  final TextEditingController editVideoController = TextEditingController();
   final FocusNode postFocusNode = FocusNode();
   final RxString selectedImage = "".obs;
+  final RxString editSelectedImage = "".obs;
   final RxInt selectedTabIndex = 0.obs;
   var filteredPosts = <Posts>[].obs;
   final ScrollController scrollController = ScrollController();
@@ -122,6 +126,25 @@ class CommunityController extends GetxController {
       }
 
       selectedImage.value = pickedFile.path;
+    }
+  }
+
+  Future<void> pickEditImage(ImageSource source) async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: source);
+    if (pickedFile != null) {
+      final file = File(pickedFile.path);
+      final fileSize = await file.length();
+
+      if (fileSize > 2 * 1024 * 1024) {
+        // Check if file size exceeds 2 MB
+        scaffoldMessengerKey.currentState!.showSnackBar(
+          SnackBar(content: Text("Image size must be less than 2 MB"), backgroundColor: Colors.red),
+        );
+        return;
+      }
+
+      editSelectedImage.value = pickedFile.path;
     }
   }
 
@@ -226,16 +249,11 @@ class CommunityController extends GetxController {
         }
       });
 
-      // Update the comments count in the main posts list
-      int postIndex = communityPosts.value.result?.data?.indexWhere((post) => post.id == selectedPostId.value) ?? -1;
-      if (postIndex != -1) {
-        communityPosts.update((posts) {
-          posts?.result?.data?[postIndex].commentsCount = (posts.result!.data![postIndex].commentsCount! + 1);
-        });
-      }
+      // Synchronize the comments count across controllers
+      syncCommentsCountAcrossControllers(postId, 1);
 
       // Refresh the comments and post details
-      communityPostsById.refresh();
+      filteredPosts.refresh();
       communityPosts.refresh();
     }
 
@@ -243,43 +261,99 @@ class CommunityController extends GetxController {
     getComments(postId);
   }
 
-  deleteComments(String id, BuildContext context) async {
+  deleteComments(String id, String postId, BuildContext context) async {
     try {
       isLoading(true);
       final response = await CommunityRep().deleteComment(id, context);
 
       if (response['success'] == true) {
         // Decrement the comments count for the selected post
+        debugPrint("inside the success ======");
         communityPostsById.update((post) {
           if (post?.result != null && post!.result!.commentsCount != null) {
             post.result!.commentsCount = (post.result!.commentsCount! - 1).clamp(0, double.infinity).toInt();
           }
         });
+        // Synchronize the comments count across controllers
+        syncCommentsCountAcrossControllers(postId, -1);
 
-        // Update the comments count in the main posts list
-        int postIndex = communityPosts.value.result?.data?.indexWhere((post) => post.id == selectedPostId.value) ?? -1;
-        if (postIndex != -1) {
-          communityPosts.update((posts) {
-            posts?.result?.data?[postIndex].commentsCount =
-                (posts.result!.data![postIndex].commentsCount! - 1).clamp(0, double.infinity).toInt();
-          });
-        }
-        // Refresh the comments and post details
-        communityPostsById.refresh();
+        // Refresh the comments list
+        comments.update((val) {
+          val?.result?.data?.removeWhere((comment) => comment.id.toString() == id);
+        });
         comments.refresh();
+
+        // Refresh the filtered posts and community posts
+        filteredPosts.refresh();
         communityPosts.refresh();
+      } else {
+        debugPrint("Failed to delete comment: ${response['message']}");
       }
 
       debugPrint("delete comments response $response");
     } catch (e) {
-      isLoading(false);
       debugPrint("Error deleting comment: $e");
     } finally {
       isLoading(false);
     }
   }
 
-  likePosts(BuildContext context) async {
+  // Helper method to synchronize comments count across controllers
+  void syncCommentsCountAcrossControllers(String postId, int delta) {
+    // Ensure postId is parsed to int once
+    final postIdInt = int.tryParse(postId);
+    debugPrint("Post ID=============================: $postIdInt");
+
+    // Update in filtered posts list
+    int filteredIndex = filteredPosts.indexWhere((p) => p.id == postIdInt);
+    if (filteredIndex != -1) {
+      filteredPosts[filteredIndex].commentsCount =
+          ((filteredPosts[filteredIndex].commentsCount ?? 0) + delta).clamp(0, double.infinity).toInt();
+      filteredPosts.refresh();
+    }
+
+    // Update in GroupsController if registered
+    if (Get.isRegistered<GroupsController>()) {
+      final groupsController = Get.find<GroupsController>();
+      int groupPostIndex = groupsController.groupPosts.indexWhere((p) => p.id == postIdInt);
+      if (groupPostIndex != -1) {
+        groupsController.groupPosts[groupPostIndex].commentsCount =
+            ((groupsController.groupPosts[groupPostIndex].commentsCount ?? 0) + delta)
+                .clamp(0, double.infinity)
+                .toInt();
+        groupsController.groupPosts.refresh();
+      }
+    }
+
+    // Update in MyPostsController if registered
+    if (Get.isRegistered<MyPostsController>()) {
+      final myPostsController = Get.find<MyPostsController>();
+      int myPostIndex = myPostsController.myPosts.value.result?.data?.indexWhere((p) => p.id == postIdInt) ?? -1;
+      if (myPostIndex != -1) {
+        myPostsController.myPosts.value.result!.data![myPostIndex].commentsCount =
+            ((myPostsController.myPosts.value.result!.data![myPostIndex].commentsCount ?? 0) + delta)
+                .clamp(0, double.infinity)
+                .toInt();
+        myPostsController.myPosts.refresh();
+      }
+    }
+
+    // Update in SavePostController if registered
+    if (Get.isRegistered<SavePostController>()) {
+      final savePostController = Get.find<SavePostController>();
+      int savedPostIndex =
+          savePostController.savePosts.value.result?.data?.indexWhere((p) => p.post?.id == postIdInt) ?? -1;
+      if (savedPostIndex != -1) {
+        savePostController.savePosts.value.result!.data![savedPostIndex].post?.commentsCount =
+            ((savePostController.savePosts.value.result!.data![savedPostIndex].post?.commentsCount ?? 0) + delta)
+                .clamp(0, double.infinity)
+                .toInt();
+        savePostController.savePosts.refresh();
+      }
+    }
+  }
+
+  void likePosts(BuildContext context) async {
     int postIndex = communityPosts.value.result?.data?.indexWhere((post) => post.id == selectedPostId.value) ?? -1;
 
     if (postIndex == -1) return;
@@ -441,8 +515,8 @@ class CommunityController extends GetxController {
 
       // Check if the selectedImage is a local file path or a URL
       File? selectedFile;
-      if (selectedImage.value.isNotEmpty && !selectedImage.value.startsWith('http')) {
-        selectedFile = File(selectedImage.value); // Only create a File object for local paths
+      if (selectedImage.value.isNotEmpty && !editSelectedImage.value.startsWith('http')) {
+        selectedFile = File(editSelectedImage.value); // Only create a File object for local paths
       }
 
       final response = await CommunityRep().updatePosts(
@@ -504,55 +578,17 @@ class CommunityController extends GetxController {
     }
   }
 
-  void loadPostData(String postId) {
-    final post = communityPostsById.value.result;
-    final isDebug = true;
-
-    if (isDebug) debugPrint("COMMUNITY CONTROLLER: Loading post data for ID: $postId");
-
-    if (post != null && post.id.toString() == postId) {
-      // Set content, image and video
-      createPostController.text = post.content ?? '';
-      selectedImage.value = post.image ?? '';
-      videoLinkController.text = post.videoUrl ?? '';
-
-      // Only set topic if it's not already set (to avoid overriding values already set)
-      if (selectedTopic.value.isEmpty && post.topic != null) {
-        selectedTopic.value = post.topic?.name ?? '';
-        selectedTopicId.value = post.topic?.id?.toString() ?? '';
-        if (isDebug)
-          debugPrint(
-            "COMMUNITY CONTROLLER: Setting topic from post: ${selectedTopic.value}, ID: ${selectedTopicId.value}",
-          );
-      } else if (isDebug) {
-        debugPrint(
-          "COMMUNITY CONTROLLER: Keeping existing topic: ${selectedTopic.value}, ID: ${selectedTopicId.value}",
-        );
-      }
-
-      // Update the tab index based on whether there's a video URL or image
-      if (post.videoUrl != null && post.videoUrl!.isNotEmpty) {
-        selectedTabIndex.value = 1;
-      } else {
-        selectedTabIndex.value = 0;
-      }
-    } else {
-      // Clear data for new posts
-      clearCreatePostData();
-    }
-  }
-
   void loadEditPostData(String postId) {
     final post = communityPostsById.value.result;
     if (post != null && post.id.toString() == postId) {
       // Set content, image, and video
       editPostController.text = post.content ?? '';
-      selectedImage.value = post.image ?? '';
-      videoLinkController.text = post.videoUrl ?? '';
+      editSelectedImage.value = post.image ?? '';
+      editVideoController.text = post.videoUrl ?? '';
 
       // Set topic
-      selectedTopic.value = post.topic?.name ?? '';
-      selectedTopicId.value = post.topic?.id?.toString() ?? '';
+      editSelectedTopic.value = post.topic?.name ?? '';
+      editSelectedTopicId.value = post.topic?.id?.toString() ?? '';
 
       // Update the tab index
       selectedTabIndex.value = (post.videoUrl != null && post.videoUrl!.isNotEmpty) ? 1 : 0;

@@ -22,6 +22,7 @@ class PostDetailsCard extends StatefulWidget {
     this.videoUrl,
     required this.dp,
     required this.caption,
+    this.onCommentTap,
     required this.commentCount,
     required this.isLiked,
     required this.isSaved,
@@ -32,6 +33,7 @@ class PostDetailsCard extends StatefulWidget {
   final VoidCallback onTap;
   final VoidCallback? onLike;
   final VoidCallback? onSave;
+  final VoidCallback? onCommentTap;
   final String name;
   final int? postId;
   final String rank;
@@ -94,7 +96,7 @@ class _PostDetailsState extends State<PostDetailsCard> {
     return GestureDetector(
       onTap: widget.onTap,
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 16.h),
+        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 12.h),
         color: dark ? AppColors.dark : Colors.white,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -209,32 +211,37 @@ class _PostDetailsState extends State<PostDetailsCard> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                IconButton(
-                  padding: EdgeInsets.all(16.w),
-                  onPressed: widget.onLike,
-                  icon: Icon(
-                    widget.isLiked ? Icons.favorite : Icons.favorite_border,
-                    color:
-                        widget.isLiked
-                            ? Colors.red
-                            : dark
-                            ? AppColors.darkGrey
-                            : AppColors.dark,
+                GestureDetector(
+                  onTap: widget.onLike,
+                  child: Container(
+                    padding: EdgeInsets.only(right: 20.w, left: 20.w),
+                    child: Icon(
+                      widget.isLiked ? Icons.favorite : Icons.favorite_border,
+                      color:
+                          widget.isLiked
+                              ? Colors.red
+                              : dark
+                              ? AppColors.darkGrey
+                              : AppColors.dark,
+                    ),
                   ),
                 ),
-                Row(
-                  children: [
-                    SvgPicture.asset("assets/icons/comment.svg", color: dark ? AppColors.darkGrey : AppColors.dark),
-                    5.wS,
-                    Text(widget.commentCount, style: GoogleFonts.plusJakartaSans(color: Colors.grey)),
-                  ],
+                InkWell(
+                  onTap: widget.onCommentTap,
+                  child: Row(
+                    children: [
+                      SvgPicture.asset("assets/icons/comment.svg", color: dark ? AppColors.darkGrey : AppColors.dark),
+                      5.wS,
+                      Text(widget.commentCount, style: GoogleFonts.plusJakartaSans(color: Colors.grey)),
+                    ],
+                  ),
                 ),
                 GestureDetector(
                   behavior: HitTestBehavior.translucent,
 
                   onTap: widget.onSave,
                   child: Container(
-                    padding: EdgeInsets.all(16.w),
+                    padding: EdgeInsets.only(right: 20.w, left: 20.w),
                     child: Icon(
                       widget.isSaved ? Icons.bookmark : Icons.bookmark_border,
                       color:

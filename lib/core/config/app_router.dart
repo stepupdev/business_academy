@@ -15,6 +15,7 @@ import 'package:business_application/features/onboarding/presentation/pages/onbo
 import 'package:business_application/features/onboarding/presentation/pages/splash_page.dart';
 import 'package:business_application/features/save_posts/presentation/pages/save_posts.dart';
 import 'package:business_application/features/search/presentation/page/search_page.dart';
+import 'package:business_application/features/no_internet/presentation/pages/no_internet_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -150,6 +151,10 @@ class AppRouter {
           );
         },
         parentNavigatorKey: _rootNavigatorKey,
+      ),
+      GoRoute(
+        path: AppRoutes.noInternet,
+        pageBuilder: (context, state) => MaterialPage(key: state.pageKey, child: NoInternetPage()),
       ),
     ],
   );

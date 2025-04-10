@@ -14,4 +14,5 @@ class AppRoutes {
   static const String groupDetails = '/group-details';
   static const String myPosts = '/my-posts';
   static const String editPost = '/edit-post';
+  static const String noInternet = '/no-internet';
 }

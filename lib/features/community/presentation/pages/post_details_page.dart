@@ -166,9 +166,12 @@ class PostDetailsPageState extends State<PostDetailsPage> {
                         videoUrl: post?.videoUrl ?? "",
                         dp: post?.user?.avatar ?? "",
                         caption: post?.content ?? "",
-                        commentCount: post?.commentsCount?.toString() ?? "",
+                        commentCount: controller.comments.value.result?.data?.length.toString() ?? "",
                         isLiked: post?.isLiked ?? false,
                         isSaved: post?.isSaved ?? false,
+                        onCommentTap: () {
+                          _commentFocusNode.requestFocus();
+                        },
                         onLike: () {
                           final postId = post?.id ?? 0;
                           if (postId == 0) return;
@@ -274,11 +277,21 @@ class PostDetailsPageState extends State<PostDetailsPage> {
                                                 Navigator.of(context).pop();
                                                 // Call the delete comment method
                                                 controller.selectedPostId.value = post?.id ?? 0;
-                                                controller.deleteComments(comment.id.toString(), context).then((_) {
-                                                  controller.getComments(
-                                                    post?.id.toString() ?? "",
-                                                  ); // Refresh comments after deletion
-                                                });
+                                                controller
+                                                    .deleteComments(
+                                                      comment.id.toString(),
+                                                      controller.selectedPostId.value.toString(),
+                                                      context,
+                                                    )
+                                                    .then((_) {
+                                                      controller.getComments(
+                                                        post?.id.toString() ?? "",
+                                                      ); // Refresh comments after deletion
+                                                      controller.syncCommentsCountAcrossControllers(
+                                                        controller.selectedPostId.value.toString(),
+                                                        -1,
+                                                      );
+                                                    });
                                               },
                                               child: Text('Delete'),
                                             ),
@@ -304,7 +317,7 @@ class PostDetailsPageState extends State<PostDetailsPage> {
                                               onPressed: () {
                                                 Navigator.of(context).pop();
                                                 controller.selectedPostId.value = post?.id ?? 0;
-                                                controller.deleteComments(value, context);
+                                                controller.deleteComments(value, post?.id?.toString() ?? "", context);
                                                 controller.getComments(post?.id.toString() ?? "");
                                               },
                                               child: Text('Delete'),
@@ -356,6 +369,9 @@ class PostDetailsPageState extends State<PostDetailsPage> {
                             TextFormField(
                               onTapOutside: (_) => FocusScope.of(context).unfocus(),
                               controller: _commentController,
+                              keyboardType: TextInputType.multiline,
+                              minLines: 1,
+                              maxLines: 3,
                               focusNode: _commentFocusNode,
                               decoration: InputDecoration(
                                 fillColor: dark ? AppColors.dark : Colors.white,
@@ -409,6 +425,10 @@ class PostDetailsPageState extends State<PostDetailsPage> {
                           debugPrint("here is the _replyto: $_replyingTo");
                           debugPrint("Parent id is ${_replyingTo?.toString()}");
                           controller.selectedPostId.value = post?.id ?? 0;
+                          if (_commentController.text.trim().isEmpty) {
+                            Ui.showErrorSnackBar(context, message: "Please enter a comment");
+                            return;
+                          }
                           controller.addComments(
                             context: context,
                             postId: controller.selectedPostId.value.toString(),

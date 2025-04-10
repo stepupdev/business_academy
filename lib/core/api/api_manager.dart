@@ -76,7 +76,7 @@ class APIManager {
       if (response.statusCode == 200) {
         responseJson = _response(response);
         debugPrint('APIManager.postAPICall');
-        debugPrint(responseJson);
+        debugPrint("response is ${response.body}");
       } else if (response.statusCode == 404) {
         responseJson = _response(response);
       } else if (response.statusCode == 405) {
