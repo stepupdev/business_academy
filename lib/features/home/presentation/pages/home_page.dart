@@ -44,17 +44,18 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final dark = Ui.isDarkMode(context);
 
-    return WillPopScope(
-      onWillPop: () async {
-        if (controller.currentIndex.value != 0) {
-          controller.changeTabIndex(0, context); // Pass context for navigation
-          return false;
-        } else {
-          final exitApp = await _showExitDialog(context);
-          if (exitApp) {
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (bool didPop, int? currentIndex) async {
+        if (didPop) {
+          final shouldExit = await _showExitDialog(context);
+          if (shouldExit) {
             SystemNavigator.pop();
+          } else {
+            controller.currentIndex.value = currentIndex ?? 0; // Reset to the previous index
           }
-          return false;
+        } else {
+          controller.currentIndex.value = currentIndex ?? 0; // Reset to the previous index
         }
       },
       child: Obx(() {

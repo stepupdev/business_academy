@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:business_application/core/services/auth_services.dart';
+import 'package:business_application/core/utils/ui_support.dart';
 import 'package:business_application/features/community/data/comments_response_model.dart';
 import 'package:business_application/features/community/data/community_posts_model.dart';
 import 'package:business_application/features/community/data/posts_by_id_model.dart';
@@ -12,8 +13,10 @@ import 'package:business_application/features/save_posts/controller/save_post_co
 import 'package:business_application/main.dart';
 import 'package:business_application/repository/community_rep.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 
 class CommunityController extends GetxController {
   var isLoading = false.obs;
@@ -115,17 +118,25 @@ class CommunityController extends GetxController {
     final pickedFile = await picker.pickImage(source: source);
     if (pickedFile != null) {
       final file = File(pickedFile.path);
-      final fileSize = await file.length();
+      File? compressFile = await compressImageTo2MB(file);
 
-      if (fileSize > 2 * 1024 * 1024) {
-        // Check if file size exceeds 2 MB
-        scaffoldMessengerKey.currentState!.showSnackBar(
-          SnackBar(content: Text("Image size must be less than 2 MB"), backgroundColor: Colors.red),
+      selectedImage.value = compressFile?.path ?? pickedFile.path;
+      debugPrint("Edit image path: ${compressFile!.path}");
+      debugPrint("Picked file path : ${pickedFile.path}");
+      if (compressFile.lengthSync() > 2 * 1024 * 1024) {
+        Get.snackbar(
+          "Error",
+          "Image size exceeds 2MB after compression",
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.BOTTOM,
+          margin: const EdgeInsets.all(20),
+          borderRadius: 8,
         );
-        return;
+        debugPrint("Image size exceeds 2MB after compression");
+      } else {
+        debugPrint("Image size is within limit");
       }
-
-      selectedImage.value = pickedFile.path;
     }
   }
 
@@ -133,19 +144,39 @@ class CommunityController extends GetxController {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: source);
     if (pickedFile != null) {
-      final file = File(pickedFile.path);
+      File file = File(pickedFile.path);
       final fileSize = await file.length();
 
-      if (fileSize > 2 * 1024 * 1024) {
-        // Check if file size exceeds 2 MB
-        scaffoldMessengerKey.currentState!.showSnackBar(
-          SnackBar(content: Text("Image size must be less than 2 MB"), backgroundColor: Colors.red),
-        );
-        return;
-      }
+      File? compressFile = await compressImageTo2MB(file);
 
-      editSelectedImage.value = pickedFile.path;
+      editSelectedImage.value = compressFile!.path;
+      debugPrint("Edit image path: ${compressFile.path}");
+      debugPrint("compress file length: ${compressFile.lengthSync()}");
+      debugPrint("Picked file path : ${pickedFile.path}");
+      debugPrint("Picked file length: $fileSize");
     }
+  }
+
+  // compressed the image
+  Future<File?> compressImageTo2MB(File file) async {
+    int maxSizeInBytes = 1 * 1024 * 1024; // 2MB in bytes
+    int quality = 95;
+    File? compressedFile = file;
+    while ((await compressedFile!.length()) > maxSizeInBytes && quality > 10) {
+      final dir = await getTemporaryDirectory();
+      final targetPath = '${dir.path}/temp${file.path.split('/').last}';
+      var result = await FlutterImageCompress.compressAndGetFile(
+        file.absolute.path,
+        targetPath,
+        quality: quality,
+        format: CompressFormat.jpeg,
+      );
+      if (result != null) {
+        compressedFile = File(result.path);
+      }
+      quality -= 5;
+    }
+    return compressedFile;
   }
 
   void changeCommunity(String communityId) {
@@ -481,11 +512,17 @@ class CommunityController extends GetxController {
 
   createNewPosts({String? groupId}) async {
     File? selectedFile = selectedImage.value.isNotEmpty ? File(selectedImage.value) : null;
+    // compress file
+    File? compressFile;
+    if (selectedFile != null) {
+      compressFile = await compressImageTo2MB(selectedFile);
+    }
+    debugPrint("compress file length: ${compressFile?.lengthSync()}");
 
     final response = await CommunityRep().communityPosts(
       content: createPostController.text.trim(),
       topicId: selectedTopicId.value,
-      imageFile: selectedFile,
+      imageFile: compressFile,
       videoUrl: videoLinkController.text.isNotEmpty ? videoLinkController.text : null,
       groupId: groupId, // Pass groupId to the repository
     );
@@ -515,8 +552,11 @@ class CommunityController extends GetxController {
 
       // Check if the selectedImage is a local file path or a URL
       File? selectedFile;
-      if (selectedImage.value.isNotEmpty && !editSelectedImage.value.startsWith('http')) {
+      if (editSelectedImage.value.isNotEmpty && !editSelectedImage.value.startsWith('http')) {
         selectedFile = File(editSelectedImage.value); // Only create a File object for local paths
+        // compress file
+        File? compressFile = await compressImageTo2MB(selectedFile);
+        selectedFile = compressFile;
       }
 
       final response = await CommunityRep().updatePosts(
