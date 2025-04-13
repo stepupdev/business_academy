@@ -7,7 +7,6 @@ import 'package:business_application/core/utils/ui_support.dart';
 import 'package:business_application/main.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/utils.dart';
 import 'package:http/http.dart' as http;
 
 class APIManager {

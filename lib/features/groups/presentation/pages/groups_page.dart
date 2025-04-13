@@ -1,9 +1,7 @@
 import 'package:business_application/core/config/app_routes.dart';
 import 'package:business_application/core/config/app_size.dart';
-import 'package:business_application/core/services/connectivity_service.dart';
 import 'package:business_application/core/utils/app_strings.dart';
 import 'package:business_application/features/groups/controller/groups_controller.dart';
-import 'package:business_application/features/no_internet/presentation/pages/no_internet_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';

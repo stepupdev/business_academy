@@ -30,9 +30,9 @@ class CommunityRep {
       "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
     }, context);
     debugPrint("response: $response");
-    if (response['success'] == true) {
-      Ui.showSuccessSnackBar(context, message: response['message']);
-    }
+    // if (response['success'] == true) {
+    //   Ui.showSuccessSnackBar(context, message: response['message']);
+    // }
     return response;
   }
 
