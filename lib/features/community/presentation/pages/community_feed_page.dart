@@ -198,37 +198,44 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen> with Automatic
                   delegate: SliverChildBuilderDelegate((context, index) {
                     if (index == controller.filteredPosts.length) {
                       return Padding(
-                        padding: EdgeInsets.symmetric(vertical: 10.h),
+                        padding: EdgeInsets.only(top: index == 0 ? 0 : 10.h, bottom: 10.h),
                         child: Center(child: CircularProgressIndicator(color: AppColors.primaryColor, strokeWidth: 2)),
                       );
                     }
                     final posts = controller.filteredPosts[index];
-                    return UserPostWidget(
-                      onTap: () {
-                        // First save the scroll position
-                        controller.saveScrollPosition();
-                        controller.shouldRestorePosition.value = true;
+                    return Column(
+                      children: [
+                        UserPostWidget(
+                          onTap: () {
+                            // First save the scroll position
+                            controller.saveScrollPosition();
+                            controller.shouldRestorePosition.value = true;
 
-                        // Set up for the details page
-                        Get.find<CommunityController>().getCommunityPostsById(posts.id.toString());
-                        Get.find<CommunityController>().getComments(posts.id.toString());
-                        controller.selectedPostId.value = posts.id ?? 0;
+                            // Set up for the details page
+                            Get.find<CommunityController>().getCommunityPostsById(posts.id.toString());
+                            Get.find<CommunityController>().getComments(posts.id.toString());
+                            controller.selectedPostId.value = posts.id ?? 0;
 
-                        // Navigate using go_router
-                        context.push('/post-details/${posts.id}');
-                      },
-                      name: posts.user?.name ?? "",
-                      postId: posts.id ?? 0,
-                      rank: posts.user?.rank?.name ?? "",
-                      topic: posts.topic?.name ?? "",
-                      time: posts.createdAt ?? DateTime.now(),
-                      postImage: posts.image ?? "",
-                      videoUrl: posts.videoUrl ?? "",
-                      dp: posts.user?.avatar ?? "",
-                      caption: controller.cleanHtml(posts.content ?? ""),
-                      commentCount: posts.commentsCount?.toString() ?? "0",
-                      isLiked: posts.isLiked ?? false,
-                      isSaved: posts.isSaved ?? false,
+                            // Navigate using go_router
+                            context.push('/post-details/${posts.id}');
+                          },
+                          name: posts.user?.name ?? "",
+                          postId: posts.id ?? 0,
+                          rank: posts.user?.rank?.name ?? "",
+                          topic: posts.topic?.name ?? "",
+                          time: posts.createdAt ?? DateTime.now(),
+                          postImage: posts.image ?? "",
+                          videoUrl: posts.videoUrl ?? "",
+                          dp: posts.user?.avatar ?? "",
+                          caption: controller.cleanHtml(posts.content ?? ""),
+                          commentCount: posts.commentsCount?.toString() ?? "0",
+                          isLiked: posts.isLiked ?? false,
+                          isSaved: posts.isSaved ?? false,
+                        ),
+                        if (index != controller.filteredPosts.length - 1) ...[
+                          Divider(height: 2.h, color: AppColors.darkGrey),
+                        ],
+                      ],
                     );
                   }, childCount: controller.filteredPosts.length + (controller.isPaginating.value ? 1 : 0)),
                 ),
