@@ -1,6 +1,11 @@
+import 'dart:io';
+
+import 'package:app_settings/app_settings.dart';
+import 'package:business_application/core/config/app_routes.dart';
 import 'package:business_application/core/services/connectivity_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 
 class NoInternetPage extends StatelessWidget {
   const NoInternetPage({Key? key}) : super(key: key);
@@ -25,12 +30,24 @@ class NoInternetPage extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () => Get.find<ConnectivityService>().retryConnection(),
+                onPressed: () {
+                  Get.find<ConnectivityService>().checkNow().then((isConnected) {
+                    if (isConnected) {
+                      context.go(AppRoutes.communityFeed);
+                    } else {
+                      if (Platform.isAndroid) {
+                        AppSettings.openAppSettingsPanel(AppSettingsPanelType.internetConnectivity);
+                      } else if (Platform.isIOS) {
+                        AppSettings.openAppSettings();
+                      }
+                    }
+                  });
+                },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.redAccent,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                 ),
-                child: const Text("Retry"),
+                child: Text("Retry"),
               ),
             ],
           ),

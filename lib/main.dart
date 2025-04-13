@@ -4,6 +4,7 @@ import 'package:business_application/core/config/app_router.dart';
 import 'package:business_application/core/config/dependency_injection.dart';
 import 'package:business_application/core/services/auth_services.dart';
 import 'package:business_application/core/services/connectivity_service.dart';
+import 'package:business_application/core/utils/app_strings.dart';
 import 'package:business_application/core/utils/theme/theme.dart';
 import 'package:business_application/features/notification/controller/notification_controller.dart';
 import 'package:flutter/material.dart';
@@ -37,11 +38,7 @@ void startNotificationChecker() async {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Get.putAsync<ConnectivityService>(() async {
-    final service = ConnectivityService();
-    return service;
-  });
-
+  Get.put(ConnectivityService());
   await Get.putAsync(() async => AuthService());
   // SystemChrome.setSystemUIOverlayStyle(
   //   const SystemUiOverlayStyle(
@@ -113,7 +110,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           routerDelegate: AppRouter.router.routerDelegate,
           routeInformationParser: AppRouter.router.routeInformationParser,
           routeInformationProvider: AppRouter.router.routeInformationProvider,
-          title: 'Business Academy',
+          title: AppStrings.appName,
           theme: TAppTheme.lightTheme,
           themeMode: ThemeMode.system,
           darkTheme: TAppTheme.darkTheme,

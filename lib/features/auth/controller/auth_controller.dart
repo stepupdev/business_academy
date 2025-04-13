@@ -1,6 +1,8 @@
 import 'package:business_application/core/config/app_routes.dart';
 import 'package:business_application/core/services/auth_services.dart';
+import 'package:business_application/core/services/connectivity_service.dart';
 import 'package:business_application/core/utils/auth_utils.dart';
+import 'package:business_application/core/utils/ui_support.dart';
 import 'package:business_application/features/auth/data/login_response_model.dart';
 import 'package:business_application/repository/auth_repo/auth_repo.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +24,14 @@ class AuthController extends GetxController {
   signInWithGoogle(BuildContext context) async {
     try {
       isLoading.value = true;
+
+      final isConnect = await Get.find<ConnectivityService>().isConnected();
+      if (!isConnect) {
+        debugPrint("No internet connection");
+        isLoading.value = false;
+        Ui.showErrorSnackBar(context, message: "No internet connection");
+        return;
+      }
       final user = await _googleSignIn.signIn();
       if (user != null) {
         GoogleSignInAuthentication googleSignInAuthentication = await user.authentication;

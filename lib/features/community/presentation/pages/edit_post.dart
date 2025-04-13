@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:business_application/core/config/app_colors.dart';
 import 'package:business_application/core/config/app_size.dart';
+import 'package:business_application/core/utils/app_strings.dart';
 import 'package:business_application/core/utils/ui_support.dart';
 import 'package:business_application/features/community/controller/community_controller.dart';
 import 'package:business_application/features/community/data/topics_model.dart';
@@ -136,7 +137,7 @@ class _EditPostPageState extends State<EditPostPage> {
                       focusNode: controller.postFocusNode,
                       maxLines: 5,
                       decoration: InputDecoration(
-                        hintText: "Edit your post...",
+                        hintText: AppStrings.createPostPrompt,
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide: BorderSide(color: AppColors.borderColor, width: 0.5),

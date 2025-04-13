@@ -1,5 +1,6 @@
 import 'package:business_application/core/config/app_colors.dart';
 import 'package:business_application/core/config/app_size.dart';
+import 'package:business_application/core/utils/app_strings.dart';
 import 'package:business_application/core/utils/ui_support.dart';
 import 'package:business_application/features/community/controller/community_controller.dart';
 import 'package:business_application/features/search/controller/search_controller.dart';
@@ -135,7 +136,7 @@ class SearchPage extends GetView<SearchedController> {
                           Icon(Icons.search_off, size: 80.sp, color: Colors.grey.shade400),
                           10.hS,
                           Text(
-                            "No Results Found",
+                            AppStrings.noResultsFound,
                             style: GoogleFonts.plusJakartaSans(
                               fontSize: 20.sp,
                               fontWeight: FontWeight.bold,
@@ -157,7 +158,7 @@ class SearchPage extends GetView<SearchedController> {
                           children: [
                             RichText(
                               text: TextSpan(
-                                text: 'Search Results: ',
+                                text: AppStrings.searchResult,
                                 style: GoogleFonts.plusJakartaSans(color: Colors.grey),
                                 children: [
                                   TextSpan(
@@ -199,7 +200,7 @@ class SearchPage extends GetView<SearchedController> {
                                 postImage: result?.image ?? "",
                                 commentCount: result?.commentsCount.toString() ?? "",
                                 videoUrl: result?.videoUrl ?? "",
-                                caption: result?.content ?? "",
+                                caption: result?.content ?? AppStrings.noPostsAvailable,
                               );
                             },
                           ),

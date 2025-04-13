@@ -1,9 +1,11 @@
 import 'package:business_application/core/config/app_colors.dart';
+import 'package:business_application/core/services/connectivity_service.dart';
 import 'package:business_application/core/utils/ui_support.dart';
 import 'package:business_application/features/auth/controller/auth_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -52,7 +54,20 @@ class SignInPage extends GetView<AuthController> {
                     ),
                     SizedBox(height: 40),
                     ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
+                        final isConnect = await Get.find<ConnectivityService>().isConnected();
+                        final networkService = Get.find<ConnectivityService>();
+                        if (networkService.isConnected.value) {
+                          debugPrint("Internet connection is available");
+                        } else {
+                          debugPrint("No internet connection");
+                        }
+                        if (!isConnect) {
+                          debugPrint("No internet connection");
+                          Ui.showErrorSnackBar(context, message: "No internet connection");
+                          return;
+                        }
+
                         controller.signInWithGoogle(context);
                       },
                       style: ElevatedButton.styleFrom(

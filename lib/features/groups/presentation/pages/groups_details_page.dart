@@ -1,6 +1,7 @@
 import 'package:business_application/core/config/app_colors.dart';
 import 'package:business_application/core/config/app_size.dart';
 import 'package:business_application/core/services/auth_services.dart';
+import 'package:business_application/core/utils/app_strings.dart';
 import 'package:business_application/core/utils/ui_support.dart';
 import 'package:business_application/features/community/controller/community_controller.dart';
 import 'package:business_application/features/groups/controller/groups_controller.dart';
@@ -38,7 +39,7 @@ class GroupDetailsPage extends GetView<GroupsController> {
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 20.h),
                 child: Text(
-                  'No posts available for this group.',
+                  AppStrings.noGroupPostsAvailable,
                   style: TextStyle(color: Colors.grey, fontSize: 14.sp, fontWeight: FontWeight.w500),
                 ),
               ),
@@ -84,7 +85,7 @@ class GroupDetailsPage extends GetView<GroupsController> {
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
                               ),
                               child: Text(
-                                'Creatre a Post!',
+                                AppStrings.createPostButton,
                                 style: GoogleFonts.plusJakartaSans(color: Colors.grey, fontWeight: FontWeight.w600),
                               ),
                             ),
@@ -164,7 +165,7 @@ class GroupDetailsPage extends GetView<GroupsController> {
                           child: Padding(
                             padding: EdgeInsets.symmetric(vertical: 20.h),
                             child: Text(
-                              'No posts available for this group.',
+                              AppStrings.noPostsAvailable,
                               style: TextStyle(color: Colors.grey, fontSize: 14.sp, fontWeight: FontWeight.w500),
                             ),
                           ),

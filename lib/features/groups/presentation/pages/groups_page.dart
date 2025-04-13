@@ -1,8 +1,12 @@
 import 'package:business_application/core/config/app_routes.dart';
 import 'package:business_application/core/config/app_size.dart';
+import 'package:business_application/core/services/connectivity_service.dart';
+import 'package:business_application/core/utils/app_strings.dart';
 import 'package:business_application/features/groups/controller/groups_controller.dart';
+import 'package:business_application/features/no_internet/presentation/pages/no_internet_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -40,7 +44,7 @@ class GroupsPage extends GetView<GroupsController> {
                         Icon(Icons.group_outlined, size: 80.sp, color: Colors.grey.shade400),
                         10.hS,
                         Text(
-                          "No Groups Found",
+                          AppStrings.noGroupsFound,
                           style: GoogleFonts.plusJakartaSans(
                             fontSize: 20.sp,
                             fontWeight: FontWeight.bold,

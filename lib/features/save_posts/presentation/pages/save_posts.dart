@@ -1,5 +1,6 @@
 import 'package:business_application/core/config/app_colors.dart';
 import 'package:business_application/core/config/app_size.dart';
+import 'package:business_application/core/utils/app_strings.dart';
 import 'package:business_application/features/community/controller/community_controller.dart';
 import 'package:business_application/features/save_posts/controller/save_post_controller.dart';
 import 'package:business_application/widgets/custom_post_cart_widgets.dart';
@@ -48,25 +49,30 @@ class _SavePostsPageState extends State<SavePostsPage> {
           }
           if (controller.savePosts.value.result?.data?.isEmpty ?? true) {
             return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.bookmark_border, size: 80.sp, color: Colors.grey.shade400),
-                  10.hS,
-                  Text(
-                    "No Saved Posts",
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 20.sp,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey.shade600,
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.bookmark_border, size: 80.sp, color: Colors.grey.shade400),
+                    10.hS,
+                    Text(
+                      AppStrings.noSavedPostsFound,
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 20.sp,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey.shade600,
+                      ),
                     ),
-                  ),
-                  5.hS,
-                  Text(
-                    "Save posts to view them here.",
-                    style: GoogleFonts.plusJakartaSans(fontSize: 14.sp, color: Colors.grey.shade500),
-                  ),
-                ],
+                    5.hS,
+                    Text(
+                      textAlign: TextAlign.center,
+                      AppStrings.noSavedPostsDescription,
+                      style: GoogleFonts.plusJakartaSans(fontSize: 14.sp, color: Colors.grey.shade500),
+                    ),
+                  ],
+                ),
               ),
             );
           }

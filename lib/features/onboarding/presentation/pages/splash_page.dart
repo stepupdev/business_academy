@@ -1,4 +1,5 @@
 import 'package:business_application/core/config/app_routes.dart';
+import 'package:business_application/core/services/connectivity_service.dart';
 import 'package:business_application/core/utils/auth_utils.dart';
 import 'package:business_application/core/services/auth_services.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +26,12 @@ class SplashPageState extends State<SplashPage> {
     await Future.delayed(const Duration(seconds: 2)); // Splash delay
 
     bool isLoggedIn = await AuthUtlity.checkUserLogin();
+    final isConnect = await Get.find<ConnectivityService>().checkNow();
+    if (!isConnect) {
+      debugPrint("No internet connection");
+      context.go(AppRoutes.noInternet);
+      return;
+    }
     debugPrint("🔹 Is User Logged In? $isLoggedIn");
 
     if (isLoggedIn) {

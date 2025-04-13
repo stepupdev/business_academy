@@ -1,3 +1,4 @@
+import 'package:business_application/core/utils/app_strings.dart';
 import 'package:business_application/core/utils/ui_support.dart';
 import 'package:business_application/features/community/controller/community_controller.dart';
 import 'package:business_application/features/save_posts/data/save_posts_res_model.dart';
@@ -89,7 +90,7 @@ class SavePostController extends GetxController {
         savePosts.value.result!.data![postIndex].post?.isLiked = !currentState;
         savePosts.refresh();
       } else {
-        Ui.showErrorSnackBar(context, message: "Something went wrong!!");
+        Ui.showErrorSnackBar(context, message: AppStrings.error);
       }
 
       // Process the like action without making assumptions about post type

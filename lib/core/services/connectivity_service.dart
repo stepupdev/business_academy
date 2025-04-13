@@ -1,90 +1,59 @@
 import 'dart:async';
-import 'dart:io';
-
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 
-class ConnectivityService extends GetxService {
+class ConnectivityService extends GetxController {
+  static ConnectivityService get instance => Get.find();
+
   final Connectivity _connectivity = Connectivity();
-  late StreamSubscription<List<ConnectivityResult>> _subscription;
-
+  late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
   final RxBool isConnected = true.obs;
-  Timer? _periodicTimer;
 
   @override
   void onInit() {
     super.onInit();
-    _startMonitoring();
-    _checkInitialConnection(); // Check once on app launch
-  }
-
-  void _startMonitoring() {
-    _subscription = _connectivity.onConnectivityChanged.listen((results) async {
-      // Safely pick one result from the list (e.g., prioritize Wi-Fi > Mobile > None)
-      final result =
-          results.contains(ConnectivityResult.wifi)
-              ? ConnectivityResult.wifi
-              : results.contains(ConnectivityResult.mobile)
-              ? ConnectivityResult.mobile
-              : ConnectivityResult.none;
-
-      final hasInternet = await _checkInternetConnection(result);
-      _updateConnectionStatus(hasInternet);
+    _checkInitialConnection();
+    _connectivitySubscription = _connectivity.onConnectivityChanged.listen((_) {
+      _checkInitialConnection();
     });
   }
 
   Future<void> _checkInitialConnection() async {
-    final results = await _connectivity.checkConnectivity();
-
-    final result =
-        results.contains(ConnectivityResult.wifi)
-            ? ConnectivityResult.wifi
-            : results.contains(ConnectivityResult.mobile)
-            ? ConnectivityResult.mobile
-            : ConnectivityResult.none;
-
-    final hasInternet = await _checkInternetConnection(result);
-    _updateConnectionStatus(hasInternet);
+    final result = await _connectivity.checkConnectivity();
+    await _updateConnectionStatus(result);
   }
 
+  Future<void> _updateConnectionStatus(List<ConnectivityResult> result) async {
+    final hasConnection = result.any((element) => element != ConnectivityResult.none);
+    isConnected.value = hasConnection;
+    if (!hasConnection) {
+      Get.snackbar(
+        "No Internet Connection",
+        "Please check your network settings and try again.",
+        snackPosition: SnackPosition.BOTTOM,
+        duration: const Duration(seconds: 5),
+        backgroundColor: Colors.redAccent,
+        colorText: Colors.white,
+      );
+    }
+  }
 
-  Future<bool> _checkInternetConnection(ConnectivityResult result) async {
-    if (result == ConnectivityResult.none) return false;
+  Future<bool> checkNow() async {
     try {
-      final lookupResult = await InternetAddress.lookup('google.com');
-      return lookupResult.isNotEmpty && lookupResult[0].rawAddress.isNotEmpty;
-    } catch (_) {
+      final results = await _connectivity.checkConnectivity();
+      final result = results.isNotEmpty ? results.first : ConnectivityResult.none;
+      return result != ConnectivityResult.none;
+    } on PlatformException {
       return false;
     }
   }
 
-  void _updateConnectionStatus(bool hasInternet) {
-    isConnected.value = hasInternet;
-    if (!hasInternet) {
-      Get.offAllNamed('/no-internet'); // Navigate to the No Internet screen
-    }
-  }
-
-  Future<void> retryConnection() async {
-    final results = await _connectivity.checkConnectivity();
-    final result =
-        results.contains(ConnectivityResult.wifi)
-            ? ConnectivityResult.wifi
-            : results.contains(ConnectivityResult.mobile)
-            ? ConnectivityResult.mobile
-            : ConnectivityResult.none;
-
-    final hasInternet = await _checkInternetConnection(result);
-    if (hasInternet) {
-      Get.offAllNamed('/'); // Navigate back to the main workflow
-    }
-  }
-
-
   @override
   void onClose() {
-    _subscription.cancel();
-    _periodicTimer?.cancel();
+    _connectivitySubscription.cancel();
     super.onClose();
   }
 }

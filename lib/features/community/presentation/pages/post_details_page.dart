@@ -1,6 +1,7 @@
 import 'package:business_application/core/config/app_colors.dart';
 import 'package:business_application/core/config/app_size.dart';
 import 'package:business_application/core/services/auth_services.dart';
+import 'package:business_application/core/utils/app_strings.dart';
 import 'package:business_application/core/utils/helper_utils.dart';
 import 'package:business_application/core/utils/ui_support.dart';
 import 'package:business_application/features/community/controller/community_controller.dart';
@@ -215,7 +216,7 @@ class PostDetailsPageState extends State<PostDetailsPage> {
                             child: Padding(
                               padding: EdgeInsets.symmetric(vertical: 20.h),
                               child: Text(
-                                'No comments available.',
+                                AppStrings.noCommentsFound,
                                 style: TextStyle(color: Colors.grey, fontSize: 14.sp, fontWeight: FontWeight.w500),
                               ),
                             ),
@@ -265,8 +266,8 @@ class PostDetailsPageState extends State<PostDetailsPage> {
                                     context: context,
                                     builder:
                                         (context) => AlertDialog(
-                                          title: Text('Delete Comment'),
-                                          content: Text('Are you sure you want to delete this comment?'),
+                                          title: Text(AppStrings.deleteComment),
+                                          content: Text(AppStrings.deleteCommentConfirmation),
                                           actions: [
                                             TextButton(
                                               onPressed: () => Navigator.of(context).pop(),
@@ -300,18 +301,18 @@ class PostDetailsPageState extends State<PostDetailsPage> {
                                   );
                                 },
                                 onReplyDelete: (value) {
-                                  debugPrint("here is the reply id: ${value}");
+                                  debugPrint("here is the reply id: $value");
                                   // show confirmation dialog
                                   showDialog(
                                     context: context,
                                     builder:
                                         (context) => AlertDialog(
-                                          title: Text('Delete Reply'),
-                                          content: Text('Are you sure you want to delete this reply?'),
+                                          title: Text(AppStrings.deleteComment),
+                                          content: Text(AppStrings.deleteCommentConfirmation),
                                           actions: [
                                             TextButton(
                                               onPressed: () => Navigator.of(context).pop(),
-                                              child: Text('Cancel'),
+                                              child: Text(AppStrings.cancel),
                                             ),
                                             TextButton(
                                               onPressed: () {
@@ -320,7 +321,7 @@ class PostDetailsPageState extends State<PostDetailsPage> {
                                                 controller.deleteComments(value, post?.id?.toString() ?? "", context);
                                                 controller.getComments(post?.id.toString() ?? "");
                                               },
-                                              child: Text('Delete'),
+                                              child: Text(AppStrings.delete),
                                             ),
                                           ],
                                         ),

@@ -3,9 +3,12 @@ import 'package:business_application/core/config/app_colors.dart';
 import 'package:business_application/core/config/app_routes.dart';
 import 'package:business_application/core/config/app_size.dart';
 import 'package:business_application/core/services/auth_services.dart';
+import 'package:business_application/core/services/connectivity_service.dart';
+import 'package:business_application/core/utils/app_strings.dart';
 import 'package:business_application/core/utils/ui_support.dart';
 import 'package:business_application/features/community/controller/community_controller.dart';
 import 'package:business_application/features/community/presentation/widgets/custom_shimmer.dart';
+import 'package:business_application/features/no_internet/presentation/pages/no_internet_page.dart';
 import 'package:business_application/features/notification/controller/notification_controller.dart';
 import 'package:business_application/widgets/custom_post_cart_widgets.dart';
 import 'package:flutter/material.dart';
@@ -177,7 +180,7 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen> with Automatic
                                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
                                     ),
                                     child: Text(
-                                      'Creatre a Post!',
+                                      AppStrings.createPostButton,
                                       style: GoogleFonts.plusJakartaSans(
                                         color: dark ? AppColors.light : Colors.grey,
                                         fontWeight: FontWeight.w600,
@@ -270,7 +273,7 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen> with Automatic
                               Icon(Icons.forum_outlined, size: 80.sp, color: Colors.grey.shade400),
                               10.hS,
                               Text(
-                                "No Posts Available",
+                                AppStrings.noPostsAvailable,
                                 style: GoogleFonts.plusJakartaSans(
                                   fontSize: 20.sp,
                                   fontWeight: FontWeight.bold,

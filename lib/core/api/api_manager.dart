@@ -2,9 +2,12 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:business_application/core/api/api_exception.dart';
+import 'package:business_application/core/services/connectivity_service.dart';
 import 'package:business_application/core/utils/ui_support.dart';
 import 'package:business_application/main.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/utils.dart';
 import 'package:http/http.dart' as http;
 
 class APIManager {
@@ -85,6 +88,11 @@ class APIManager {
         return null;
       }
     } on SocketException catch (_) {
+      final isConnect = await ConnectivityService.instance.isConnected.value;
+      debugPrint("isConnect is $isConnect");
+      if (!isConnect) {
+        debugPrint("No Internet connection");
+      }
       throw FetchDataException('No Internet connection');
     }
     return responseJson;
@@ -201,8 +209,10 @@ class APIManager {
       final response = await http.get(Uri.parse(url), headers: headerData);
       debugPrint("my getWithHeader method data response ${response.body}");
       responseJson = _response(response);
+    } on FetchDataException catch (_) {
+      Get.snackbar("Error", "No Internet connection", backgroundColor: Colors.red, colorText: Colors.white);
     } on SocketException catch (_) {
-      throw FetchDataException('No Internet connection');
+      Get.snackbar("Error", "No Internet connection", backgroundColor: Colors.red, colorText: Colors.white);
     }
     return responseJson;
   }
