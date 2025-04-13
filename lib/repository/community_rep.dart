@@ -69,9 +69,10 @@ class CommunityRep {
     return response;
   }
 
-  Future getCommentsByPostId(String id) async {
+  Future getCommentsByPostId({required String id, String? fullUrl}) async {
     APIManager _manager = APIManager();
-    final response = await _manager.getWithHeader("${ApiUrl.communityPosts}/$id/comments", {
+    final url = fullUrl ?? "${ApiUrl.communityPosts}/$id/comments";
+    final response = await _manager.getWithHeader(url, {
       "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
     });
     debugPrint("response: $response");
@@ -206,9 +207,10 @@ class CommunityRep {
     return response;
   }
 
-  Future getSavePosts() async {
+  Future getSavePosts({String? fullUrl}) async {
     APIManager _manager = APIManager();
-    final response = await _manager.getWithHeader(ApiUrl.savePosts, {
+    final uri = fullUrl != null ? Uri.parse(fullUrl) : Uri.parse(ApiUrl.savePosts);
+    final response = await _manager.getWithHeader(uri.toString(), {
       "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
     });
     debugPrint("response: $response");

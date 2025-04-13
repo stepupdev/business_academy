@@ -14,6 +14,7 @@ import 'package:business_application/repository/community_rep.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -47,6 +48,12 @@ class CommunityController extends GetxController {
   var currentPage = 1.obs;
   var nextPageUrl = ''.obs;
   var isPaginating = false.obs;
+
+  //comments pagination
+  var commentsPage = 1.obs;
+  var commentsNextPageUrl = ''.obs;
+  var isCommentsPaginating = false.obs;
+  final ScrollController commentsScrollController = ScrollController();
 
   @override
   void onInit() {
@@ -474,13 +481,34 @@ class CommunityController extends GetxController {
   getComments(String id) async {
     try {
       commentLoading(true);
-      final response = await CommunityRep().getCommentsByPostId(id);
+      final response = await CommunityRep().getCommentsByPostId(id: id);
       comments(CommentsResponseModel.fromJson(response));
+      commentsPage.value = comments.value.result?.meta?.currentPage ?? 1;
+      commentsNextPageUrl.value = comments.value.result?.links?.next ?? "";
+      debugPrint("comments response: ${comments.value.result?.data}");
     } catch (e) {
       commentLoading(false);
       debugPrint("Error fetching comments: $e");
     } finally {
       commentLoading(false);
+    }
+  }
+
+  // pagination comments
+  loadNextCommentsPage(String postId) async {
+    if (isCommentsPaginating.value || commentsNextPageUrl.value.isEmpty) return;
+    try {
+      isCommentsPaginating(true);
+      final response = await CommunityRep().getCommentsByPostId(id: postId, fullUrl: commentsNextPageUrl.value);
+      final newComments = CommentsResponseModel.fromJson(response);
+      comments.value.result?.data?.addAll(newComments.result?.data ?? []);
+      comments.refresh();
+      commentsPage.value = newComments.result?.meta?.currentPage ?? 1;
+      commentsNextPageUrl.value = newComments.result?.links?.next ?? "";
+    } catch (e) {
+      debugPrint("Error loading next comments page: $e");
+    } finally {
+      isCommentsPaginating(false);
     }
   }
 
@@ -652,6 +680,7 @@ class CommunityController extends GetxController {
           duration: const Duration(seconds: 5),
         );
         getCommunityPosts(); // Refresh posts after deletion
+        context.pop();
       } else {
         debugPrint("Error deleting post: ${response['message']}");
       }

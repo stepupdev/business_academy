@@ -15,6 +15,11 @@ class SavePostController extends GetxController {
   RxDouble scrollOffset = 0.0.obs;
   RxBool shouldRestorePosition = false.obs;
 
+  // pagination
+  var currentPage = 1.obs;
+  var nextPageUrl = ''.obs;
+  var isPaginating = false.obs;
+
   @override
   void onInit() {
     getSavePosts();
@@ -66,11 +71,30 @@ class SavePostController extends GetxController {
       final response = await CommunityRep().getSavePosts();
       if (response['message'] == 'Saved posts retrieved successfully') {
         savePosts(SavePostResponseModel.fromJson(response));
+        currentPage.value = savePosts.value.result?.meta?.currentPage ?? 1;
+        nextPageUrl.value = savePosts.value.result?.links?.next ?? '';
       }
     } catch (e) {
       debugPrint("Error fetching saved posts: $e");
     } finally {
       isLoading(false);
+    }
+  }
+
+  loadNextPage() async {
+    if (isPaginating.value || nextPageUrl.value.isEmpty) return;
+    try {
+      isPaginating(true);
+      final response = await CommunityRep().getSavePosts(fullUrl: nextPageUrl.value);
+      final newPosts = SavePostResponseModel.fromJson(response);
+      savePosts.value.result?.data?.addAll(newPosts.result?.data ?? []);
+      currentPage.value = newPosts.result?.meta?.currentPage ?? 1;
+      nextPageUrl.value = newPosts.result?.links?.next ?? "";
+      savePosts.refresh();
+    } catch (e) {
+      debugPrint("Error loading next page: $e");
+    } finally {
+      isPaginating(false);
     }
   }
 

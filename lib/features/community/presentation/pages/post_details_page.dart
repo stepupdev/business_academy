@@ -31,12 +31,27 @@ class PostDetailsPage extends StatefulWidget {
   PostDetailsPageState createState() => PostDetailsPageState();
 }
 
-class PostDetailsPageState extends State<PostDetailsPage> {
+class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+  late CommunityController communityController;
   final TextEditingController _commentController = TextEditingController();
   final FocusNode _commentFocusNode = FocusNode();
   bool _isReplying = false;
   int? _replyingTo;
   bool _isInitialized = false; // To ensure the logic runs only once
+
+  @override
+  void initState() {
+    super.initState();
+    communityController = Get.find<CommunityController>();
+    communityController.scrollController.addListener(() {
+      if (communityController.commentsScrollController.position.pixels >=
+          communityController.commentsScrollController.position.maxScrollExtent - 300) {
+        communityController.loadNextCommentsPage(widget.postId);
+      }
+    });
+  }
 
   @override
   void didChangeDependencies() {
@@ -65,6 +80,7 @@ class PostDetailsPageState extends State<PostDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final dark = Ui.isDarkMode(context);
     final controller = Get.find<CommunityController>();
     final currentUserId = Get.find<AuthService>().currentUser.value.result?.user?.id;
@@ -153,6 +169,8 @@ class PostDetailsPageState extends State<PostDetailsPage> {
             children: [
               Expanded(
                 child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  controller: communityController.commentsScrollController,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -229,7 +247,7 @@ class PostDetailsPageState extends State<PostDetailsPage> {
                           height: MediaQuery.of(context).size.height * 0.5,
                           child: ListView.builder(
                             shrinkWrap: true,
-                            physics: AlwaysScrollableScrollPhysics(), // Allow smooth scrolling
+                            physics: const NeverScrollableScrollPhysics(), // Allow smooth scrolling
                             itemCount: comments.length,
                             itemBuilder: (context, index) {
                               final comment = comments[index];
@@ -426,10 +444,10 @@ class PostDetailsPageState extends State<PostDetailsPage> {
                           debugPrint("here is the _replyto: $_replyingTo");
                           debugPrint("Parent id is ${_replyingTo?.toString()}");
                           controller.selectedPostId.value = post?.id ?? 0;
-                          if (_commentController.text.trim().isEmpty) {
-                            Ui.showErrorSnackBar(context, message: "Please enter a comment");
-                            return;
-                          }
+                          // if (_commentController.text.trim().isEmpty) {
+                          //   Ui.showErrorSnackBar(context, message: "Please enter a comment");
+                          //   return;
+                          // }
                           controller.addComments(
                             context: context,
                             postId: controller.selectedPostId.value.toString(),

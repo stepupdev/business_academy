@@ -49,7 +49,7 @@ class UserMenuController extends GetxController {
     }
   }
 
-  changeCommunity(String id, BuildContext context) {
+  Future<void> changeCommunity(String id, BuildContext context) async {
     isLoading(true);
     try {
       Map<String, dynamic> data = {"community_id": id};

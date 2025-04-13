@@ -1,6 +1,5 @@
 import 'package:business_application/core/config/app_routes.dart';
 import 'package:business_application/features/announcements/presentation/page/announcements_page.dart';
-import 'package:business_application/features/community/controller/community_controller.dart';
 import 'package:business_application/features/community/presentation/pages/community_feed_page.dart';
 import 'package:business_application/features/groups/presentation/pages/groups_page.dart';
 import 'package:business_application/features/menu/controller/menu_controller.dart';
@@ -26,7 +25,6 @@ class HomeController extends GetxController {
     super.onInit();
 
     // Find controllers only once
-    final communityController = Get.find<CommunityController>();
     final menuController = Get.find<UserMenuController>();
 
     // Initialize screens with PageStorageKey to help preserve state
@@ -39,10 +37,7 @@ class HomeController extends GetxController {
 
     // Listen for tab changes to update resources
     ever(currentIndex, (index) {
-      if (index == 0) {
-        communityController.getCommunityPosts();
-        communityController.getTopic();
-      } else if (index == 3) {
+      if (index == 3) {
         menuController.fetchCommunities();
         menuController.getUser();
       }
@@ -57,11 +52,7 @@ class HomeController extends GetxController {
     currentIndex.value = index;
 
     // Update resources based on selected tab
-    if (index == 0) {
-      final communityController = Get.find<CommunityController>();
-      communityController.getCommunityPosts();
-      communityController.getTopic();
-    } else if (index == 3) {
+    if (index == 3) {
       final menuController = Get.find<UserMenuController>();
       menuController.fetchCommunities();
       menuController.getUser();
