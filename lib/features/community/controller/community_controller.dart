@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:business_application/core/services/auth_services.dart';
-import 'package:business_application/core/utils/ui_support.dart';
 import 'package:business_application/features/community/data/comments_response_model.dart';
 import 'package:business_application/features/community/data/community_posts_model.dart';
 import 'package:business_application/features/community/data/posts_by_id_model.dart';
@@ -27,7 +26,7 @@ class CommunityController extends GetxController {
   var communityPostsById = PostByIdResponseModel().obs;
   var topics = topics_model.TopicsResponseModel().obs;
   topics_model.TopicsResponseModel? selectedTopicValue;
-  var selectedTopic = ''.obs;
+  var selectedTopic = 'All'.obs;
   var selectedTopicId = ''.obs;
   var editSelectedTopic = ''.obs;
   var editSelectedTopicId = ''.obs;

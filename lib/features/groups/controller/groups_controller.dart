@@ -50,6 +50,7 @@ class GroupsController extends GetxController {
       var response = await GroupsRep().getGroupsTopic(id);
       groupsTopicResponse(groups_topic.GroupsTopicResponseModel.fromJson(response));
       groupsTopicResponse.value.result?.data?.insert(0, groups_topic.GroupTopics(id: 0, name: "All"));
+      selectedTopic.value = "All";
       return true;
     } catch (e) {
       return false;
