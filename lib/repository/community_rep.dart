@@ -11,11 +11,11 @@ import 'package:http/http.dart' as http;
 
 class CommunityRep {
   Future getCommunityPosts({Map<String, dynamic>? params, String? fullUrl}) async {
-    APIManager _manager = APIManager();
+    APIManager manager = APIManager();
     final uri =
         fullUrl != null ? Uri.parse(fullUrl) : Uri.parse(ApiUrl.communityPosts).replace(queryParameters: params);
     debugPrint("Fetching posts with URI: ${uri.toString()}");
-    final response = await _manager.getWithHeader(uri.toString(), {
+    final response = await manager.getWithHeader(uri.toString(), {
       "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
     });
     debugPrint("Posts response: $response");
@@ -23,8 +23,8 @@ class CommunityRep {
   }
 
   Future createComments(Map<String, dynamic> body, BuildContext context) async {
-    APIManager _manager = APIManager();
-    final response = await _manager.postAPICallWithHeader(ApiUrl.createComments, body, {
+    APIManager manager = APIManager();
+    final response = await manager.postAPICallWithHeader(ApiUrl.createComments, body, {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
       "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
@@ -37,8 +37,8 @@ class CommunityRep {
   }
 
   Future deleteComment(String commentId, BuildContext context) async {
-    APIManager _manager = APIManager();
-    final response = await _manager.deleteAPICallWithHeader(
+    APIManager manager = APIManager();
+    final response = await manager.deleteAPICallWithHeader(
       context,
       "${ApiUrl.comments}/$commentId/delete",
       headerData: {"Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}"},
@@ -48,8 +48,8 @@ class CommunityRep {
   }
 
   Future likePosts(Map<String, dynamic> body, BuildContext context) async {
-    APIManager _manager = APIManager();
-    final response = await _manager.postAPICallWithHeader(ApiUrl.likePost, body, {
+    APIManager manager = APIManager();
+    final response = await manager.postAPICallWithHeader(ApiUrl.likePost, body, {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
       "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
@@ -59,8 +59,8 @@ class CommunityRep {
   }
 
   Future savePost(Map<String, dynamic> body, BuildContext context) async {
-    APIManager _manager = APIManager();
-    final response = await _manager.postAPICallWithHeader(ApiUrl.savePost, body, {
+    APIManager manager = APIManager();
+    final response = await manager.postAPICallWithHeader(ApiUrl.savePost, body, {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
       "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
@@ -70,9 +70,9 @@ class CommunityRep {
   }
 
   Future getCommentsByPostId({required String id, String? fullUrl}) async {
-    APIManager _manager = APIManager();
+    APIManager manager = APIManager();
     final url = fullUrl ?? "${ApiUrl.communityPosts}/$id/comments";
-    final response = await _manager.getWithHeader(url, {
+    final response = await manager.getWithHeader(url, {
       "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
     });
     debugPrint("response: $response");
@@ -80,8 +80,8 @@ class CommunityRep {
   }
 
   Future getCommunityPostsById(String id) async {
-    APIManager _manager = APIManager();
-    final response = await _manager.getWithHeader("${ApiUrl.communityPosts}/$id", {
+    APIManager manager = APIManager();
+    final response = await manager.getWithHeader("${ApiUrl.communityPosts}/$id", {
       "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
     });
     debugPrint("response: $response");
@@ -133,8 +133,8 @@ class CommunityRep {
   }
 
   Future deletePost(String postId, BuildContext context) async {
-    APIManager _manager = APIManager();
-    final response = await _manager.deleteAPICallWithHeader(
+    APIManager manager = APIManager();
+    final response = await manager.deleteAPICallWithHeader(
       context,
       "${ApiUrl.communityPosts}/delete/$postId",
       headerData: {"Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}"},
@@ -190,17 +190,18 @@ class CommunityRep {
   }
 
   Future getTopics() async {
-    APIManager _manager = APIManager();
-    final response = await _manager.getWithHeader(ApiUrl.topics, {
+    APIManager manager = APIManager();
+    final response = await manager.getWithHeader(ApiUrl.topics, {
       "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
     });
     debugPrint("response: $response");
     return response;
   }
 
-  Future getMyPosts() async {
-    APIManager _manager = APIManager();
-    final response = await _manager.getWithHeader(ApiUrl.myPosts, {
+  Future getMyPosts({String? fullUrl}) async {
+    APIManager manager = APIManager();
+    final uri = fullUrl != null ? Uri.parse(fullUrl) : Uri.parse(ApiUrl.myPosts);
+    final response = await manager.getWithHeader(uri.toString(), {
       "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
     });
     debugPrint("response: $response");
@@ -208,9 +209,9 @@ class CommunityRep {
   }
 
   Future getSavePosts({String? fullUrl}) async {
-    APIManager _manager = APIManager();
+    APIManager manager = APIManager();
     final uri = fullUrl != null ? Uri.parse(fullUrl) : Uri.parse(ApiUrl.savePosts);
-    final response = await _manager.getWithHeader(uri.toString(), {
+    final response = await manager.getWithHeader(uri.toString(), {
       "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
     });
     debugPrint("response: $response");
@@ -218,8 +219,8 @@ class CommunityRep {
   }
 
   Future getUser() async {
-    APIManager _manager = APIManager();
-    final response = await _manager.getWithHeader(ApiUrl.user, {
+    APIManager manager = APIManager();
+    final response = await manager.getWithHeader(ApiUrl.user, {
       "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
     });
     debugPrint("response: $response");
@@ -227,8 +228,8 @@ class CommunityRep {
   }
 
   Future fetchCommunities() async {
-    APIManager _manager = APIManager();
-    final response = await _manager.getWithHeader(ApiUrl.communities, {
+    APIManager manager = APIManager();
+    final response = await manager.getWithHeader(ApiUrl.communities, {
       "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
     });
     debugPrint("response: $response");
@@ -236,8 +237,8 @@ class CommunityRep {
   }
 
   Future changeCommunity(Map<String, dynamic> body, BuildContext context) async {
-    APIManager _manager = APIManager();
-    final response = await _manager.postAPICallWithHeader("${ApiUrl.communities}/change", body, {
+    APIManager manager = APIManager();
+    final response = await manager.postAPICallWithHeader("${ApiUrl.communities}/change", body, {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
       "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
@@ -252,7 +253,7 @@ class CommunityRep {
   }
 
   Future search(String queryParameters, {String? topicQuery, String? groupQuery}) async {
-    APIManager _manager = APIManager();
+    APIManager manager = APIManager();
     final uri = Uri.parse(ApiUrl.search).replace(
       queryParameters: {
         'q': queryParameters,
@@ -260,7 +261,7 @@ class CommunityRep {
         if (groupQuery != null) 'group_id': groupQuery,
       },
     );
-    final response = await _manager.getWithHeader(uri.toString(), {
+    final response = await manager.getWithHeader(uri.toString(), {
       "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
     });
     debugPrint("response: $response");

@@ -70,69 +70,56 @@ class _MyPostsPageState extends State<MyPostsPage> {
               ),
             );
           }
-          return Obx(() {
-            return ListView.separated(
-              separatorBuilder: (_, __) => Container(height: 2.h, color: AppColors.grey),
-              controller: controller.scrollController,
-              physics: const AlwaysScrollableScrollPhysics(),
-              itemCount: controller.myPosts.value.result?.data?.length ?? 0,
-              itemBuilder: (context, index) {
-                final post = controller.myPosts.value.result?.data?[index];
-                return UserPostWidget(
-                  onTap: () {
-                    controller.saveScrollPosition();
-
-                    Get.find<CommunityController>().getCommunityPostsById(post?.id.toString() ?? "0");
-                    Get.find<CommunityController>().getComments(post?.id.toString() ?? "0");
-                    Get.find<CommunityController>().selectedPostId.value = post?.id ?? 0;
-
-                    context.push('/post-details/${post?.id}');
-                  },
-                  name: post?.user?.name ?? "",
-                  rank: post?.user?.rank?.name ?? "",
-                  topic: post?.topic?.name ?? "",
-                  time: post?.createdAt ?? DateTime.now(),
-                  postImage: post?.image ?? "",
-                  videoUrl: post?.videoUrl ?? "",
-                  dp: post?.user?.avatar ?? "",
-                  caption: post?.content ?? "",
-                  commentCount: post?.commentsCount.toString() ?? "",
-                  isLiked: post?.isLiked ?? false,
-                  isSaved: post?.isSaved ?? false,
-                  postId: post?.id ?? 0,
-                  onLike: () {
-                    final postId = post?.id ?? 0;
-                    if (postId == 0) return;
-
-                    // Update UI optimistically
-                    // int postIndex = controller.myPosts.value.result?.data?.indexWhere((p) => p.id == postId) ?? -1;
-                    // if (postIndex != -1) {
-                    //   bool currentState = controller.myPosts.value.result!.data![postIndex].isLiked ?? false;
-                    //   controller.myPosts.value.result!.data![postIndex].isLiked = !currentState;
-                    //   controller.myPosts.refresh();
-                    // }
-
-                    controller.handlePostInteraction(postId, 'like', context);
-                  },
-                  onSave: () {
-                    final postId = post?.id ?? 0;
-                    if (postId == 0) return;
-
-                    // // Update UI optimistically
-                    // int postIndex = controller.myPosts.value.result?.data?.indexWhere((p) => p.id == postId) ?? -1;
-                    // if (postIndex != -1) {
-                    //   bool currentState = controller.myPosts.value.result!.data![postIndex].isSaved ?? false;
-                    //   controller.myPosts.value.result!.data![postIndex].isSaved = !currentState;
-                    //   controller.myPosts.refresh();
-                    // }
-
-                    // Use the new method that handles group posts correctly
-                    controller.handlePostInteraction(postId, 'save', context);
-                  },
+          return ListView.separated(
+            separatorBuilder: (_, __) => Container(height: 2.h, color: AppColors.grey),
+            controller: controller.scrollController,
+            physics: const AlwaysScrollableScrollPhysics(),
+            itemCount: controller.myPosts.value.result?.data?.length ?? (controller.isPaginating.value ? 1 : 0),
+            itemBuilder: (context, index) {
+              final posts = controller.myPosts.value.result?.data ?? [];
+              if (index == posts.length && controller.isPaginating.value) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  child: Center(child: CircularProgressIndicator()),
                 );
-              },
-            );
-          });
+              }
+              final post = posts[index];
+              return UserPostWidget(
+                onTap: () {
+                  controller.saveScrollPosition();
+
+                  Get.find<CommunityController>().getCommunityPostsById(post.id.toString());
+                  Get.find<CommunityController>().getComments(post.id.toString());
+                  Get.find<CommunityController>().selectedPostId.value = post.id ?? 0;
+
+                  context.push('/post-details/${post.id}');
+                },
+                name: post.user?.name ?? "",
+                rank: post.user?.rank?.name ?? "",
+                topic: post.topic?.name ?? "",
+                time: post.createdAt ?? DateTime.now(),
+                postImage: post.image ?? "",
+                videoUrl: post.videoUrl ?? "",
+                dp: post.user?.avatar ?? "",
+                caption: post.content ?? "",
+                commentCount: post.commentsCount.toString(),
+                isLiked: post.isLiked ?? false,
+                isSaved: post.isSaved ?? false,
+                onSave: () {
+                  final postId = post.id ?? 0;
+                  if (postId == 0) return;
+
+                  controller.handlePostInteraction(postId, 'save', context);
+                },
+                onLike: () {
+                  final postId = post.id ?? 0;
+                  if (postId == 0) return;
+
+                  controller.handlePostInteraction(postId, 'like', context);
+                },
+              );
+            },
+          );
         }),
       ),
     );

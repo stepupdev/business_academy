@@ -55,9 +55,9 @@ class _EditPostPageState extends State<EditPostPage> {
         if (isDebug) {
           final topics = groupsController.groupsTopicResponse.value.result?.data ?? [];
           debugPrint("EDIT POST PAGE: Loaded ${topics.length} group topics:");
-          topics.forEach((topic) {
+          for (var topic in topics) {
             debugPrint("  - ${topic.name} (ID: ${topic.id})");
-          });
+          }
         }
       } else {
         if (isDebug) debugPrint("EDIT POST PAGE: Loading community topics");

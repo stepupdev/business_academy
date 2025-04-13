@@ -54,7 +54,7 @@ class _PostDetailsState extends State<PostDetailsCard> {
   bool _isExpanded = false;
   bool _isOverflowing = false;
   String? videoThumbnail;
-  bool _isPlaying = false;
+  final bool _isPlaying = false;
 
   String? getVideoThumbnail(String? videoUrl) {
     if (videoUrl == null || videoUrl.isEmpty) return null;

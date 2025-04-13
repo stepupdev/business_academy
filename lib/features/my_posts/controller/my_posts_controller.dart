@@ -13,12 +13,22 @@ class MyPostsController extends GetxController {
   RxDouble scrollOffset = 0.0.obs;
   RxBool shouldRestorePosition = false.obs;
 
+  // Pagination variables
+  var currentPage = 1.obs;
+  var nextPageUrl = ''.obs;
+  var isPaginating = false.obs;
+
   @override
   void onInit() {
     getMyPosts();
 
     scrollController.addListener(() {
       scrollOffset.value = scrollController.offset;
+
+      // Trigger pagination when nearing the bottom
+      if (scrollController.position.pixels >= scrollController.position.maxScrollExtent - 300) {
+        loadNextPage();
+      }
     });
 
     super.onInit();
@@ -60,6 +70,8 @@ class MyPostsController extends GetxController {
       isLoading(true);
       final response = await CommunityRep().getMyPosts();
       myPosts(MyPostResponseModel.fromJson(response));
+      currentPage.value = myPosts.value.result?.meta?.currentPage ?? 1;
+      nextPageUrl.value = myPosts.value.result?.links?.next ?? '';
     } catch (e) {
       isLoading(false);
       scaffoldMessengerKey.currentState?.showSnackBar(
@@ -67,6 +79,23 @@ class MyPostsController extends GetxController {
       );
     } finally {
       isLoading(false);
+    }
+  }
+
+  loadNextPage() async {
+    if (isPaginating.value || nextPageUrl.value.isEmpty) return;
+    try {
+      isPaginating(true);
+      final response = await CommunityRep().getMyPosts(fullUrl: nextPageUrl.value);
+      final newPosts = MyPostResponseModel.fromJson(response);
+      myPosts.value.result?.data?.addAll(newPosts.result?.data ?? []);
+      currentPage.value = newPosts.result?.meta?.currentPage ?? 1;
+      nextPageUrl.value = newPosts.result?.links?.next ?? "";
+      myPosts.refresh();
+    } catch (e) {
+      debugPrint("Error loading next page: $e");
+    } finally {
+      isPaginating(false);
     }
   }
 

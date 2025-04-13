@@ -6,8 +6,8 @@ import 'package:get/get.dart';
 
 class GroupsRep {
   Future getGroups() async {
-    APIManager _manager = APIManager();
-    final response = await _manager.getWithHeader(ApiUrl.groups, {
+    APIManager manager = APIManager();
+    final response = await manager.getWithHeader(ApiUrl.groups, {
       "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
     });
     debugPrint("response: $response");
@@ -15,8 +15,8 @@ class GroupsRep {
   }
 
   Future getGroupsDetails(String id) async {
-    APIManager _manager = APIManager();
-    final response = await _manager.getWithHeader("${ApiUrl.groups}/$id", {
+    APIManager manager = APIManager();
+    final response = await manager.getWithHeader("${ApiUrl.groups}/$id", {
       "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
     });
     debugPrint("response: $response");
@@ -24,8 +24,8 @@ class GroupsRep {
   }
 
   Future getGroupsTopic(String id) async {
-    APIManager _manager = APIManager();
-    final response = await _manager.getWithHeader("${ApiUrl.groups}/$id/topics", {
+    APIManager manager = APIManager();
+    final response = await manager.getWithHeader("${ApiUrl.groups}/$id/topics", {
       "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
     });
     debugPrint("response topic: $response");

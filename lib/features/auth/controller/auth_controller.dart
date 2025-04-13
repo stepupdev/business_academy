@@ -25,7 +25,7 @@ class AuthController extends GetxController {
     try {
       isLoading.value = true;
 
-      final isConnect = await Get.find<ConnectivityService>().isConnected();
+      final isConnect = Get.find<ConnectivityService>().isConnected();
       if (!isConnect) {
         debugPrint("No internet connection");
         isLoading.value = false;

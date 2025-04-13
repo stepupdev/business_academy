@@ -308,8 +308,9 @@ class _CreatePostPageState extends State<CreatePostPage> {
                             controller.selectedTopicId.value = selectedTopic?.id?.toString() ?? '';
                           }
 
-                          if (isDebug)
+                          if (isDebug) {
                             debugPrint("CREATE POST PAGE: Set topic ID to: ${controller.selectedTopicId.value}");
+                          }
                         },
                         dropdownMenuEntries:
                             topicsToShow?.map((topic) {

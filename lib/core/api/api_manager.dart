@@ -74,7 +74,7 @@ class APIManager {
     try {
       final response = await http.post(Uri.parse(url), body: param, headers: header);
       debugPrint("status code is ${response.statusCode}");
-      debugPrint("status  ${response}");
+      debugPrint("status  $response");
       if (response.statusCode == 200) {
         responseJson = _response(response);
         debugPrint('APIManager.postAPICall');
@@ -87,7 +87,7 @@ class APIManager {
         return null;
       }
     } on SocketException catch (_) {
-      final isConnect = await ConnectivityService.instance.isConnected.value;
+      final isConnect = ConnectivityService.instance.isConnected.value;
       debugPrint("isConnect is $isConnect");
       if (!isConnect) {
         debugPrint("No Internet connection");
@@ -105,7 +105,7 @@ class APIManager {
     String parameterName,
   ) async {
     debugPrint("Calling API: $url");
-    debugPrint("Calling parameters: ${param}");
+    debugPrint("Calling parameters: $param");
     debugPrint(images);
     debugPrint("Calling parameterName: $parameterName");
 

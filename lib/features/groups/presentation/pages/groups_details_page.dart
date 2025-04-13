@@ -26,6 +26,13 @@ class GroupDetailsPage extends GetView<GroupsController> {
       }
     });
 
+    // Add scroll listener for pagination
+    controller.scrollController.addListener(() {
+      if (controller.scrollController.position.pixels >= controller.scrollController.position.maxScrollExtent - 300) {
+        controller.loadNextPage();
+      }
+    });
+
     return Scaffold(
       appBar: AppBar(title: Text(controller.groupsDetails.value.result?.name ?? "")),
       body: RefreshIndicator(
@@ -174,9 +181,16 @@ class GroupDetailsPage extends GetView<GroupsController> {
                       return ListView.separated(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
+                        controller: controller.scrollController, // Attach scroll controller
                         separatorBuilder: (_, __) => Container(height: 2.h, color: AppColors.darkGrey),
-                        itemCount: controller.groupPosts.length, // Use groupPosts here
+                        itemCount: controller.groupPosts.length + (controller.isPaginating.value ? 1 : 0),
                         itemBuilder: (context, index) {
+                          if (index == controller.groupPosts.length && controller.isPaginating.value) {
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 20),
+                              child: Center(child: CircularProgressIndicator()),
+                            );
+                          }
                           final posts = controller.groupPosts[index]; // Use groupPosts here
                           return UserPostWidget(
                             onTap: () {

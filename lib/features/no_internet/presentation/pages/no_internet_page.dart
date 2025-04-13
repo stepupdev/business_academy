@@ -8,7 +8,7 @@ import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 
 class NoInternetPage extends StatelessWidget {
-  const NoInternetPage({Key? key}) : super(key: key);
+  const NoInternetPage({super.key});
 
   @override
   Widget build(BuildContext context) {

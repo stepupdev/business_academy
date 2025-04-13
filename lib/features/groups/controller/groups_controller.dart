@@ -19,6 +19,12 @@ class GroupsController extends GetxController {
   var groupPosts = <Posts>[].obs;
   var currentGroupId = ''.obs;
 
+  var currentPage = 1.obs;
+  var nextPageUrl = ''.obs;
+  var isPaginating = false.obs;
+
+  final ScrollController scrollController = ScrollController();
+
   @override
   void onInit() {
     fetchGroups();
@@ -31,6 +37,14 @@ class GroupsController extends GetxController {
         filterPostsByTopic(value, topicId: gropTopic?.id.toString());
       }
     });
+
+    // Add scroll listener for pagination
+    scrollController.addListener(() {
+      if (scrollController.position.pixels >= scrollController.position.maxScrollExtent - 300) {
+        loadNextPage();
+      }
+    });
+
     super.onInit();
   }
 
@@ -39,7 +53,6 @@ class GroupsController extends GetxController {
     try {
       var response = await GroupsRep().getGroups();
       groups(GroupsResponseModel.fromJson(response));
-    } catch (e) {
     } finally {
       isLoading(false);
     }
@@ -83,11 +96,30 @@ class GroupsController extends GetxController {
       final postsModel = PostsResponseModel.fromJson(response);
       groupPosts.assignAll(postsModel.result?.data ?? []);
       debugPrint("Loaded ${groupPosts.length} posts for group $groupId"); // Debug line
+      currentPage.value = postsModel.result?.meta?.currentPage ?? 1;
+      nextPageUrl.value = postsModel.result?.links?.next ?? '';
       return true;
     } catch (e) {
       return false;
     } finally {
       isLoading(false);
+    }
+  }
+
+  Future<void> loadNextPage() async {
+    if (isPaginating.value || nextPageUrl.value.isEmpty) return;
+    try {
+      isPaginating(true);
+      final response = await CommunityRep().getCommunityPosts(fullUrl: nextPageUrl.value);
+      final newPosts = PostsResponseModel.fromJson(response);
+      groupPosts.addAll(newPosts.result?.data ?? []);
+      currentPage.value = newPosts.result?.meta?.currentPage ?? 1;
+      nextPageUrl.value = newPosts.result?.links?.next ?? "";
+      groupPosts.refresh();
+    } catch (e) {
+      debugPrint("Error loading next page: $e");
+    } finally {
+      isPaginating(false);
     }
   }
 

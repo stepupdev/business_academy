@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 
 class AuthRepository {
   Future signInWithGoogle(String token) async {
-    APIManager _manager = APIManager();
-    final response = await _manager.postAPICall(ApiUrl.login, {"token": token});
+    APIManager manager = APIManager();
+    final response = await manager.postAPICall(ApiUrl.login, {"token": token});
     debugPrint("response: $response");
     return response;
   }
