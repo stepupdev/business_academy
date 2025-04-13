@@ -145,201 +145,177 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen> with Automatic
               Get.find<NotificationController>().hasNewNotification.value;
               return controller.getCommunityPosts();
             },
-            child: SafeArea(
-              child: Column(
-                children: [
-                  Flexible(
-                    flex: 2,
-                    fit: FlexFit.tight,
-                    child: Column(
-                      children: [
-                        Container(
-                          color: dark ? AppColors.dark : Color(0xffE9F0FF),
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 8.h, vertical: 8.h),
-                            child: Row(
-                              children: [
-                                CircleAvatar(
-                                  backgroundImage: NetworkImage(
-                                    Get.find<AuthService>().currentUser.value.result?.user?.avatar ?? "",
-                                  ),
-                                ),
-                                10.wS,
-                                Expanded(
-                                  child: TextButton(
-                                    onPressed: () {
-                                      context.push('/create-post', extra: {'isGroupTopics': false}); // Pass argument
-                                    },
-                                    style: TextButton.styleFrom(
-                                      alignment: Alignment.centerLeft,
-                                      backgroundColor: dark ? AppColors.dark : Colors.white,
-                                      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-                                      side: BorderSide(color: Colors.blue.shade100, width: 0.5),
-                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-                                    ),
-                                    child: Text(
-                                      AppStrings.createPostButton,
-                                      style: GoogleFonts.plusJakartaSans(
-                                        color: dark ? AppColors.light : Colors.grey,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
+            child: CustomScrollView(
+              controller: controller.scrollController,
+              slivers: [
+                SliverAppBar(
+                  pinned: false,
+                  floating: false,
+                  expandedHeight: 65.h,
+                  flexibleSpace: FlexibleSpaceBar(
+                    background: Container(
+                      color: dark ? AppColors.dark : Color(0xffE9F0FF),
+                      padding: EdgeInsets.symmetric(horizontal: 8.h, vertical: 8.h),
+                      child: Row(
+                        children: [
+                          CircleAvatar(
+                            backgroundImage: NetworkImage(
+                              Get.find<AuthService>().currentUser.value.result?.user?.avatar ?? "",
                             ),
                           ),
-                        ),
-                        12.hS,
-                        Obx(() {
-                          if (controller.topics.value.result?.data == null) {
-                            return Center(child: Text("No topics available", style: TextStyle(color: Colors.grey)));
-                          }
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                            child: SizedBox(
-                              height: 25.h,
-                              child: ListView.separated(
-                                separatorBuilder: (context, index) => SizedBox(width: 5.w),
-                                scrollDirection: Axis.horizontal,
-                                itemCount: controller.topics.value.result?.data?.length ?? 0,
-                                itemBuilder: (context, index) {
-                                  final topic = controller.topics.value.result?.data?[index];
-                                  return Obx(() {
-                                    final isSelected = controller.selectedTopic.value == topic?.name;
-                                    return GestureDetector(
-                                      onTap: () {
-                                        controller.selectedTopic.value = topic?.name ?? "";
-                                        controller.selectedTopicId.value = topic?.id?.toString() ?? "";
-                                      },
-                                      child: IntrinsicHeight(
-                                        child: Container(
-                                          padding: EdgeInsets.symmetric(horizontal: 12.w),
-                                          decoration: BoxDecoration(
-                                            color: dark ? AppColors.dark : Colors.white,
-                                            border: Border.all(
-                                              color:
-                                                  isSelected
-                                                      ? AppColors.primaryColor
-                                                      : (Colors.grey[200] ?? Colors.grey),
-                                              width: 0.5,
-                                            ),
-                                            borderRadius: BorderRadius.circular(50),
-                                          ),
-                                          child: Row(
-                                            children: [
-                                              Text(
-                                                topic?.name ?? "",
-                                                style: GoogleFonts.plusJakartaSans(
-                                                  color: dark ? AppColors.light : Colors.black,
-                                                  fontSize: 12.sp,
-                                                  fontWeight: FontWeight.w600,
-                                                  height: 1.0,
-                                                ),
-                                              ),
-                                              if (topic?.postsCount != null && topic?.name != "All") ...[
-                                                5.wS,
-                                                Text(
-                                                  '(${topic?.postsCount.toString()})',
-                                                  style: TextStyle(color: Colors.grey.shade400),
-                                                ),
-                                              ],
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  });
-                                },
+                          10.wS,
+                          Expanded(
+                            child: TextButton(
+                              onPressed: () {
+                                context.push('/create-post', extra: {'isGroupTopics': false}); // Pass argument
+                              },
+                              style: TextButton.styleFrom(
+                                alignment: Alignment.centerLeft,
+                                backgroundColor: dark ? AppColors.dark : Colors.white,
+                                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                                side: BorderSide(color: Colors.blue.shade100, width: 0.5),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+                              ),
+                              child: Text(
+                                AppStrings.createPostButton,
+                                style: GoogleFonts.plusJakartaSans(
+                                  color: dark ? AppColors.light : Colors.grey,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                             ),
-                          );
-                        }),
-                      ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                  Flexible(
-                    flex: 8,
-                    fit: FlexFit.tight,
-                    child: Obx(() {
-                      if (controller.filteredPosts.isEmpty) {
-                        return Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Icon(Icons.forum_outlined, size: 80.sp, color: Colors.grey.shade400),
-                              10.hS,
-                              Text(
-                                AppStrings.noPostsAvailable,
-                                style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 20.sp,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.grey.shade600,
-                                ),
-                              ),
-                              5.hS,
-                              Text(
-                                "Try selecting a different topic.",
-                                style: GoogleFonts.plusJakartaSans(fontSize: 14.sp, color: Colors.grey.shade500),
-                              ),
-                            ],
-                          ),
-                        );
-                      }
-                      return ListView.separated(
-                        key: PageStorageKey('communityFeedList'),
-                        controller: controller.scrollController,
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        itemCount: controller.filteredPosts.length + (controller.isPaginating.value ? 1 : 0),
-                        separatorBuilder: (_, __) => Container(height: 2.h, color: AppColors.darkGrey),
-                        itemBuilder: (context, index) {
-                          if (index == controller.filteredPosts.length) {
-                            return Padding(
-                              padding: EdgeInsets.symmetric(vertical: 10.h),
-                              child: Center(
-                                child: CircularProgressIndicator(color: AppColors.primaryColor, strokeWidth: 2),
-                              ),
-                            );
-                          }
-                          final posts = controller.filteredPosts[index];
-                          return UserPostWidget(
-                            onTap: () {
-                              // First save the scroll position
-                              controller.saveScrollPosition();
-                              controller.shouldRestorePosition.value = true;
-
-                              // Set up for the details page
-                              Get.find<CommunityController>().getCommunityPostsById(posts.id.toString());
-                              Get.find<CommunityController>().getComments(posts.id.toString());
-                              controller.selectedPostId.value = posts.id ?? 0;
-
-                              // Navigate using go_router
-                              context.push('/post-details/${posts.id}');
-                            },
-                            name: posts.user?.name ?? "",
-                            postId: posts.id ?? 0,
-                            rank: posts.user?.rank?.name ?? "",
-                            topic: posts.topic?.name ?? "",
-                            time: posts.createdAt ?? DateTime.now(),
-                            postImage: posts.image ?? "",
-                            videoUrl: posts.videoUrl ?? "",
-                            dp: posts.user?.avatar ?? "",
-                            caption: controller.cleanHtml(posts.content ?? ""),
-                            commentCount: posts.commentsCount?.toString() ?? "0",
-                            isLiked: posts.isLiked ?? false,
-                            isSaved: posts.isSaved ?? false,
-                          );
-                        },
+                ),
+                SliverPersistentHeader(
+                  pinned: true,
+                  delegate: _TopicSelectionHeader(dark: dark, controller: controller),
+                ),
+                SliverList(
+                  delegate: SliverChildBuilderDelegate((context, index) {
+                    if (index == controller.filteredPosts.length) {
+                      return Padding(
+                        padding: EdgeInsets.symmetric(vertical: 10.h),
+                        child: Center(child: CircularProgressIndicator(color: AppColors.primaryColor, strokeWidth: 2)),
                       );
-                    }),
-                  ),
-                ],
-              ),
+                    }
+                    final posts = controller.filteredPosts[index];
+                    return UserPostWidget(
+                      onTap: () {
+                        // First save the scroll position
+                        controller.saveScrollPosition();
+                        controller.shouldRestorePosition.value = true;
+
+                        // Set up for the details page
+                        Get.find<CommunityController>().getCommunityPostsById(posts.id.toString());
+                        Get.find<CommunityController>().getComments(posts.id.toString());
+                        controller.selectedPostId.value = posts.id ?? 0;
+
+                        // Navigate using go_router
+                        context.push('/post-details/${posts.id}');
+                      },
+                      name: posts.user?.name ?? "",
+                      postId: posts.id ?? 0,
+                      rank: posts.user?.rank?.name ?? "",
+                      topic: posts.topic?.name ?? "",
+                      time: posts.createdAt ?? DateTime.now(),
+                      postImage: posts.image ?? "",
+                      videoUrl: posts.videoUrl ?? "",
+                      dp: posts.user?.avatar ?? "",
+                      caption: controller.cleanHtml(posts.content ?? ""),
+                      commentCount: posts.commentsCount?.toString() ?? "0",
+                      isLiked: posts.isLiked ?? false,
+                      isSaved: posts.isSaved ?? false,
+                    );
+                  }, childCount: controller.filteredPosts.length + (controller.isPaginating.value ? 1 : 0)),
+                ),
+              ],
             ),
           );
         }),
       ),
     );
   }
+}
+
+class _TopicSelectionHeader extends SliverPersistentHeaderDelegate {
+  final bool dark;
+  final CommunityController controller;
+
+  _TopicSelectionHeader({required this.dark, required this.controller});
+
+  @override
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return Container(
+      color: dark ? AppColors.dark : Color(0xffE9F0FF),
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: Obx(() {
+        if (controller.topics.value.result?.data == null) {
+          return Center(child: Text("No topics available", style: TextStyle(color: Colors.grey)));
+        }
+        return SizedBox(
+          height: 45.h,
+          child: ListView.separated(
+            separatorBuilder: (context, index) => SizedBox(width: 5.w),
+            scrollDirection: Axis.horizontal,
+            itemCount: controller.topics.value.result?.data?.length ?? 0,
+            itemBuilder: (context, index) {
+              final topic = controller.topics.value.result?.data?[index];
+              return Obx(() {
+                final isSelected = controller.selectedTopic.value == topic?.name;
+                return GestureDetector(
+                  onTap: () {
+                    controller.selectedTopic.value = topic?.name ?? "";
+                    controller.selectedTopicId.value = topic?.id?.toString() ?? "";
+                  },
+                  child: IntrinsicHeight(
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 12.w),
+                      decoration: BoxDecoration(
+                        color: dark ? AppColors.dark : Colors.white,
+                        border: Border.all(
+                          color: isSelected ? AppColors.primaryColor : (Colors.grey[200] ?? Colors.grey),
+                          width: 0.5,
+                        ),
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      child: Row(
+                        children: [
+                          Text(
+                            topic?.name ?? "",
+                            style: GoogleFonts.plusJakartaSans(
+                              color: dark ? AppColors.light : Colors.black,
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.w600,
+                              height: 1.0,
+                            ),
+                          ),
+                          if (topic?.postsCount != null && topic?.name != "All") ...[
+                            5.wS,
+                            Text('(${topic?.postsCount.toString()})', style: TextStyle(color: Colors.grey.shade400)),
+                          ],
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              });
+            },
+          ),
+        );
+      }),
+    );
+  }
+
+  @override
+  double get maxExtent => 20.h;
+
+  @override
+  double get minExtent => 20.h;
+
+  @override
+  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) => true;
 }
