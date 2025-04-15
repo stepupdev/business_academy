@@ -28,12 +28,14 @@ class PostDetailsCard extends StatefulWidget {
     required this.isSaved,
     this.onLike,
     this.onSave,
+    this.onTopicTap, // Add this line
   });
 
   final VoidCallback onTap;
   final VoidCallback? onLike;
   final VoidCallback? onSave;
   final VoidCallback? onCommentTap;
+  final VoidCallback? onTopicTap; // Add this line
   final String name;
   final int? postId;
   final String rank;
@@ -134,10 +136,13 @@ class _PostDetailsState extends State<PostDetailsCard> {
                 ),
                 10.wS,
                 Expanded(
-                  child: Text(
-                    widget.topic,
-                    style: GoogleFonts.plusJakartaSans(color: Colors.grey, fontSize: 12.sp),
-                    overflow: TextOverflow.ellipsis,
+                  child: GestureDetector(
+                    onTap: widget.onTopicTap, // Add this line
+                    child: Text(
+                      widget.topic,
+                      style: GoogleFonts.plusJakartaSans(color: Colors.grey, fontSize: 12.sp),
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                 ),
               ],

@@ -46,7 +46,7 @@ class _HomePageState extends State<HomePage> {
 
     return PopScope(
       canPop: false,
-      onPopInvokedWithResult: (bool didPop, _) async {
+      onPopInvoked: (bool didPop, ) async {
         if (didPop) return;
         if (controller.currentIndex.value != 0) {
           controller.changeTabIndex(0, context); // Navigate to the first tab

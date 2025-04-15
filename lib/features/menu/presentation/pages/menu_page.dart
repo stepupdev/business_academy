@@ -136,12 +136,12 @@ class MenuPage extends GetView<UserMenuController> {
                                                   isSelected
                                                       ? Icon(Icons.check_circle, color: AppColors.primaryColor)
                                                       : null,
-                                              onTap: () {
+                                              onTap: () async {
                                                 debugPrint("Selected Community: ${community?.name}");
-                                                Get.find<CommunityController>().getCommunityPosts();
+                                                await Get.find<CommunityController>().getCommunityPosts();
                                                 final communityId = community?.id?.toString() ?? "";
                                                 debugPrint("Community ID: $communityId");
-                                                controller.changeCommunity(communityId, context).then((e) {
+                                                await controller.changeCommunity(communityId, context).then((e) {
                                                   final communityController = Get.find<CommunityController>();
                                                   communityController.getCommunityPosts();
                                                   communityController.getTopic();

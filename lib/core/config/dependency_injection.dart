@@ -1,4 +1,5 @@
 import 'package:business_application/core/services/auth_services.dart';
+import 'package:business_application/features/announcements/controller/announcement_controller.dart';
 import 'package:business_application/features/auth/controller/auth_controller.dart';
 import 'package:business_application/features/community/controller/community_controller.dart';
 import 'package:business_application/features/groups/controller/groups_controller.dart';
@@ -24,5 +25,6 @@ class DependencyInjection extends Bindings {
     Get.lazyPut<SearchedController>(() => SearchedController(), fenix: true);
     Get.lazyPut(() => HomeController(), fenix: true);
     Get.lazyPut(() => AuthService(), fenix: true);
+    Get.lazyPut(() => AnnouncementController(), fenix: true);
   }
 }

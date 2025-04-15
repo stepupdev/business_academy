@@ -7,6 +7,7 @@ import 'package:business_application/core/utils/app_strings.dart';
 import 'package:business_application/core/utils/ui_support.dart';
 import 'package:business_application/features/community/controller/community_controller.dart';
 import 'package:business_application/features/community/presentation/widgets/custom_shimmer.dart';
+import 'package:business_application/features/home/controller/home_controller.dart';
 import 'package:business_application/features/notification/controller/notification_controller.dart';
 import 'package:business_application/widgets/custom_post_cart_widgets.dart';
 import 'package:flutter/material.dart';
@@ -152,7 +153,7 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen> with Automatic
                 SliverAppBar(
                   pinned: false,
                   floating: false,
-                  expandedHeight: 80.h,
+                  expandedHeight: 55.h,
                   flexibleSpace: FlexibleSpaceBar(
                     background: Container(
                       color: dark ? AppColors.dark : Color(0xffE9F0FF),
@@ -276,6 +277,11 @@ class _TopicSelectionHeader extends SliverPersistentHeaderDelegate {
                 final isSelected = controller.selectedTopic.value == topic?.name;
                 return GestureDetector(
                   onTap: () {
+                    if (topic?.name == "Announcement") {
+                      // navigate to the announcement page {bottom navigation page index 2}
+                      Get.find<HomeController>().changeTabIndex(2, context);
+                      context.go(AppRoutes.announcementsTab);
+                    }
                     controller.selectedTopic.value = topic?.name ?? "";
                     controller.selectedTopicId.value = topic?.id?.toString() ?? "";
                   },

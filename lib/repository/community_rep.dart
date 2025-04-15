@@ -267,4 +267,13 @@ class CommunityRep {
     debugPrint("response: $response");
     return response;
   }
+
+  Future fetchAnnouncements() async {
+    APIManager manager = APIManager();
+    final response = await manager.getWithHeader("${ApiUrl.baseUrl}/announcements", {
+      "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
+    });
+    debugPrint("response: $response");
+    return response;
+  }
 }

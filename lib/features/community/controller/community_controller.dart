@@ -229,6 +229,8 @@ class CommunityController extends GetxController {
         final response = await CommunityRep().getCommunityPosts();
         communityPosts(PostsResponseModel.fromJson(response));
         filteredPosts.assignAll(communityPosts.value.result?.data ?? []);
+        currentPage.value = communityPosts.value.result?.meta?.currentPage ?? 1;
+        nextPageUrl.value = communityPosts.value.result?.links?.next ?? "";
       } catch (e) {
         debugPrint("Error fetching all posts: $e");
       } finally {
@@ -240,6 +242,8 @@ class CommunityController extends GetxController {
         final response = await CommunityRep().getCommunityPosts(params: {'topic_id': topicId});
         communityPosts(PostsResponseModel.fromJson(response));
         filteredPosts.assignAll(communityPosts.value.result?.data ?? []);
+        currentPage.value = communityPosts.value.result?.meta?.currentPage ?? 1;
+        nextPageUrl.value = communityPosts.value.result?.links?.next ?? "";
       } catch (e) {
         debugPrint("Error fetching posts by topic: $e");
       } finally {

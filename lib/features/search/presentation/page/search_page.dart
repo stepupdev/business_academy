@@ -84,42 +84,44 @@ class SearchPage extends GetView<SearchedController> {
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: SizedBox(
                   height: 25.h,
-                  child: ListView.separated(
-                    scrollDirection: Axis.horizontal,
-                    separatorBuilder: (context, index) => SizedBox(width: 5.w),
-                    itemCount: controller.topics.value.result?.data?.length ?? 0,
-                    itemBuilder: (context, index) {
-                      final topic = controller.topics.value.result?.data?[index];
-                      return InkWell(
-                        onTap: () {
-                          controller.searching(controller.searchKeyword.value, topicId: topic?.id.toString());
-                        },
-                        child: IntrinsicHeight(
-                          child: Container(
-                            padding: EdgeInsets.symmetric(horizontal: 12.w),
-                            decoration: BoxDecoration(
-                              color: dark ? AppColors.dark : Colors.white,
-                              border: Border.all(color: Colors.grey[200] ?? Colors.grey),
-                              borderRadius: BorderRadius.circular(50),
-                            ),
-                            child: Row(
-                              children: [
-                                Text(
-                                  topic?.name ?? "",
-                                  style: GoogleFonts.plusJakartaSans(
-                                    color: dark ? AppColors.light : Colors.black,
-                                    fontSize: 12.sp,
-                                    fontWeight: FontWeight.w600,
-                                    height: 1.0,
+                  child: Obx(() {
+                    return ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      separatorBuilder: (context, index) => SizedBox(width: 5.w),
+                      itemCount: controller.topics.value.result?.data?.length ?? 0,
+                      itemBuilder: (context, index) {
+                        final topic = controller.topics.value.result?.data?[index];
+                        return InkWell(
+                          onTap: () {
+                            controller.searching(controller.searchKeyword.value, topicId: topic?.id.toString());
+                          },
+                          child: IntrinsicHeight(
+                            child: Container(
+                              padding: EdgeInsets.symmetric(horizontal: 12.w),
+                              decoration: BoxDecoration(
+                                color: dark ? AppColors.dark : Colors.white,
+                                border: Border.all(color: Colors.grey[200] ?? Colors.grey),
+                                borderRadius: BorderRadius.circular(50),
+                              ),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    topic?.name ?? "",
+                                    style: GoogleFonts.plusJakartaSans(
+                                      color: dark ? AppColors.light : Colors.black,
+                                      fontSize: 12.sp,
+                                      fontWeight: FontWeight.w600,
+                                      height: 1.0,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      );
-                    },
-                  ),
+                        );
+                      },
+                    );
+                  }),
                 ),
               ),
               Divider(thickness: 0.5, color: Colors.grey.shade300),

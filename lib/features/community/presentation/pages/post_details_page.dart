@@ -215,6 +215,23 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
                           // Call controller method instead of direct API call
                           controller.savePostAndSyncState(context, postId, currentState);
                         },
+                        onTopicTap: () {
+                          if (widget.isGroupPost && widget.groupId != null) {
+                            // Navigate to group details page with the selected topic
+                            final groupController = Get.find<GroupsController>();
+                            groupController.selectedTopic.value = post?.topic?.name ?? "";
+                            groupController.filterPostsByTopic(
+                              post?.topic?.name ?? "",
+                              topicId: post?.topic?.id?.toString(),
+                            );
+                            context.pop(); // Close the details page
+                          } else {
+                            // Navigate to community feed page with the selected topic
+                            controller.selectedTopic.value = post?.topic?.name ?? "";
+                            controller.selectedTopicId.value = post?.topic?.id?.toString() ?? "";
+                            context.pop(); // Close the details page
+                          }
+                        },
                       ),
                       Divider(height: 1.h),
                       Padding(
