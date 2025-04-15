@@ -1,6 +1,8 @@
+import 'package:business_application/core/config/app_colors.dart';
 import 'package:business_application/core/config/app_routes.dart';
 import 'package:business_application/core/config/app_size.dart';
 import 'package:business_application/core/utils/app_strings.dart';
+import 'package:business_application/core/utils/ui_support.dart';
 import 'package:business_application/features/groups/controller/groups_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -17,15 +19,11 @@ class GroupsPage extends GetView<GroupsController> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       controller.fetchGroups();
     });
+    final dark = Ui.isDarkMode(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Groups',
-          style: GoogleFonts.plusJakartaSans(
-            fontSize: 18.sp,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
+        backgroundColor: dark ? AppColors.dark : Colors.white,
+        title: Text('Groups', style: GoogleFonts.plusJakartaSans(fontSize: 18.sp, fontWeight: FontWeight.w700)),
       ),
       body: RefreshIndicator(
         onRefresh: () => controller.fetchGroups(),
@@ -45,11 +43,7 @@ class GroupsPage extends GetView<GroupsController> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(
-                          Icons.group_outlined,
-                          size: 80.sp,
-                          color: Colors.grey.shade400,
-                        ),
+                        Icon(Icons.group_outlined, size: 80.sp, color: Colors.grey.shade400),
                         10.hS,
                         Text(
                           AppStrings.noGroupsFound,
@@ -71,26 +65,16 @@ class GroupsPage extends GetView<GroupsController> {
                       return ListTile(
                         leading: CircleAvatar(
                           radius: 20,
-                          child: Image.asset(
-                            "assets/logo/icon.png",
-                            fit: BoxFit.contain,
-                          ),
+                          child: Image.asset("assets/logo/icon.png", fit: BoxFit.contain),
                         ),
                         title: Text(
-                          controller.groups.value.result?.data?[index].name ??
-                              "",
-                          style: GoogleFonts.plusJakartaSans(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16.sp,
-                          ),
+                          controller.groups.value.result?.data?[index].name ?? "",
+                          style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.bold, fontSize: 16.sp),
                         ),
                         onTap: () async {
                           try {
                             controller.isLoading(true);
-                            final groupId =
-                                controller.groups.value.result?.data?[index].id
-                                    .toString() ??
-                                "";
+                            final groupId = controller.groups.value.result?.data?[index].id.toString() ?? "";
 
                             // Store the groupId in the controller for use in GroupDetailsPage
                             controller.currentGroupId.value = groupId;
