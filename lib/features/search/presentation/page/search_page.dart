@@ -41,6 +41,7 @@ class SearchPage extends GetView<SearchedController> {
                       padding: const EdgeInsets.all(8.0),
                       child: TextFormField(
                         // onTapOutside: (event) => FocusScope.of(context).unfocus(),
+                        onSaved: (value) {},
                         onEditingComplete: () {
                           controller.searchKeyword.value = controller.searchTextController.value.text;
                           if (controller.searchKeyword.value.isNotEmpty) {
@@ -91,34 +92,51 @@ class SearchPage extends GetView<SearchedController> {
                       itemCount: controller.topics.value.result?.data?.length ?? 0,
                       itemBuilder: (context, index) {
                         final topic = controller.topics.value.result?.data?[index];
-                        return InkWell(
-                          onTap: () {
-                            controller.searching(controller.searchKeyword.value, topicId: topic?.id.toString());
-                          },
-                          child: IntrinsicHeight(
-                            child: Container(
-                              padding: EdgeInsets.symmetric(horizontal: 12.w),
-                              decoration: BoxDecoration(
-                                color: dark ? AppColors.dark : Colors.white,
-                                border: Border.all(color: Colors.grey[200] ?? Colors.grey),
+                        return Obx(() {
+                          return Material(
+                            borderRadius: BorderRadius.circular(50),
+
+                            color: dark ? AppColors.dark : Colors.white,
+                            child: IntrinsicHeight(
+                              child: InkWell(
+                                // radius: 50,
                                 borderRadius: BorderRadius.circular(50),
-                              ),
-                              child: Row(
-                                children: [
-                                  Text(
-                                    topic?.name ?? "",
-                                    style: GoogleFonts.plusJakartaSans(
-                                      color: dark ? AppColors.light : Colors.black,
-                                      fontSize: 12.sp,
-                                      fontWeight: FontWeight.w600,
-                                      height: 1.0,
+                                onTap: () {
+                                  if (topic?.name == "All") {
+                                    controller.searching(controller.searchKeyword.value);
+                                  }
+                                  controller.searching(controller.searchKeyword.value, topicId: topic?.id.toString());
+                                  controller.selectedTopic.value = index;
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 12.w),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color:
+                                          controller.selectedTopic.value == index
+                                              ? AppColors.primaryColor
+                                              : Colors.grey[200] ?? Colors.grey,
                                     ),
+                                    borderRadius: BorderRadius.circular(50),
                                   ),
-                                ],
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        topic?.name ?? "",
+                                        style: GoogleFonts.plusJakartaSans(
+                                          color: dark ? AppColors.light : Colors.black,
+                                          fontSize: 12.sp,
+                                          fontWeight: FontWeight.w600,
+                                          height: 1.0,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
-                        );
+                          );
+                        });
                       },
                     );
                   }),

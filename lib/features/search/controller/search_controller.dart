@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 
 class SearchedController extends GetxController {
   var isLoading = false.obs;
-
+  var selectedTopic = 0.obs;
   var search = SearchResponseModel().obs;
   var searchTextController = TextEditingController().obs;
   var searchHistory = <String>[].obs;
