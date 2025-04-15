@@ -10,6 +10,7 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthController extends GetxController {
   var userToken = ''.obs;
@@ -75,6 +76,12 @@ class AuthController extends GetxController {
     await _googleSignIn.signOut();
     await Get.find<AuthService>().removeCurrentUser();
     await Get.find<AuthService>().removeLogged();
+
+    // Remove token and userId from SharedPreferences
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove('token');
+    await prefs.remove('user_id');
+
     context.go(AppRoutes.signIn);
   }
 }

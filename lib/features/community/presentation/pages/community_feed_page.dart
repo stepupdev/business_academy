@@ -146,6 +146,7 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen> with Automatic
               return controller.getCommunityPosts();
             },
             child: CustomScrollView(
+              key: PageStorageKey<String>('communityFeed'),
               controller: controller.scrollController,
               slivers: [
                 SliverAppBar(
