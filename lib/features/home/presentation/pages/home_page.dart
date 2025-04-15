@@ -46,16 +46,18 @@ class _HomePageState extends State<HomePage> {
 
     return PopScope(
       canPop: false,
-      onPopInvoked: (bool didPop, ) async {
-        if (didPop) return;
-        if (controller.currentIndex.value != 0) {
-          controller.changeTabIndex(0, context); // Navigate to the first tab
-        } else {
-          await Future.delayed(Duration.zero);
+      onPopInvokedWithResult: (bool didPop, Object? result) async {
+        if (controller.currentIndex.value == 0) {
+          // Show confirmation dialog to exit the app
           final shouldExit = await _showExitDialog(context);
           if (shouldExit) {
             SystemNavigator.pop();
           }
+        }
+        if (controller.currentIndex != 0) {
+          // Reset to the first tab
+          controller.currentIndex.value = 0;
+          GoRouter.of(context).go(controller.tabRoutes[0]);
         }
       },
       child: Obx(() {
