@@ -8,7 +8,7 @@ class NotificationRep {
   Future getNotifications() async {
     APIManager manager = APIManager();
     final response = await manager.getWithHeader(ApiUrl.notification, {
-      "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
+      "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result?.token}",
     });
     debugPrint("response: $response");
     return response;
@@ -17,7 +17,7 @@ class NotificationRep {
   Future checkNotification() async {
     APIManager manager = APIManager();
     final response = await manager.getWithHeader("${ApiUrl.notification}/check", {
-      "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
+      "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result?.token}",
     });
     debugPrint("response: $response");
     return response;

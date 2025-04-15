@@ -20,11 +20,11 @@ class SearchedController extends GetxController {
     super.onClose();
   }
 
-  searching(String query, {String? topicId}) async {
+  searching(String query, {String? topicId, String? groupId}) async {
     try {
       isLoading(true);
       searchKeyword(query); // Update the search keyword
-      final response = await CommunityRep().search(query, topicQuery: topicId);
+      final response = await CommunityRep().search(query, topicQuery: topicId, groupQuery: groupId);
       search(SearchResponseModel.fromJson(response));
     } catch (e) {
       debugPrint("Error: $e");

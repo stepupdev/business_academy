@@ -111,7 +111,7 @@ class _SavePostsPageState extends State<SavePostsPage> with AutomaticKeepAliveCl
                     Get.find<CommunityController>().getComments(post?.id.toString() ?? "0");
                     Get.find<CommunityController>().selectedPostId.value = post?.id ?? 0;
 
-                    context.push('/post-details/${post?.id}');
+                    context.push('/post-details/${post?.id}', extra: {'post': post});
                   },
                   name: post?.user?.name ?? "",
                   rank: post?.user?.rank?.name ?? "",

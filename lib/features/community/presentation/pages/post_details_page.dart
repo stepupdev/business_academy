@@ -1,14 +1,5 @@
-import 'package:business_application/core/config/app_colors.dart';
-import 'package:business_application/core/config/app_size.dart';
-import 'package:business_application/core/services/auth_services.dart';
-import 'package:business_application/core/utils/app_strings.dart';
-import 'package:business_application/core/utils/helper_utils.dart';
-import 'package:business_application/core/utils/ui_support.dart';
-import 'package:business_application/features/community/controller/community_controller.dart';
-import 'package:business_application/features/community/presentation/widgets/comment_widget.dart';
-import 'package:business_application/features/community/presentation/widgets/post_details_card.dart';
-import 'package:business_application/features/community/presentation/widgets/post_details_shimmer.dart';
-import 'package:business_application/features/groups/controller/groups_controller.dart';
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:business_application/core/config/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -16,13 +7,36 @@ import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:business_application/core/config/app_colors.dart';
+import 'package:business_application/core/config/app_size.dart';
+import 'package:business_application/core/services/auth_services.dart';
+import 'package:business_application/core/utils/app_strings.dart';
+import 'package:business_application/core/utils/helper_utils.dart';
+import 'package:business_application/core/utils/ui_support.dart';
+import 'package:business_application/features/community/controller/community_controller.dart';
+import 'package:business_application/features/community/data/community_posts_model.dart';
+import 'package:business_application/features/community/presentation/widgets/comment_widget.dart';
+import 'package:business_application/features/community/presentation/widgets/post_details_card.dart';
+import 'package:business_application/features/community/presentation/widgets/post_details_shimmer.dart';
+import 'package:business_application/features/groups/controller/groups_controller.dart';
+
 class PostDetailsPage extends StatefulWidget {
   final String postId;
+  final Posts? post;
   final bool isVideo;
-  final bool isGroupPost;
-  final String? groupId;
+  late bool isGroupPost;
+  late String? groupId;
+  final bool fromSearchPage;
 
-  PostDetailsPage({super.key, this.isVideo = true, required this.isGroupPost, this.groupId, required this.postId}) {
+  PostDetailsPage({
+    super.key,
+    required this.postId,
+    this.post,
+    this.isVideo = true,
+    this.fromSearchPage = false,
+    required this.isGroupPost,
+    this.groupId,
+  }) {
     // Add debug print to see the values being passed
     debugPrint("POST DETAILS PAGE CONSTRUCTOR: isGroupPost=$isGroupPost, groupId=$groupId, postId=$postId");
   }
@@ -44,6 +58,8 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
   @override
   void initState() {
     super.initState();
+    debugPrint("Widget group id: ${widget.groupId}");
+    debugPrint("Widget isGroupPost: ${widget.isGroupPost}");
     communityController = Get.find<CommunityController>();
     communityController.scrollController.addListener(() {
       if (communityController.commentsScrollController.position.pixels >=
@@ -51,6 +67,19 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
         communityController.loadNextCommentsPage(widget.postId);
       }
     });
+    if (widget.post != null) {
+      // find the topic name and match it with groups fetches topic name, if it's matches, then set the isGroupPost to true
+      final groupController = Get.find<GroupsController>();
+      if (groupController.groupsTopicResponse.value.result?.data?.isNotEmpty ?? false) {
+        for (var topic in groupController.groupsTopicResponse.value.result!.data!) {
+          if (topic.name == widget.post?.topic?.name) {
+            widget.isGroupPost = true;
+            widget.groupId = topic.id.toString();
+            break;
+          }
+        }
+      }
+    }
   }
 
   @override
@@ -216,20 +245,42 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
                           controller.savePostAndSyncState(context, postId, currentState);
                         },
                         onTopicTap: () {
-                          if (widget.isGroupPost && widget.groupId != null) {
-                            // Navigate to group details page with the selected topic
+                          if (widget.fromSearchPage) {
+                            if (widget.isGroupPost) {
+                              // Navigate to the group details page
+                              final groupController = Get.find<GroupsController>();
+                              groupController.isLoading(true);
+                              groupController.currentGroupId.value = widget.groupId ?? '';
+                              groupController.selectedTopic.value = post?.topic?.name ?? "";
+                              groupController.currentGroupId.value = widget.groupId ?? '';
+                              var topicId = post?.topic?.id?.toString();
+                              groupController.fetchGroupsTopic(widget.groupId!);
+                              groupController.fetchGroupPosts(widget.groupId!);
+                              groupController.filterPostsByTopic(post?.topic?.name ?? "", topicId: topicId);
+                              context.push(AppRoutes.groupDetails);
+                            } else {
+                              // Navigate to the community feed page
+                              controller.selectedTopic.value = post?.topic?.name ?? "";
+                              controller.selectedTopicId.value = post?.topic?.id?.toString() ?? "";
+                              context.go(AppRoutes.communityFeed);
+                            }
+                          } else if (widget.isGroupPost && widget.groupId != null) {
+                            // Navigate to the group details page with the selected topic
                             final groupController = Get.find<GroupsController>();
                             groupController.selectedTopic.value = post?.topic?.name ?? "";
                             groupController.filterPostsByTopic(
                               post?.topic?.name ?? "",
                               topicId: post?.topic?.id?.toString(),
                             );
-                            context.pop(); // Close the details page
+                            context.go(
+                              AppRoutes.groupDetails,
+                              extra: {'groupId': widget.groupId, 'topicId': post?.topic?.id.toString()},
+                            );
                           } else {
-                            // Navigate to community feed page with the selected topic
+                            // Navigate to the community feed page with the selected topic
                             controller.selectedTopic.value = post?.topic?.name ?? "";
                             controller.selectedTopicId.value = post?.topic?.id?.toString() ?? "";
-                            context.pop(); // Close the details page
+                            context.go(AppRoutes.communityFeed);
                           }
                         },
                       ),

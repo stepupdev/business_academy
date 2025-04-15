@@ -1,6 +1,7 @@
 import 'package:business_application/core/config/app_routes.dart';
 import 'package:business_application/features/announcements/presentation/page/announcements_page.dart';
 import 'package:business_application/features/auth/presentation/pages/signin_page.dart';
+import 'package:business_application/features/community/data/community_posts_model.dart';
 import 'package:business_application/features/community/presentation/pages/community_feed_page.dart';
 import 'package:business_application/features/community/presentation/pages/create_post.dart';
 import 'package:business_application/features/community/presentation/pages/post_details_page.dart';
@@ -95,12 +96,20 @@ class AppRouter {
           final bool isGroupPost = extra['isGroupPost'] as bool? ?? false;
           final String? postId = state.params['postId'];
           final String? groupId = extra['groupId'] as String?;
+          final bool fromSearchPage = extra['fromSearchPage'] as bool? ?? false;
+          var post = extra['post'] as Posts?;
           debugPrint(
             "ROUTER: Creating PostDetailsPage with postId: $postId, isGroupPost: $isGroupPost, groupId: $groupId",
           );
           return CustomTransitionPage<void>(
             key: state.pageKey,
-            child: PostDetailsPage(postId: postId!, isGroupPost: isGroupPost, groupId: groupId),
+            child: PostDetailsPage(
+              postId: postId!,
+              isGroupPost: isGroupPost,
+              groupId: groupId,
+              post: post,
+              fromSearchPage: fromSearchPage,
+            ),
             transitionsBuilder: (context, animation, secondaryAnimation, child) {
               return FadeTransition(opacity: animation, child: child);
             },
@@ -125,7 +134,13 @@ class AppRouter {
       ),
       GoRoute(
         path: AppRoutes.search,
-        pageBuilder: (context, state) => MaterialPage(key: state.pageKey, child: SearchPage()),
+        pageBuilder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>? ?? {};
+          final String? groupId = extra['groupId'] as String?;
+          final bool isGroupTopics = extra['isGroup'] as bool? ?? false;
+          debugPrint("ROUTER: Creating SearchPage with groupId: $groupId, isGroupTopics: $isGroupTopics");
+          return MaterialPage(key: state.pageKey, child: SearchPage(isGroup: isGroupTopics, groupId: groupId));
+        },
         parentNavigatorKey: _rootNavigatorKey,
       ),
       GoRoute(

@@ -38,8 +38,11 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen> with Automatic
     super.initState();
     controller = Get.find<CommunityController>();
     controller.scrollController.addListener(() {
-      if (controller.scrollController.position.pixels >= controller.scrollController.position.maxScrollExtent - 300) {
-        controller.loadNextPage();
+      if (controller.scrollController.hasClients) {
+        // Access the scrollController safely
+        if (controller.scrollController.position.pixels >= controller.scrollController.position.maxScrollExtent - 300) {
+          controller.loadNextPage();
+        }
       }
     });
   }
@@ -141,9 +144,21 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen> with Automatic
             return CustomShimmer();
           }
           return RefreshIndicator(
-            onRefresh: () {
+            onRefresh: () async {
               Get.find<NotificationController>().hasNewNotification.value;
-              return controller.getCommunityPosts();
+              // return controller.getCommunityPosts();
+              if (controller.selectedTopic.value.isNotEmpty &&
+                  controller.selectedTopicId.value.isNotEmpty &&
+                  controller.selectedTopic.value != "All") {
+                return controller.filterPostsByTopic(
+                  controller.selectedTopic.value,
+                  topicId: controller.selectedTopicId.value,
+                );
+              } else if (controller.selectedTopic.value.isEmpty && controller.selectedTopic.value == "All") {
+                controller.getTopic();
+              } else {
+                return controller.getCommunityPosts();
+              }
             },
             child: CustomScrollView(
               key: PageStorageKey<String>('communityFeed'),
@@ -195,6 +210,13 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen> with Automatic
                   pinned: true,
                   delegate: _TopicSelectionHeader(dark: dark, controller: controller),
                 ),
+                if (controller.isLoading.value)
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 10.h),
+                      child: Center(child: CircularProgressIndicator(color: AppColors.primaryColor, strokeWidth: 2)),
+                    ),
+                  ),
                 if (controller.filteredPosts.isEmpty ||
                     controller.communityPosts.value.result?.data == null ||
                     controller.communityPosts.value.result!.data!.isEmpty)
@@ -203,7 +225,7 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen> with Automatic
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.group_outlined, size: 80.sp, color: Colors.grey.shade400),
+                        Icon(Icons.post_add, size: 80.sp, color: Colors.grey.shade400),
                         10.hS,
                         Text(
                           AppStrings.noPostsFound,

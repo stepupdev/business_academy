@@ -3,6 +3,8 @@ import 'package:business_application/core/config/app_size.dart';
 import 'package:business_application/core/utils/app_strings.dart';
 import 'package:business_application/core/utils/ui_support.dart';
 import 'package:business_application/features/community/controller/community_controller.dart';
+import 'package:business_application/features/community/data/community_posts_model.dart';
+import 'package:business_application/features/groups/controller/groups_controller.dart';
 import 'package:business_application/features/search/controller/search_controller.dart';
 import 'package:business_application/features/search/presentation/widgets/search_post_card.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +15,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:heroicons/heroicons.dart';
 
 class SearchPage extends GetView<SearchedController> {
-  const SearchPage({super.key});
+  final bool isGroup;
+  final String? groupId;
+  const SearchPage({super.key, this.isGroup = false, this.groupId});
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +55,12 @@ class SearchPage extends GetView<SearchedController> {
                               }
                               controller.searchHistory.add(controller.searchKeyword.value);
                             }
-                            controller.searching(controller.searchKeyword.value);
+                            if (isGroup) {
+                              controller.searching(controller.searchKeyword.value, groupId: groupId);
+                            } else {
+                              controller.searching(controller.searchKeyword.value);
+                            }
+                            // controller.searching(controller.searchKeyword.value);
                           }
                           controller.searchTextController.value.text =
                               controller.searchKeyword.value; // Restore the keyword
@@ -89,9 +98,16 @@ class SearchPage extends GetView<SearchedController> {
                     return ListView.separated(
                       scrollDirection: Axis.horizontal,
                       separatorBuilder: (context, index) => SizedBox(width: 5.w),
-                      itemCount: controller.topics.value.result?.data?.length ?? 0,
+                      itemCount:
+                          isGroup
+                              ? Get.find<GroupsController>().groupsTopicResponse.value.result?.data?.length ?? 0
+                              : controller.topics.value.result?.data?.length ?? 0,
                       itemBuilder: (context, index) {
                         final topic = controller.topics.value.result?.data?[index];
+                        if (isGroup) {
+                          topic?.name =
+                              Get.find<GroupsController>().groupsTopicResponse.value.result?.data?[index].name;
+                        }
                         return Obx(() {
                           return Material(
                             borderRadius: BorderRadius.circular(50),
@@ -215,7 +231,25 @@ class SearchPage extends GetView<SearchedController> {
                                   Get.find<CommunityController>().getCommunityPostsById(result?.id.toString() ?? "");
                                   Get.find<CommunityController>().getComments(result?.id.toString() ?? "");
                                   Get.find<CommunityController>().selectedPostId.value = result?.id ?? 0;
-                                  GoRouter.of(context).push('/post-details/${result?.id}');
+                                  if (isGroup) {
+                                    Get.find<CommunityController>().selectedPostId.value = result?.id ?? 0;
+                                    Get.find<CommunityController>().getCommunityPostsById(result?.id.toString() ?? "");
+                                    Get.find<CommunityController>().getComments(result?.id.toString() ?? "");
+                                    Get.find<GroupsController>().selectedPostId.value = result?.id ?? 0;
+
+                                    context.push(
+                                      '/post-details/${result?.id}',
+                                      extra: {
+                                        'post': result,
+                                        'groupId': groupId,
+                                        'fromSearchPage': true,
+                                        'isGroupPost': true,
+                                        'postId': result?.id,
+                                      },
+                                    );
+                                  } else {
+                                    context.push('/post-details/${result?.id}', extra: {'post': result});
+                                  }
                                 },
                                 postImage: result?.image ?? "",
                                 commentCount: result?.commentsCount.toString() ?? "",
