@@ -15,6 +15,8 @@ import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../widgets/image_picker_widget.dart';
+
 class CreatePostPage extends StatefulWidget {
   final bool isGroupTopics;
   final String? groupId;
@@ -98,25 +100,38 @@ class _CreatePostPageState extends State<CreatePostPage> {
             FilledButton(
               onPressed: () {
                 if (controller.createPostController.value.text.isEmpty) {
-                  Ui.showErrorSnackBar(context, message: AppStrings.createPostPrompt);
+                  Ui.showErrorSnackBar(
+                    context,
+                    message: AppStrings.createPostPrompt,
+                  );
                   return;
                 }
                 if (controller.createPostController.value.text.length < 10) {
-                  Ui.showErrorSnackBar(context, message: "Post must be at least 10 characters");
+                  Ui.showErrorSnackBar(
+                    context,
+                    message: "Post must be at least 10 characters",
+                  );
                   return;
                 }
                 if (controller.selectedTopicId.value.isEmpty) {
-                  Ui.showErrorSnackBar(context, message: "Please select a topic");
+                  Ui.showErrorSnackBar(
+                    context,
+                    message: "Please select a topic",
+                  );
                   return;
                 }
 
-                controller.createNewPosts(groupId: widget.isGroupTopics ? widget.groupId : null);
+                controller.createNewPosts(
+                  groupId: widget.isGroupTopics ? widget.groupId : null,
+                );
                 context.pop();
               },
               style: FilledButton.styleFrom(
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 backgroundColor: AppColors.primaryColor,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.r)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30.r),
+                ),
               ),
               child: const Text("Share", style: TextStyle(color: Colors.white)),
             ),
@@ -140,11 +155,17 @@ class _CreatePostPageState extends State<CreatePostPage> {
                         hintText: AppStrings.createPostPrompt,
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: AppColors.borderColor, width: 0.5),
+                          borderSide: BorderSide(
+                            color: AppColors.borderColor,
+                            width: 0.5,
+                          ),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: AppColors.primaryColor, width: 0.5),
+                          borderSide: BorderSide(
+                            color: AppColors.primaryColor,
+                            width: 0.5,
+                          ),
                         ),
                       ),
                       onTapOutside: (event) => FocusScope.of(context).unfocus(),
@@ -154,11 +175,16 @@ class _CreatePostPageState extends State<CreatePostPage> {
                       () => Column(
                         children: [
                           TabBar(
-                            onTap: (index) => controller.selectedTabIndex.value = index,
+                            onTap:
+                                (index) =>
+                                    controller.selectedTabIndex.value = index,
                             indicatorColor: AppColors.primaryColor,
                             labelColor: AppColors.primaryColor,
                             unselectedLabelColor: Colors.grey,
-                            tabs: const [Tab(text: "Image"), Tab(text: "Video")],
+                            tabs: const [
+                              Tab(text: "Image"),
+                              Tab(text: "Video"),
+                            ],
                           ),
                           14.hS,
                           if (controller.selectedTabIndex.value == 0) ...[
@@ -170,9 +196,16 @@ class _CreatePostPageState extends State<CreatePostPage> {
                                           Container(
                                             height: 200.h,
                                             decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.circular(12),
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
                                               image: DecorationImage(
-                                                image: FileImage(File(controller.selectedImage.value)),
+                                                image: FileImage(
+                                                  File(
+                                                    controller
+                                                        .selectedImage
+                                                        .value,
+                                                  ),
+                                                ),
                                                 fit: BoxFit.cover,
                                               ),
                                             ),
@@ -181,13 +214,20 @@ class _CreatePostPageState extends State<CreatePostPage> {
                                             top: 8,
                                             right: 8,
                                             child: GestureDetector(
-                                              onTap: () => controller.selectedImage.value = '',
+                                              onTap:
+                                                  () =>
+                                                      controller
+                                                          .selectedImage
+                                                          .value = '',
                                               child: Container(
                                                 decoration: BoxDecoration(
                                                   color: Colors.grey.shade600,
                                                   shape: BoxShape.circle,
                                                 ),
-                                                child: const Icon(Icons.close, color: Colors.white),
+                                                child: const Icon(
+                                                  Icons.close,
+                                                  color: Colors.white,
+                                                ),
                                               ),
                                             ),
                                           ),
@@ -197,53 +237,55 @@ class _CreatePostPageState extends State<CreatePostPage> {
                             ),
                             14.hS,
                             Row(
+                              spacing: 10.w,
                               children: [
                                 Flexible(
-                                  child: ElevatedButton.icon(
-                                    onPressed: () => controller.pickImage(ImageSource.camera),
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: const Color(0xFFE9F0FF),
-                                      fixedSize: Size(165.w, 50.h),
-                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
-                                    ),
-                                    label: const Text("Camera", style: TextStyle(color: Colors.black)),
-                                    icon: Icon(Icons.photo_camera, size: 24, color: AppColors.primaryColor),
+                                  flex: 1,
+                                  child: ImagePickerWidget(
+                                    text: 'Camera',
+                                    icon: Icons.photo_camera,
+                                    onTap:
+                                        () => controller.pickImage(
+                                          ImageSource.camera,
+                                        ),
                                   ),
                                 ),
-                                10.wS,
                                 Flexible(
-                                  child: ElevatedButton.icon(
-                                    onPressed: () => controller.pickImage(ImageSource.gallery),
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: const Color(0xFFE9F0FF),
-                                      fixedSize: Size(165.w, 50.h),
-                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
-                                    ),
-                                    label: const Text("Add Photos", style: TextStyle(color: Colors.black)),
-                                    icon: Icon(
-                                      Icons.photo_size_select_actual_rounded,
-                                      size: 24,
-                                      color: AppColors.primaryColor,
-                                    ),
+                                  flex: 1,
+                                  child: ImagePickerWidget(
+                                    icon: Icons.photo,
+                                    text: 'Gallery',
+                                    onTap:
+                                        () => controller.pickImage(
+                                          ImageSource.gallery,
+                                        ),
                                   ),
                                 ),
                               ],
                             ),
-                          ] else if (controller.selectedTabIndex.value == 1) ...[
+                          ] else if (controller.selectedTabIndex.value ==
+                              1) ...[
                             TextFormField(
                               controller: controller.videoLinkController,
                               decoration: InputDecoration(
                                 hintText: "Enter video link...",
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
-                                  borderSide: BorderSide(color: AppColors.borderColor, width: 0.5),
+                                  borderSide: BorderSide(
+                                    color: AppColors.borderColor,
+                                    width: 0.5,
+                                  ),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
-                                  borderSide: BorderSide(color: AppColors.primaryColor, width: 0.5),
+                                  borderSide: BorderSide(
+                                    color: AppColors.primaryColor,
+                                    width: 0.5,
+                                  ),
                                 ),
                               ),
-                              onTapOutside: (event) => FocusScope.of(context).unfocus(),
+                              onTapOutside:
+                                  (event) => FocusScope.of(context).unfocus(),
                             ),
                           ],
                         ],
@@ -254,7 +296,11 @@ class _CreatePostPageState extends State<CreatePostPage> {
                       final isDebug = true;
                       final topicsToShow =
                           widget.isGroupTopics
-                              ? Get.find<GroupsController>().groupsTopicResponse.value.result?.data
+                              ? Get.find<GroupsController>()
+                                  .groupsTopicResponse
+                                  .value
+                                  .result
+                                  ?.data
                               : controller.topics.value.result?.data;
 
                       final currentSelection = controller.selectedTopic.value;
@@ -262,10 +308,17 @@ class _CreatePostPageState extends State<CreatePostPage> {
                       if (isDebug) {
                         debugPrint("=========== DROPDOWN REBUILD ===========");
                         debugPrint("isGroupTopics = ${widget.isGroupTopics}");
-                        debugPrint("Current selection = '$currentSelection' (ID: ${controller.selectedTopicId.value})");
-                        debugPrint("Available topics: ${topicsToShow?.length ?? 0}");
+                        debugPrint(
+                          "Current selection = '$currentSelection' (ID: ${controller.selectedTopicId.value})",
+                        );
+                        debugPrint(
+                          "Available topics: ${topicsToShow?.length ?? 0}",
+                        );
                         topicsToShow?.forEach((topic) {
-                          final name = widget.isGroupTopics ? (topic as GroupTopics).name : (topic as Topic).name;
+                          final name =
+                              widget.isGroupTopics
+                                  ? (topic as GroupTopics).name
+                                  : (topic as Topic).name;
                           debugPrint("  - $name");
                         });
                       }
@@ -275,41 +328,68 @@ class _CreatePostPageState extends State<CreatePostPage> {
                         inputDecorationTheme: InputDecorationTheme(
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: AppColors.borderColor),
+                            borderSide: BorderSide(
+                              color: AppColors.borderColor,
+                            ),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: AppColors.borderColor),
+                            borderSide: BorderSide(
+                              color: AppColors.borderColor,
+                            ),
                           ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: AppColors.borderColor),
+                            borderSide: BorderSide(
+                              color: AppColors.borderColor,
+                            ),
                           ),
                         ),
                         width: MediaQuery.of(context).size.width * 0.9,
                         requestFocusOnTap: true,
                         enableFilter: true,
-                        trailingIcon: const Icon(Icons.keyboard_arrow_down_sharp),
+                        trailingIcon: const Icon(
+                          Icons.keyboard_arrow_down_sharp,
+                        ),
                         onSelected: (val) {
                           if (val == null) return;
 
-                          if (isDebug) debugPrint("CREATE POST PAGE: Topic selected: $val");
+                          if (isDebug)
+                            debugPrint(
+                              "CREATE POST PAGE: Topic selected: $val",
+                            );
 
                           controller.selectedTopic.value = val;
                           if (widget.isGroupTopics) {
-                            final selectedTopic = Get.find<GroupsController>().groupsTopicResponse.value.result?.data
-                                ?.firstWhere((topic) => topic.name == val, orElse: () => GroupTopics());
-                            controller.selectedTopicId.value = selectedTopic?.id?.toString() ?? '';
+                            final selectedTopic = Get.find<GroupsController>()
+                                .groupsTopicResponse
+                                .value
+                                .result
+                                ?.data
+                                ?.firstWhere(
+                                  (topic) => topic.name == val,
+                                  orElse: () => GroupTopics(),
+                                );
+                            controller.selectedTopicId.value =
+                                selectedTopic?.id?.toString() ?? '';
                           } else {
-                            final selectedTopic = controller.topics.value.result?.data?.firstWhere(
-                              (topic) => topic.name == val,
-                              orElse: () => Topic(),
-                            );
-                            controller.selectedTopicId.value = selectedTopic?.id?.toString() ?? '';
+                            final selectedTopic = controller
+                                .topics
+                                .value
+                                .result
+                                ?.data
+                                ?.firstWhere(
+                                  (topic) => topic.name == val,
+                                  orElse: () => Topic(),
+                                );
+                            controller.selectedTopicId.value =
+                                selectedTopic?.id?.toString() ?? '';
                           }
 
                           if (isDebug) {
-                            debugPrint("CREATE POST PAGE: Set topic ID to: ${controller.selectedTopicId.value}");
+                            debugPrint(
+                              "CREATE POST PAGE: Set topic ID to: ${controller.selectedTopicId.value}",
+                            );
                           }
                         },
                         dropdownMenuEntries:

@@ -188,7 +188,7 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen>
                       color: dark ? AppColors.dark : Color(0xffE9F0FF),
                       padding: EdgeInsets.symmetric(
                         horizontal: 8.h,
-                        vertical: 20.h,
+                        vertical: 10.h,
                       ),
                       child: Row(
                         children: [
