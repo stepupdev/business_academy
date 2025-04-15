@@ -21,22 +21,27 @@ class GroupDetailsPage extends GetView<GroupsController> {
 
     // Check if we need to load data (if coming directly to this page)
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (controller.groupPosts.isEmpty && controller.currentGroupId.value.isNotEmpty) {
+      if (controller.groupPosts.isEmpty &&
+          controller.currentGroupId.value.isNotEmpty) {
         _loadData();
       }
     });
 
     // Add scroll listener for pagination
     controller.scrollController.addListener(() {
-      if (controller.scrollController.position.pixels >= controller.scrollController.position.maxScrollExtent - 300) {
+      if (controller.scrollController.position.pixels >=
+          controller.scrollController.position.maxScrollExtent - 300) {
         controller.loadNextPage();
       }
     });
 
     return Scaffold(
-      appBar: AppBar(title: Text(controller.groupsDetails.value.result?.name ?? "")),
+      appBar: AppBar(
+        title: Text(controller.groupsDetails.value.result?.name ?? ""),
+      ),
       body: RefreshIndicator(
-        onRefresh: () => controller.fetchGroupPosts(controller.currentGroupId.value),
+        onRefresh:
+            () => controller.fetchGroupPosts(controller.currentGroupId.value),
         child: Obx(() {
           if (controller.isLoading.value) {
             return Center(child: CircularProgressIndicator());
@@ -47,7 +52,11 @@ class GroupDetailsPage extends GetView<GroupsController> {
                 padding: EdgeInsets.symmetric(vertical: 20.h),
                 child: Text(
                   AppStrings.noGroupPostsAvailable,
-                  style: TextStyle(color: Colors.grey, fontSize: 14.sp, fontWeight: FontWeight.w500),
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
             );
@@ -72,7 +81,13 @@ class GroupDetailsPage extends GetView<GroupsController> {
                         children: [
                           CircleAvatar(
                             backgroundImage: NetworkImage(
-                              Get.find<AuthService>().currentUser.value.result?.user?.avatar ?? "",
+                              Get.find<AuthService>()
+                                      .currentUser
+                                      .value
+                                      .result
+                                      ?.user
+                                      ?.avatar ??
+                                  "",
                             ),
                           ),
                           10.wS,
@@ -81,19 +96,31 @@ class GroupDetailsPage extends GetView<GroupsController> {
                               onPressed: () {
                                 context.push(
                                   '/create-post',
-                                  extra: {'isGroupTopics': true, 'groupId': controller.currentGroupId.value},
+                                  extra: {
+                                    'isGroupTopics': true,
+                                    'groupId': controller.currentGroupId.value,
+                                  },
                                 ); // Pass argument
                               },
                               style: TextButton.styleFrom(
                                 alignment: Alignment.centerLeft,
-                                backgroundColor: dark ? AppColors.dark : Colors.white,
-                                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                                backgroundColor:
+                                    dark ? AppColors.dark : Colors.white,
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 16.w,
+                                  vertical: 12.h,
+                                ),
                                 side: BorderSide(color: Colors.blue.shade100),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(50),
+                                ),
                               ),
                               child: Text(
                                 AppStrings.createPostButton,
-                                style: GoogleFonts.plusJakartaSans(color: Colors.grey, fontWeight: FontWeight.w600),
+                                style: GoogleFonts.plusJakartaSans(
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                             ),
                           ),
@@ -110,25 +137,52 @@ class GroupDetailsPage extends GetView<GroupsController> {
                           height: 25.h,
                           child: ListView.separated(
                             scrollDirection: Axis.horizontal,
-                            separatorBuilder: (context, index) => SizedBox(width: 5.w),
-                            itemCount: controller.groupsTopicResponse.value.result?.data?.length ?? 0,
+                            separatorBuilder:
+                                (context, index) => SizedBox(width: 5.w),
+                            itemCount:
+                                controller
+                                    .groupsTopicResponse
+                                    .value
+                                    .result
+                                    ?.data
+                                    ?.length ??
+                                0,
                             itemBuilder: (context, index) {
-                              final topic = controller.groupsTopicResponse.value.result?.data?[index];
+                              final topic =
+                                  controller
+                                      .groupsTopicResponse
+                                      .value
+                                      .result
+                                      ?.data?[index];
                               return Obx(() {
-                                final isSelected = controller.selectedTopic.value == topic?.name;
+                                final isSelected =
+                                    controller.selectedTopic.value ==
+                                    topic?.name;
                                 return GestureDetector(
                                   onTap: () {
-                                    controller.selectedTopic.value = topic?.name ?? "";
-                                    controller.filterPostsByTopic(topic?.name ?? "", topicId: topic?.id?.toString());
+                                    controller.selectedTopic.value =
+                                        topic?.name ?? "";
+                                    controller.filterPostsByTopic(
+                                      topic?.name ?? "",
+                                      topicId: topic?.id?.toString(),
+                                    );
                                   },
                                   child: IntrinsicHeight(
                                     child: Container(
-                                      padding: EdgeInsets.symmetric(horizontal: 12.w),
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 12.w,
+                                      ),
                                       decoration: BoxDecoration(
-                                        color: dark ? AppColors.dark : Colors.white,
+                                        color:
+                                            dark
+                                                ? AppColors.dark
+                                                : Colors.white,
                                         border: Border.all(
                                           color:
-                                              isSelected ? AppColors.primaryColor : (Colors.grey[200] ?? Colors.grey),
+                                              isSelected
+                                                  ? AppColors.primaryColor
+                                                  : (Colors.grey[200] ??
+                                                      Colors.grey),
                                           width: 0.5,
                                         ),
                                         borderRadius: BorderRadius.circular(50),
@@ -138,17 +192,23 @@ class GroupDetailsPage extends GetView<GroupsController> {
                                           Text(
                                             topic?.name ?? "",
                                             style: GoogleFonts.plusJakartaSans(
-                                              color: dark ? AppColors.light : Colors.black,
+                                              color:
+                                                  dark
+                                                      ? AppColors.light
+                                                      : Colors.black,
                                               fontSize: 12.sp,
                                               fontWeight: FontWeight.w600,
                                               height: 1.0,
                                             ),
                                           ),
-                                          if (topic?.postsCount != null && topic?.name != "All") ...[
+                                          if (topic?.postsCount != null &&
+                                              topic?.name != "All") ...[
                                             5.wS,
                                             Text(
                                               '(${topic?.postsCount.toString()})',
-                                              style: TextStyle(color: Colors.grey.shade400),
+                                              style: TextStyle(
+                                                color: Colors.grey.shade400,
+                                              ),
                                             ),
                                           ],
                                         ],
@@ -162,7 +222,10 @@ class GroupDetailsPage extends GetView<GroupsController> {
                         ),
                       );
                     }),
-                    Divider(thickness: 0.5, color: dark ? AppColors.darkerGrey : Colors.grey[300]),
+                    Divider(
+                      thickness: 0.5,
+                      color: dark ? AppColors.darkerGrey : Colors.grey[300],
+                    ),
                     Obx(() {
                       if (controller.isLoading.value) {
                         return Center(child: CircularProgressIndicator());
@@ -173,7 +236,11 @@ class GroupDetailsPage extends GetView<GroupsController> {
                             padding: EdgeInsets.symmetric(vertical: 20.h),
                             child: Text(
                               AppStrings.noPostsAvailable,
-                              style: TextStyle(color: Colors.grey, fontSize: 14.sp, fontWeight: FontWeight.w500),
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                           ),
                         );
@@ -181,30 +248,49 @@ class GroupDetailsPage extends GetView<GroupsController> {
                       return ListView.separated(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
-                        controller: controller.scrollController, // Attach scroll controller
-                        separatorBuilder: (_, __) => Container(height: 2.h, color: AppColors.darkGrey),
-                        itemCount: controller.groupPosts.length + (controller.isPaginating.value ? 1 : 0),
+                        controller:
+                            controller
+                                .scrollController, // Attach scroll controller
+                        separatorBuilder:
+                            (_, __) => Container(
+                              height: 2.h,
+                              color: AppColors.darkGrey,
+                            ),
+                        itemCount:
+                            controller.groupPosts.length +
+                            (controller.isPaginating.value ? 1 : 0),
                         itemBuilder: (context, index) {
-                          if (index == controller.groupPosts.length && controller.isPaginating.value) {
+                          if (index == controller.groupPosts.length &&
+                              controller.isPaginating.value) {
                             return Padding(
                               padding: const EdgeInsets.symmetric(vertical: 20),
                               child: Center(child: CircularProgressIndicator()),
                             );
                           }
-                          final posts = controller.groupPosts[index]; // Use groupPosts here
+                          final posts =
+                              controller
+                                  .groupPosts[index]; // Use groupPosts here
                           return UserPostWidget(
                             onTap: () {
-                              Get.find<CommunityController>().selectedPostId.value = posts.id ?? 0;
-                              Get.find<CommunityController>().getCommunityPostsById(posts.id.toString());
-                              Get.find<CommunityController>().getComments(posts.id.toString());
+                              Get.find<CommunityController>()
+                                  .selectedPostId
+                                  .value = posts.id ?? 0;
+                              Get.find<CommunityController>()
+                                  .getCommunityPostsById(posts.id.toString());
+                              Get.find<CommunityController>().getComments(
+                                posts.id.toString(),
+                              );
 
                               // CRITICAL: Make sure isGroupPost is explicitly set to true
-                              debugPrint("GROUP DETAILS PAGE: Navigating to post details with isGroupPost=true");
+                              debugPrint(
+                                "GROUP DETAILS PAGE: Navigating to post details with isGroupPost=true",
+                              );
 
                               context.push(
                                 '/post-details/${posts.id}',
                                 extra: {
-                                  'isGroupPost': true, // Ensure this is set to true
+                                  'isGroupPost':
+                                      true, // Ensure this is set to true
                                   'groupId': controller.currentGroupId.value,
                                   'postId': posts.id.toString(),
                                 },
@@ -219,18 +305,23 @@ class GroupDetailsPage extends GetView<GroupsController> {
                             videoUrl: posts.videoUrl ?? "",
                             dp: posts.user?.avatar ?? "",
                             caption: posts.content ?? "",
-                            commentCount: posts.commentsCount?.toString() ?? "0",
+                            commentCount:
+                                posts.commentsCount?.toString() ?? "0",
                             isLiked: posts.isLiked ?? false,
                             isSaved: posts.isSaved ?? false,
                             onLike: () {
-                              controller.selectedPostId.value = posts.id ?? 0; // Add this line
+                              controller.selectedPostId.value =
+                                  posts.id ?? 0; // Add this line
                               controller.likePosts(context);
-                              controller.update(); // Ensure UI updates after liking a post
+                              controller
+                                  .update(); // Ensure UI updates after liking a post
                             },
                             onSave: () {
-                              controller.selectedPostId.value = posts.id ?? 0; // Add this line
+                              controller.selectedPostId.value =
+                                  posts.id ?? 0; // Add this line
                               controller.saveGroupPosts(context);
-                              controller.update(); // Ensure UI updates after saving a post
+                              controller
+                                  .update(); // Ensure UI updates after saving a post
                             },
                           );
                         },

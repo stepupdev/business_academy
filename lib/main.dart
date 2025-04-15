@@ -12,7 +12,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
+final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
+    GlobalKey<ScaffoldMessengerState>();
 
 void checkNotifications(SendPort sendPort) async {
   while (true) {
@@ -27,7 +28,8 @@ void startNotificationChecker() async {
 
   receivePort.listen((message) async {
     if (message == "check_notifications") {
-      bool hasNewNotifications = await Get.find<NotificationController>().checkNotification();
+      bool hasNewNotifications =
+          await Get.find<NotificationController>().checkNotification();
 
       if (hasNewNotifications) {
         debugPrint("🔔 New notification received!");
@@ -49,7 +51,9 @@ void main() async {
   //     systemNavigationBarIconBrightness: Brightness.dark,
   //   ),
   // );
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_) {
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((
+    _,
+  ) {
     runApp(const MyApp());
     startNotificationChecker();
   });
@@ -83,7 +87,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   }
 
   void _setSystemUIOverlayStyle() {
-    final brightness = WidgetsBinding.instance.platformDispatcher.platformBrightness;
+    final brightness =
+        WidgetsBinding.instance.platformDispatcher.platformBrightness;
     final isDark = brightness == Brightness.dark;
 
     SystemChrome.setSystemUIOverlayStyle(
@@ -92,7 +97,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
         statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
         systemNavigationBarColor: isDark ? Colors.black : Colors.white,
-        systemNavigationBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+        systemNavigationBarIconBrightness:
+            isDark ? Brightness.light : Brightness.dark,
       ),
     );
   }

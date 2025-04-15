@@ -18,6 +18,7 @@ class TAppTheme {
     disabledColor: TColors.grey,
     brightness: Brightness.light,
     primaryColor: TColors.primary,
+    progressIndicatorTheme: ProgressIndicatorThemeData(color: TColors.primary),
     textTheme: TTextTheme.lightTextTheme,
     chipTheme: TChipTheme.lightChipTheme,
     scaffoldBackgroundColor: TColors.white,
@@ -35,6 +36,8 @@ class TAppTheme {
     disabledColor: TColors.grey,
     brightness: Brightness.dark,
     primaryColor: TColors.primary,
+    progressIndicatorTheme: ProgressIndicatorThemeData(color: TColors.primary),
+
     textTheme: TTextTheme.darkTextTheme,
     chipTheme: TChipTheme.darkChipTheme,
     scaffoldBackgroundColor: TColors.black,

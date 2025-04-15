@@ -33,11 +33,18 @@ class _AnnouncementsPageState extends State<AnnouncementsPage> {
           await controller.fetchAnnouncements();
         },
         child: Obx(() {
+          if (controller.isLoading.value) {
+            return const Center(child: CircularProgressIndicator());
+          }
           if (controller.announcements.value.result?.data?.isEmpty ?? true) {
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.construction, size: 100.sp, color: dark ? Colors.orangeAccent : Colors.blueAccent),
+                Icon(
+                  Icons.construction,
+                  size: 100.sp,
+                  color: dark ? Colors.orangeAccent : Colors.blueAccent,
+                ),
                 SizedBox(height: 20.h),
                 Text(
                   textAlign: TextAlign.center,
@@ -52,31 +59,40 @@ class _AnnouncementsPageState extends State<AnnouncementsPage> {
                 Text(
                   "Stay tuned! The announcements feature will be published soon.",
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 16.sp, color: dark ? Colors.grey[400] : Colors.grey[700]),
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    color: dark ? Colors.grey[400] : Colors.grey[700],
+                  ),
                 ),
                 SizedBox(height: 30.h),
               ],
             );
           }
-          if (controller.isLoading.value) {
-            return const Center(child: CircularProgressIndicator());
-          }
+
           return ListView.separated(
             itemCount: controller.announcements.value.result?.data?.length ?? 0,
-            separatorBuilder: (_, __) => Container(height: 2.h, color: AppColors.darkGrey),
+            separatorBuilder:
+                (_, __) => Container(height: 2.h, color: AppColors.darkGrey),
             physics: const AlwaysScrollableScrollPhysics(),
             itemBuilder: (context, index) {
-              final announcement = controller.announcements.value.result?.data?[index];
+              final announcement =
+                  controller.announcements.value.result?.data?[index];
               return UserPostWidget(
                 onTap: () {
                   // First save the scroll position
                   Get.find<CommunityController>().saveScrollPosition();
-                  Get.find<CommunityController>().shouldRestorePosition.value = true;
+                  Get.find<CommunityController>().shouldRestorePosition.value =
+                      true;
 
                   // Set up for the details page
-                  Get.find<CommunityController>().getCommunityPostsById(announcement?.id.toString() ?? "");
-                  Get.find<CommunityController>().getComments(announcement?.id.toString() ?? "");
-                  Get.find<CommunityController>().selectedPostId.value = announcement?.id ?? 0;
+                  Get.find<CommunityController>().getCommunityPostsById(
+                    announcement?.id.toString() ?? "",
+                  );
+                  Get.find<CommunityController>().getComments(
+                    announcement?.id.toString() ?? "",
+                  );
+                  Get.find<CommunityController>().selectedPostId.value =
+                      announcement?.id ?? 0;
 
                   // Navigate using go_router
                   context.push('/post-details/${announcement?.id}');
@@ -89,7 +105,9 @@ class _AnnouncementsPageState extends State<AnnouncementsPage> {
                 postImage: announcement?.image ?? "",
                 videoUrl: announcement?.videoUrl ?? "",
                 dp: announcement?.user?.avatar ?? "",
-                caption: Get.find<CommunityController>().cleanHtml(announcement?.content ?? ""),
+                caption: Get.find<CommunityController>().cleanHtml(
+                  announcement?.content ?? "",
+                ),
                 commentCount: announcement?.commentsCount?.toString() ?? "0",
                 isLiked: announcement?.isLiked ?? false,
                 isSaved: announcement?.isSaved ?? false,
