@@ -51,6 +51,7 @@ class AppStrings {
 
   static const String noGroupsFound = "No groups found";
   static const String noPostsFound = "No posts found";
+  static const String noAnnouncementFound = "No announcements found";
   static const String noCommentsFound = "No comments found";
   static const String noSavedPostsFound = "No saved posts found";
   static const String noGroupsAvailable = "No groups available";

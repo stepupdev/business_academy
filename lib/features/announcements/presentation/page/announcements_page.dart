@@ -1,4 +1,6 @@
 import 'package:business_application/core/config/app_colors.dart';
+import 'package:business_application/core/config/app_size.dart';
+import 'package:business_application/core/utils/app_strings.dart';
 import 'package:business_application/core/utils/ui_support.dart';
 import 'package:business_application/features/announcements/controller/announcement_controller.dart';
 import 'package:business_application/features/community/controller/community_controller.dart';
@@ -7,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AnnouncementsPage extends StatefulWidget {
   const AnnouncementsPage({super.key});
@@ -37,28 +40,23 @@ class _AnnouncementsPageState extends State<AnnouncementsPage> {
             return const Center(child: CircularProgressIndicator());
           }
           if (controller.announcements.value.result?.data?.isEmpty ?? true) {
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.construction, size: 100.sp, color: dark ? Colors.orangeAccent : Colors.blueAccent),
-                SizedBox(height: 20.h),
-                Text(
-                  textAlign: TextAlign.center,
-                  "Announcements Coming Soon",
-                  style: TextStyle(
-                    fontSize: 24.sp,
-                    fontWeight: FontWeight.bold,
-                    color: dark ? Colors.white : Colors.black,
+            return Center(
+              heightFactor: 3.5,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.group_outlined, size: 80.sp, color: Colors.grey.shade400),
+                  10.hS,
+                  Text(
+                    AppStrings.noAnnouncementFound,
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 20.sp,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey.shade600,
+                    ),
                   ),
-                ),
-                SizedBox(height: 10.h),
-                Text(
-                  "Stay tuned! The announcements feature will be published soon.",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 16.sp, color: dark ? Colors.grey[400] : Colors.grey[700]),
-                ),
-                SizedBox(height: 30.h),
-              ],
+                ],
+              ),
             );
           }
 
