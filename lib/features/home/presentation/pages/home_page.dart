@@ -44,49 +44,32 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final dark = Ui.isDarkMode(context);
 
-    return PopScope(
-      canPop: false,
-      onPopInvokedWithResult: (bool didPop, Object? result) async {
-        if (controller.currentIndex.value == 0) {
-          // Show confirmation dialog to exit the app
-          final shouldExit = await _showExitDialog(context);
-          if (shouldExit) {
-            SystemNavigator.pop();
-          }
-        }
-        if (controller.currentIndex != 0) {
-          // Reset to the first tab
-          controller.currentIndex.value = 0;
-          GoRouter.of(context).go(controller.tabRoutes[0]);
-        }
-      },
-      child: Obx(() {
-        final isConnect = Get.find<ConnectivityService>().isConnected.value;
-        return Scaffold(
-          body: isConnect ? widget.child : const NoInternetPage(),
-          bottomNavigationBar:
-              isConnect
-                  ? Obx(
-                    () => BottomNavigationBar(
-                      backgroundColor: dark ? AppColors.dark : Colors.white,
-                      currentIndex: controller.currentIndex.value,
-                      type: BottomNavigationBarType.fixed,
-                      unselectedItemColor: dark ? Colors.white : Colors.grey,
-                      selectedItemColor: AppColors.primaryColor,
-                      showUnselectedLabels: true,
-                      onTap: (index) => controller.changeTabIndex(index, context), // Pass context for navigation
-                      items: const [
-                        BottomNavigationBarItem(icon: HeroIcon(HeroIcons.home), label: 'Home'),
-                        BottomNavigationBarItem(icon: HeroIcon(HeroIcons.users), label: 'Groups'),
-                        BottomNavigationBarItem(icon: HeroIcon(HeroIcons.megaphone), label: 'Announcements'),
-                        BottomNavigationBarItem(icon: HeroIcon(HeroIcons.bars3), label: 'Menu'),
-                      ],
-                    ),
-                  )
-                  : null,
-        );
-      }),
-    );
+    return Obx(() {
+      final isConnect = Get.find<ConnectivityService>().isConnected.value;
+      return Scaffold(
+        body: isConnect ? widget.child : const NoInternetPage(),
+        bottomNavigationBar:
+            isConnect
+                ? Obx(
+                  () => BottomNavigationBar(
+                    backgroundColor: dark ? AppColors.dark : Colors.white,
+                    currentIndex: controller.currentIndex.value,
+                    type: BottomNavigationBarType.fixed,
+                    unselectedItemColor: dark ? Colors.white : Colors.grey,
+                    selectedItemColor: AppColors.primaryColor,
+                    showUnselectedLabels: true,
+                    onTap: (index) => controller.changeTabIndex(index, context), // Pass context for navigation
+                    items: const [
+                      BottomNavigationBarItem(icon: HeroIcon(HeroIcons.home), label: 'Home'),
+                      BottomNavigationBarItem(icon: HeroIcon(HeroIcons.users), label: 'Groups'),
+                      BottomNavigationBarItem(icon: HeroIcon(HeroIcons.megaphone), label: 'Announcements'),
+                      BottomNavigationBarItem(icon: HeroIcon(HeroIcons.bars3), label: 'Menu'),
+                    ],
+                  ),
+                )
+                : null,
+      );
+    });
   }
 
   Future<bool> _showExitDialog(BuildContext context) async {
