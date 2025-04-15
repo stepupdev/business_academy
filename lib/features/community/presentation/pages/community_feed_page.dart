@@ -152,11 +152,11 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen> with Automatic
                 SliverAppBar(
                   pinned: false,
                   floating: false,
-                  expandedHeight: 65.h,
+                  expandedHeight: 80.h,
                   flexibleSpace: FlexibleSpaceBar(
                     background: Container(
                       color: dark ? AppColors.dark : Color(0xffE9F0FF),
-                      padding: EdgeInsets.symmetric(horizontal: 8.h, vertical: 8.h),
+                      padding: EdgeInsets.symmetric(horizontal: 8.h, vertical: 10.h),
                       child: Row(
                         children: [
                           CircleAvatar(
@@ -259,7 +259,7 @@ class _TopicSelectionHeader extends SliverPersistentHeaderDelegate {
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
     return Container(
       color: dark ? AppColors.dark : Color(0xffE9F0FF),
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 5),
       child: Obx(() {
         if (controller.topics.value.result?.data == null) {
           return Center(child: Text("No topics available", style: TextStyle(color: Colors.grey)));
@@ -279,34 +279,32 @@ class _TopicSelectionHeader extends SliverPersistentHeaderDelegate {
                     controller.selectedTopic.value = topic?.name ?? "";
                     controller.selectedTopicId.value = topic?.id?.toString() ?? "";
                   },
-                  child: IntrinsicHeight(
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 12.w),
-                      decoration: BoxDecoration(
-                        color: dark ? AppColors.dark : Colors.white,
-                        border: Border.all(
-                          color: isSelected ? AppColors.primaryColor : (Colors.grey[200] ?? Colors.grey),
-                          width: 0.5,
-                        ),
-                        borderRadius: BorderRadius.circular(50),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 12.w),
+                    decoration: BoxDecoration(
+                      color: dark ? AppColors.dark : Colors.white,
+                      border: Border.all(
+                        color: isSelected ? AppColors.primaryColor : (Colors.grey[200] ?? Colors.grey),
+                        width: 0.5,
                       ),
-                      child: Row(
-                        children: [
-                          Text(
-                            topic?.name ?? "",
-                            style: GoogleFonts.plusJakartaSans(
-                              color: dark ? AppColors.light : Colors.black,
-                              fontSize: 12.sp,
-                              fontWeight: FontWeight.w600,
-                              height: 1.0,
-                            ),
+                      borderRadius: BorderRadius.circular(50),
+                    ),
+                    child: Row(
+                      children: [
+                        Text(
+                          topic?.name ?? "",
+                          style: GoogleFonts.plusJakartaSans(
+                            color: dark ? AppColors.light : Colors.black,
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.w600,
+                            height: 1.0,
                           ),
-                          if (topic?.postsCount != null && topic?.name != "All") ...[
-                            5.wS,
-                            Text('(${topic?.postsCount.toString()})', style: TextStyle(color: Colors.grey.shade400)),
-                          ],
+                        ),
+                        if (topic?.postsCount != null && topic?.name != "All") ...[
+                          5.wS,
+                          Text('(${topic?.postsCount.toString()})', style: TextStyle(color: Colors.grey.shade400)),
                         ],
-                      ),
+                      ],
                     ),
                   ),
                 );
@@ -319,10 +317,10 @@ class _TopicSelectionHeader extends SliverPersistentHeaderDelegate {
   }
 
   @override
-  double get maxExtent => 20.h;
+  double get maxExtent => 25.h;
 
   @override
-  double get minExtent => 20.h;
+  double get minExtent => 25.h;
 
   @override
   bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) => true;

@@ -61,7 +61,8 @@ class CustomShimmer extends StatelessWidget {
           ListView.separated(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            separatorBuilder: (context, index) => Container(height: 5.h, color: Colors.grey[200]),
+            separatorBuilder:
+                (context, index) => Container(height: 5.h, color: dark ? AppColors.darkerGrey : Colors.grey[200]),
             itemCount: 5,
             itemBuilder: (context, index) {
               return Shimmer.fromColors(
@@ -88,9 +89,9 @@ class CustomShimmer extends StatelessWidget {
                         ],
                       ),
                       15.hS,
-                      Container(width: double.infinity, height: 10.h, color: Colors.grey[300]),
+                      Container(width: double.infinity, height: 10.h, color: AppColors.darkerGrey),
                       15.hS,
-                      Container(width: double.infinity, height: 200.h, color: Colors.grey[300]),
+                      Container(width: double.infinity, height: 200.h, color: AppColors.darkerGrey),
                       15.hS,
                       Row(
                         children: [

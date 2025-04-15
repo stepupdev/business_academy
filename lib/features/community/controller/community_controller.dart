@@ -165,7 +165,7 @@ class CommunityController extends GetxController {
 
   // compressed the image
   Future<File?> compressImageTo2MB(File file) async {
-    int maxSizeInBytes = 1 * 1024 * 1024; // 2MB in bytes
+    int maxSizeInBytes = 2 * 1024 * 1024; // 2MB in bytes
     int quality = 95;
     File? compressedFile = file;
     while ((await compressedFile!.length()) > maxSizeInBytes && quality > 10) {
