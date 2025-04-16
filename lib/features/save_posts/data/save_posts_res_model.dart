@@ -4,7 +4,8 @@
 
 import 'dart:convert';
 
-import 'package:business_application/features/community/data/community_posts_model.dart';
+import 'package:business_application/data/posts/pagination_model.dart';
+import 'package:business_application/data/posts/posts_models.dart';
 
 SavePostResponseModel savePostResponseModelFromJson(String str) => SavePostResponseModel.fromJson(json.decode(str));
 
@@ -145,90 +146,3 @@ class Topic {
   Map<String, dynamic> toJson() => {"id": id, "name": name, "icon": icon, "posts_count": postsCount};
 }
 
-class User {
-  int? id;
-  String? name;
-  String? email;
-  String? avatar;
-  List<String>? communityIds;
-  Rank? rank;
-  DateTime? createdAt;
-  DateTime? updatedAt;
-
-  User({this.id, this.name, this.email, this.avatar, this.communityIds, this.rank, this.createdAt, this.updatedAt});
-
-  factory User.fromJson(Map<String, dynamic> json) => User(
-    id: json["id"],
-    name: json["name"],
-    email: json["email"],
-    avatar: json["avatar"],
-    communityIds: json["community_ids"] == null ? [] : List<String>.from(json["community_ids"]!.map((x) => x)),
-    rank: json["rank"] == null ? null : Rank.fromJson(json["rank"]),
-    createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
-    updatedAt: json["updated_at"] == null ? null : DateTime.parse(json["updated_at"]),
-  );
-
-  Map<String, dynamic> toJson() => {
-    "id": id,
-    "name": name,
-    "email": email,
-    "avatar": avatar,
-    "community_ids": communityIds == null ? [] : List<dynamic>.from(communityIds!.map((x) => x)),
-    "rank": rank?.toJson(),
-    "created_at": createdAt?.toIso8601String(),
-    "updated_at": updatedAt?.toIso8601String(),
-  };
-}
-
-class Rank {
-  int? id;
-  String? name;
-  int? position;
-
-  Rank({this.id, this.name, this.position});
-
-  factory Rank.fromJson(Map<String, dynamic> json) =>
-      Rank(id: json["id"], name: json["name"], position: json["position"]);
-
-  Map<String, dynamic> toJson() => {"id": id, "name": name, "position": position};
-}
-
-class Links {
-  String? first;
-  dynamic last;
-  dynamic prev;
-  dynamic next;
-
-  Links({this.first, this.last, this.prev, this.next});
-
-  factory Links.fromJson(Map<String, dynamic> json) =>
-      Links(first: json["first"], last: json["last"], prev: json["prev"], next: json["next"]);
-
-  Map<String, dynamic> toJson() => {"first": first, "last": last, "prev": prev, "next": next};
-}
-
-class Meta {
-  int? currentPage;
-  int? from;
-  String? path;
-  int? perPage;
-  int? to;
-
-  Meta({this.currentPage, this.from, this.path, this.perPage, this.to});
-
-  factory Meta.fromJson(Map<String, dynamic> json) => Meta(
-    currentPage: json["current_page"],
-    from: json["from"],
-    path: json["path"],
-    perPage: json["per_page"],
-    to: json["to"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "current_page": currentPage,
-    "from": from,
-    "path": path,
-    "per_page": perPage,
-    "to": to,
-  };
-}

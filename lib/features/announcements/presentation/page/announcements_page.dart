@@ -45,7 +45,7 @@ class _AnnouncementsPageState extends State<AnnouncementsPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.group_outlined, size: 80.sp, color: Colors.grey.shade400),
+                  Icon(Icons.announcement_outlined, size: 80.sp, color: Colors.grey.shade400),
                   10.hS,
                   Text(
                     AppStrings.noAnnouncementFound,

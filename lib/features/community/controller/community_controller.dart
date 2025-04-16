@@ -1,10 +1,12 @@
 import 'dart:io';
 
 import 'package:business_application/core/services/auth_services.dart';
+import 'package:business_application/data/posts/posts_models.dart';
+import 'package:business_application/data/posts/topic_models.dart' as topics_model;
 import 'package:business_application/features/community/data/comments_response_model.dart';
 import 'package:business_application/features/community/data/community_posts_model.dart';
 import 'package:business_application/features/community/data/posts_by_id_model.dart';
-import 'package:business_application/features/community/data/topics_model.dart' as topics_model;
+import 'package:business_application/features/community/data/topics_model.dart';
 import 'package:business_application/features/groups/controller/groups_controller.dart';
 import 'package:business_application/features/my_posts/controller/my_posts_controller.dart';
 import 'package:business_application/features/notification/controller/notification_controller.dart';
@@ -25,8 +27,8 @@ class CommunityController extends GetxController {
   var comments = CommentsResponseModel().obs;
   var selectedPostId = 0.obs;
   var communityPostsById = PostByIdResponseModel().obs;
-  var topics = topics_model.TopicsResponseModel().obs;
-  topics_model.TopicsResponseModel? selectedTopicValue;
+  var topics = TopicsResponseModel().obs;
+  TopicsResponseModel? selectedTopicValue;
   var selectedTopic = 'All'.obs;
   var selectedTopicId = ''.obs;
   var editSelectedTopic = ''.obs;
@@ -637,7 +639,7 @@ class CommunityController extends GetxController {
     try {
       isLoading(true);
       final response = await CommunityRep().getTopics();
-      final topicsData = topics_model.TopicsResponseModel.fromJson(response);
+      final topicsData = TopicsResponseModel.fromJson(response);
       topicsData.result?.data?.insert(0, topics_model.Topic(name: "All"));
       topics(topicsData);
       selectedTopic.value = "All";

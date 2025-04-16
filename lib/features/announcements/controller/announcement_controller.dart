@@ -1,3 +1,4 @@
+import 'package:business_application/data/posts/posts_models.dart';
 import 'package:business_application/features/announcements/data/announcements_data.dart';
 import 'package:business_application/repository/community_rep.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +7,7 @@ import 'package:get/get.dart';
 class AnnouncementController extends GetxController {
   var isLoading = false.obs;
   var announcements = AnnouncementPostResponseModel().obs;
-  var announcementPosts = <AnnouncementPosts>[].obs;
+  var announcementPosts = <Posts>[].obs;
   var selectedPostId = 0.obs;
 
   @override

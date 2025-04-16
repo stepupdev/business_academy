@@ -86,13 +86,13 @@ class NotificationPage extends GetView<NotificationController> {
               itemBuilder: (context, index) {
                 final notification = controller.notifications.value.result?.data?[index];
                 return InkWell(
-                  onTap: () {
+                  onTap: ()async {
                     controller.markReadNotification(notification?.id.toString() ?? "", context);
-                    Get.find<CommunityController>().getCommunityPostsById(notification?.notifiableId.toString() ?? "");
-                    Get.find<CommunityController>().getComments(notification?.notifiableId.toString() ?? "");
+                    await Get.find<CommunityController>().getCommunityPostsById(notification?.notifiableId.toString() ?? "");
+                   await Get.find<CommunityController>().getComments(notification?.notifiableId.toString() ?? "");
                     Get.find<CommunityController>().selectedPostId.value = notification?.notifiableId ?? 0;
                     GoRouter.of(context).push('/post-details/${notification?.notifiableId}');
-                    controller.checkNotification();
+                    await controller.checkNotification();
                     // context.push(AppRoutes.postDetails, extra: {'postId': notification?.notifiableId});
                   },
                   child: Padding(

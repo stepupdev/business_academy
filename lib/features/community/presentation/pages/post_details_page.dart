@@ -1,24 +1,23 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:business_application/core/config/app_colors.dart';
 import 'package:business_application/core/config/app_routes.dart';
+import 'package:business_application/core/config/app_size.dart';
+import 'package:business_application/core/services/auth_services.dart';
+import 'package:business_application/core/utils/app_strings.dart';
+import 'package:business_application/core/utils/helper_utils.dart';
+import 'package:business_application/core/utils/ui_support.dart';
+import 'package:business_application/data/posts/posts_models.dart';
+import 'package:business_application/features/community/controller/community_controller.dart';
+import 'package:business_application/features/community/presentation/widgets/comment_widget.dart';
+import 'package:business_application/features/community/presentation/widgets/post_details_card.dart';
+import 'package:business_application/features/community/presentation/widgets/post_details_shimmer.dart';
+import 'package:business_application/features/groups/controller/groups_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-import 'package:business_application/core/config/app_colors.dart';
-import 'package:business_application/core/config/app_size.dart';
-import 'package:business_application/core/services/auth_services.dart';
-import 'package:business_application/core/utils/app_strings.dart';
-import 'package:business_application/core/utils/helper_utils.dart';
-import 'package:business_application/core/utils/ui_support.dart';
-import 'package:business_application/features/community/controller/community_controller.dart';
-import 'package:business_application/features/community/data/community_posts_model.dart';
-import 'package:business_application/features/community/presentation/widgets/comment_widget.dart';
-import 'package:business_application/features/community/presentation/widgets/post_details_card.dart';
-import 'package:business_application/features/community/presentation/widgets/post_details_shimmer.dart';
-import 'package:business_application/features/groups/controller/groups_controller.dart';
 
 class PostDetailsPage extends StatefulWidget {
   final String postId;
@@ -253,9 +252,14 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
                               groupController.currentGroupId.value = widget.groupId ?? '';
                               groupController.selectedTopic.value = post?.topic?.name ?? "";
                               groupController.currentGroupId.value = widget.groupId ?? '';
+                              debugPrint("Here is the group id: ${widget.groupId}");
+
+
                               var topicId = post?.topic?.id?.toString();
                               groupController.fetchGroupsTopic(widget.groupId!);
                               groupController.fetchGroupPosts(widget.groupId!);
+                              groupController.filterPostsByTopic(post?.topic?.name ?? "", topicId: topicId);
+
                               groupController.filterPostsByTopic(post?.topic?.name ?? "", topicId: topicId);
                               context.push(AppRoutes.groupDetails);
                             } else {
@@ -272,10 +276,7 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
                               post?.topic?.name ?? "",
                               topicId: post?.topic?.id?.toString(),
                             );
-                            context.go(
-                              AppRoutes.groupDetails,
-                              extra: {'groupId': widget.groupId, 'topicId': post?.topic?.id.toString()},
-                            );
+                          context.pop();
                           } else {
                             // Navigate to the community feed page with the selected topic
                             controller.selectedTopic.value = post?.topic?.name ?? "";

@@ -1,4 +1,5 @@
 import 'package:business_application/core/config/app_routes.dart';
+import 'package:business_application/data/posts/posts_models.dart';
 import 'package:business_application/features/announcements/presentation/page/announcements_page.dart';
 import 'package:business_application/features/auth/presentation/pages/signin_page.dart';
 import 'package:business_application/features/community/data/community_posts_model.dart';

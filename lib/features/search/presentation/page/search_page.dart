@@ -3,7 +3,6 @@ import 'package:business_application/core/config/app_size.dart';
 import 'package:business_application/core/utils/app_strings.dart';
 import 'package:business_application/core/utils/ui_support.dart';
 import 'package:business_application/features/community/controller/community_controller.dart';
-import 'package:business_application/features/community/data/community_posts_model.dart';
 import 'package:business_application/features/groups/controller/groups_controller.dart';
 import 'package:business_application/features/search/controller/search_controller.dart';
 import 'package:business_application/features/search/presentation/widgets/search_post_card.dart';

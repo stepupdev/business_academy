@@ -12,12 +12,12 @@ class NotificationController extends GetxController {
   var hasNewNotification = false.obs; // Separate flag for new notifications
 
   @override
-  void onInit() {
-    fetchNotifications();
+  void onInit() async {
+    await fetchNotifications();
     super.onInit();
   }
 
-  fetchNotifications() async {
+  Future<void> fetchNotifications() async {
     isLoading(true);
     try {
       var response = await NotificationRep().getNotifications();
@@ -71,7 +71,7 @@ class NotificationController extends GetxController {
         notifications.value.result?.data?[notificationIndex].isRead =
             !(notifications.value.result?.data?[notificationIndex].isRead ?? false);
         notifications.refresh(); // Notify listeners about the change
-        checkNotification();
+        await checkNotification();
       }
     } catch (e) {
       debugPrint("Error marking notification as read/unread: $e");
@@ -88,7 +88,7 @@ class NotificationController extends GetxController {
       debugPrint("Notification: $response");
 
       notifications.refresh();
-      checkNotification();
+      await checkNotification();
     } catch (e) {
       debugPrint("Error marking all notifications as read: $e");
     } finally {

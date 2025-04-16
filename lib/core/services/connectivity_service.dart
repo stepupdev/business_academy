@@ -29,16 +29,6 @@ class ConnectivityService extends GetxController {
   Future<void> _updateConnectionStatus(List<ConnectivityResult> result) async {
     final hasConnection = result.any((element) => element != ConnectivityResult.none);
     isConnected.value = hasConnection;
-    if (!hasConnection) {
-      Get.snackbar(
-        "No Internet Connection",
-        "Please check your network settings and try again.",
-        snackPosition: SnackPosition.BOTTOM,
-        duration: const Duration(seconds: 5),
-        backgroundColor: Colors.redAccent,
-        colorText: Colors.white,
-      );
-    }
   }
 
   Future<bool> checkNow() async {
