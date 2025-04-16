@@ -8,7 +8,7 @@ class GroupsRep {
   Future getGroups() async {
     APIManager manager = APIManager();
     final response = await manager.getWithHeader(ApiUrl.groups, {
-      "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
+      "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result?.token}",
     });
     debugPrint("response: $response");
     return response;
@@ -17,7 +17,7 @@ class GroupsRep {
   Future getGroupsDetails(String id) async {
     APIManager manager = APIManager();
     final response = await manager.getWithHeader("${ApiUrl.groups}/$id", {
-      "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
+      "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result?.token}",
     });
     debugPrint("response: $response");
     return response;
@@ -26,7 +26,7 @@ class GroupsRep {
   Future getGroupsTopic(String id) async {
     APIManager manager = APIManager();
     final response = await manager.getWithHeader("${ApiUrl.groups}/$id/topics", {
-      "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
+      "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result?.token}",
     });
     debugPrint("response topic: $response");
     return response;

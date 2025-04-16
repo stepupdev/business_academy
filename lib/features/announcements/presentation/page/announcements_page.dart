@@ -73,12 +73,12 @@ class _AnnouncementsPageState extends State<AnnouncementsPage> {
                   Get.find<CommunityController>().shouldRestorePosition.value = true;
 
                   // Set up for the details page
-                  Get.find<CommunityController>().getCommunityPostsById(announcement?.id.toString() ?? "");
-                  Get.find<CommunityController>().getComments(announcement?.id.toString() ?? "");
+                  // Get.find<CommunityController>().getCommunityPostsById(announcement?.id.toString() ?? "");
+                  // Get.find<CommunityController>().getComments(announcement?.id.toString() ?? "");
                   Get.find<CommunityController>().selectedPostId.value = announcement?.id ?? 0;
 
                   // Navigate using go_router
-                  context.push('/post-details/${announcement?.id}');
+                  context.push('/post-details/${announcement?.id}', extra: {'post': announcement});
                 },
                 name: announcement?.user?.name ?? "",
                 postId: announcement?.id ?? 0,

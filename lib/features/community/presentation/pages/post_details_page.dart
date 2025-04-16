@@ -37,9 +37,11 @@ class PostDetailsPage extends StatefulWidget {
     this.groupId,
   }) {
     // Add debug print to see the values being passed
-    debugPrint("POST DETAILS PAGE CONSTRUCTOR: isGroupPost=$isGroupPost, groupId=$groupId, postId=$postId");
-  }
+    debugPrint(
+      "POST DETAILS PAGE CONSTRUCTOR: isGroupPost=$isGroupPost, groupId=$groupId, postId=$postId, fromSearchPage=$fromSearchPage",
+    );
 
+  }
   @override
   PostDetailsPageState createState() => PostDetailsPageState();
 }
@@ -61,9 +63,11 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
     debugPrint("Widget isGroupPost: ${widget.isGroupPost}");
     communityController = Get.find<CommunityController>();
     communityController.scrollController.addListener(() {
-      if (communityController.commentsScrollController.position.pixels >=
-          communityController.commentsScrollController.position.maxScrollExtent - 300) {
-        communityController.loadNextCommentsPage(widget.postId);
+      if (communityController.scrollController.hasClients) {
+        if (communityController.commentsScrollController.position.pixels >=
+            communityController.commentsScrollController.position.maxScrollExtent - 300) {
+          communityController.loadNextCommentsPage(widget.postId);
+        }
       }
     });
     if (widget.post != null) {
@@ -73,7 +77,7 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
         for (var topic in groupController.groupsTopicResponse.value.result!.data!) {
           if (topic.name == widget.post?.topic?.name) {
             widget.isGroupPost = true;
-            widget.groupId = topic.id.toString();
+
             break;
           }
         }
@@ -86,11 +90,14 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
     super.didChangeDependencies();
     if (!_isInitialized) {
       debugPrint("POST DETAILS: Initializing with isGroupPost=${widget.isGroupPost}, groupId=${widget.groupId}");
+      debugPrint("From search Page: ${widget.fromSearchPage}");
 
       final controller = Get.find<CommunityController>();
       controller.selectedPostId.value = int.tryParse(widget.postId) ?? 0;
-      controller.getCommunityPostsById(widget.postId);
-      controller.getComments(widget.postId);
+      // controller.getCommunityPostsById(widget.postId);
+      if (widget.post?.commentsCount != null) {
+        controller.getComments(widget.postId);
+      }
 
       // Initialize group controller if this is a group post
       if (widget.isGroupPost && widget.groupId != null) {
@@ -189,7 +196,8 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
           return PostDetailsShimmer();
         }
 
-        final post = controller.communityPostsById.value.result;
+        // final post = controller.communityPostsById.value.result;
+        final post = widget.post ?? controller.communityPostsById.value.result;
 
         return SafeArea(
           child: Column(
@@ -251,14 +259,13 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
                               groupController.isLoading(true);
                               groupController.currentGroupId.value = widget.groupId ?? '';
                               groupController.selectedTopic.value = post?.topic?.name ?? "";
-                              groupController.currentGroupId.value = widget.groupId ?? '';
+                              // groupController.currentGroupId.value = widget.groupId ?? '';
                               debugPrint("Here is the group id: ${widget.groupId}");
-
 
                               var topicId = post?.topic?.id?.toString();
                               groupController.fetchGroupsTopic(widget.groupId!);
-                              groupController.fetchGroupPosts(widget.groupId!);
-                              groupController.filterPostsByTopic(post?.topic?.name ?? "", topicId: topicId);
+                              // groupController.fetchGroupPosts(widget.groupId!);
+                              // groupController.filterPostsByTopic(post?.topic?.name ?? "", topicId: topicId);
 
                               groupController.filterPostsByTopic(post?.topic?.name ?? "", topicId: topicId);
                               context.push(AppRoutes.groupDetails);
@@ -272,11 +279,12 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
                             // Navigate to the group details page with the selected topic
                             final groupController = Get.find<GroupsController>();
                             groupController.selectedTopic.value = post?.topic?.name ?? "";
+                            groupController.currentGroupId.value = widget.groupId!;
                             groupController.filterPostsByTopic(
                               post?.topic?.name ?? "",
                               topicId: post?.topic?.id?.toString(),
                             );
-                          context.pop();
+                            context.pop();
                           } else {
                             // Navigate to the community feed page with the selected topic
                             controller.selectedTopic.value = post?.topic?.name ?? "";

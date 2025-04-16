@@ -42,7 +42,7 @@ class CommunityController extends GetxController {
   final RxString editSelectedImage = "".obs;
   final RxInt selectedTabIndex = 0.obs;
   var filteredPosts = <Posts>[].obs;
-  final ScrollController scrollController = ScrollController();
+  ScrollController scrollController = ScrollController();
   RxDouble scrollOffset = 0.0.obs; // Change to RxDouble for reactivity
   RxBool shouldRestorePosition = false.obs;
 

@@ -39,7 +39,7 @@ Future<void> startNotificationChecker() async {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Get.put(ConnectivityService());
-  await Get.putAsync(() async => AuthService());
+  final authService = await Get.putAsync(() async => AuthService());
   // SystemChrome.setSystemUIOverlayStyle(
   //   const SystemUiOverlayStyle(
   //     statusBarColor: Colors.transparent,
@@ -51,7 +51,9 @@ void main() async {
   // );
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_) async {
     runApp(const MyApp());
-    await startNotificationChecker();
+    if (authService.currentUser.value.result?.token != null) {
+      await startNotificationChecker();
+    }
   });
 }
 

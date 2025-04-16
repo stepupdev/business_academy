@@ -206,8 +206,8 @@ class GroupDetailsPage extends GetView<GroupsController> {
                           return UserPostWidget(
                             onTap: () {
                               Get.find<CommunityController>().selectedPostId.value = posts.id ?? 0;
-                              Get.find<CommunityController>().getCommunityPostsById(posts.id.toString());
-                              Get.find<CommunityController>().getComments(posts.id.toString());
+                              // Get.find<CommunityController>().getCommunityPostsById(posts.id.toString());
+                              // Get.find<CommunityController>().getComments(posts.id.toString());
 
                               // CRITICAL: Make sure isGroupPost is explicitly set to true
                               debugPrint("GROUP DETAILS PAGE: Navigating to post details with isGroupPost=true");
@@ -218,6 +218,7 @@ class GroupDetailsPage extends GetView<GroupsController> {
                                   'isGroupPost': true, // Ensure this is set to true
                                   'groupId': controller.currentGroupId.value,
                                   'postId': posts.id.toString(),
+                                  'post': posts,
                                 },
                               );
                             },

@@ -259,12 +259,12 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen> with Automatic
                               controller.shouldRestorePosition.value = true;
 
                               // Set up for the details page
-                              Get.find<CommunityController>().getCommunityPostsById(posts.id.toString());
-                              Get.find<CommunityController>().getComments(posts.id.toString());
+                              // Get.find<CommunityController>().getCommunityPostsById(posts.id.toString());
+                              // Get.find<CommunityController>().getComments(posts.id.toString());
                               controller.selectedPostId.value = posts.id ?? 0;
 
                               // Navigate using go_router
-                              context.push('/post-details/${posts.id}');
+                              context.push('/post-details/${posts.id}', extra: {'post': posts});
                             },
                             name: posts.user?.name ?? "",
                             postId: posts.id ?? 0,

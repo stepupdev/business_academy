@@ -218,29 +218,31 @@ class APIManager {
 
   dynamic _response(http.Response response) {
     debugPrint('APIManager._response');
-    debugPrint("response is ${response.body}");
-    debugPrint("status code is ${response.statusCode}");
-    switch (response.statusCode) {
-      case 200:
-        var responseJson = json.decode(response.body.toString());
-        return responseJson;
-      case 400:
-      case 401:
-      case 403:
-        var responseJson = json.decode(response.body.toString());
-        return responseJson;
-      case 405:
-        var responseJson = json.decode(response.body.toString());
-        return responseJson;
-      case 404:
-        var responseJson = json.decode(response.body.toString());
-        return responseJson;
-      case 500:
-        throw UnauthorisedException(response.body.toString());
-      default:
-        throw FetchDataException(
-          'Error occurred while communicating with Server with StatusCode: ${response.statusCode}',
-        );
+    debugPrint("status code: ${response.statusCode}");
+    debugPrint("body: ${response.body}");
+
+    try {
+      switch (response.statusCode) {
+        case 200:
+          return json.decode(response.body);
+        case 204:
+          return null;
+        case 400:
+        case 404:
+        case 405:
+          return json.decode(response.body);
+        case 401:
+        case 403:
+          var error = json.decode(response.body);
+          throw UnauthorisedException(error.toString());
+        case 500:
+          throw UnauthorisedException("Internal Server Error");
+        default:
+          throw FetchDataException('Error occurred while communicating with Server: ${response.statusCode}');
+      }
+    } catch (e) {
+      debugPrint("⚠️ Error decoding JSON or handling response: $e");
+      throw FetchDataException("Unexpected error while parsing response.");
     }
   }
 
