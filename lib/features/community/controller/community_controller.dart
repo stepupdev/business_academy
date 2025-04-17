@@ -259,17 +259,20 @@ class CommunityController extends GetxController {
   String cleanHtml(String rawHtml) {
     String updated = rawHtml;
 
-    // Normalize all <br> tags to \n
+    // Convert <br> to newlines
     updated = updated.replaceAll(RegExp(r'<br\s*/?>', caseSensitive: false), '\n');
 
-    // Remove \r (carriage returns) since they are not needed
+    // Remove carriage returns
     updated = updated.replaceAll('\r', '');
 
-    // Optionally: remove any excessive newlines (like 3+)
-    updated = updated.replaceAll(RegExp(r'\n{3,}'), '\n\n');
-
-    // You can also clean custom tags like <t> if needed
+    // Optional: remove custom tags like <t>
     updated = updated.replaceAll(RegExp(r'</?t>'), '');
+
+    // ✅ Remove all other HTML tags
+    updated = updated.replaceAll(RegExp(r'<[^>]*>'), '');
+
+    // Optionally collapse multiple newlines
+    updated = updated.replaceAll(RegExp(r'\n{3,}'), '\n\n');
 
     return updated.trim();
   }
