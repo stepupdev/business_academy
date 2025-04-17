@@ -112,6 +112,7 @@ class CommentWidget extends StatelessWidget {
               ),
               // 3 dot for show popup menu for delete the comments
               PopupMenuButton(
+                menuPadding: EdgeInsets.zero,
                 itemBuilder: (context) => [PopupMenuItem(value: 'delete', child: Text('Delete'))],
                 onSelected: (value) {
                   if (value == 'delete') {

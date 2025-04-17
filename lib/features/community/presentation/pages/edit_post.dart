@@ -124,7 +124,11 @@ class _EditPostPageState extends State<EditPostPage> {
                   videoUrl: controller.editVideoController.text,
                   groupId: widget.post.groupId?.toString(),
                 );
-                context.go(AppRoutes.communityFeed);
+                if (widget.post.groupId != null) {
+                  context.replace(AppRoutes.groupDetails);
+                } else {
+                  context.go(AppRoutes.communityFeed);
+                }
               },
               style: FilledButton.styleFrom(
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),

@@ -15,7 +15,7 @@ class AuthService extends GetxService {
   final phone = ''.obs;
   final disableDateList = <String>[].obs;
 
-  final language_key = 'en_US'.obs;
+  final languagekey = 'en_US'.obs;
 
   AuthService() {
     _box = GetStorage();
@@ -149,7 +149,7 @@ class AuthService extends GetxService {
   //  String get apiToken => currentUser.value.user!.accToken!;
 
   getLanguage() async {
-    language_key.value = GetStorage().read<String>('language') ?? 'en_US';
+    languagekey.value = GetStorage().read<String>('language') ?? 'en_US';
   }
 
   // Future<void> getDeviceToken() async {

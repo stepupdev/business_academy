@@ -47,7 +47,7 @@ class GroupDetailsPage extends GetView<GroupsController> {
         ],
       ),
       body: RefreshIndicator(
-        onRefresh: () => controller.fetchGroupPosts(controller.currentGroupId.value),
+        onRefresh: () => _loadData(),
         child: Obx(() {
           if (controller.isLoading.value) {
             return Center(child: CircularProgressIndicator());
@@ -214,10 +214,7 @@ class GroupDetailsPage extends GetView<GroupsController> {
 
                               context.push(
                                 '/post-details/${posts.id}',
-                                extra: {
-                                  'postId': posts.id.toString(),
-                                  'post': posts,
-                                },
+                                extra: {'postId': posts.id.toString(), 'post': posts},
                               );
                             },
                             name: posts.user?.name ?? "",
