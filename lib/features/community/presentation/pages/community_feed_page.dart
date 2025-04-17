@@ -423,6 +423,27 @@ class _TopicSelectionHeader extends SliverPersistentHeaderDelegate {
             ),
           );
         }
+
+        // Ensure the selected topic is centered
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          final selectedIndex = controller.topics.value.result?.data?.indexWhere(
+                (t) => t.name == controller.selectedTopic.value,
+              ) ??
+              -1;
+
+          if (selectedIndex != -1) {
+            final itemWidth = 100.w; // Approximate width of each item
+            final screenWidth = MediaQuery.of(context).size.width;
+            final offset = (selectedIndex * itemWidth) - (screenWidth / 2) + (itemWidth / 2);
+
+            scrollController.animateTo(
+              offset.clamp(0.0, scrollController.position.maxScrollExtent),
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+            );
+          }
+        });
+
         return SizedBox(
           height: 45.h,
           child: ListView.separated(
@@ -436,25 +457,11 @@ class _TopicSelectionHeader extends SliverPersistentHeaderDelegate {
               return Obx(() {
                 final isSelected =
                     controller.selectedTopic.value == topic?.name;
-                if (isSelected) {
-                  print('Selected topic: ${topic?.name}');
-                  final selectedIndex =
-                      controller.topics.value.result?.data?.indexWhere(
-                        (t) => t.name == topic?.name,
-                      ) ??
-                      0;
 
-                  final itemWidth = 50.w;
-                  scrollController.animateTo(
-                    selectedIndex * itemWidth,
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeInOut,
-                  );
-                }
                 return GestureDetector(
                   onTap: () {
                     if (topic?.name == "Announcement") {
-                      // navigate to the announcement page {bottom navigation page index 2}
+                      // Navigate to the announcement page {bottom navigation page index 2}
                       Get.find<HomeController>().changeTabIndex(2, context);
                       context.go(AppRoutes.announcementsTab);
                     }
@@ -467,10 +474,9 @@ class _TopicSelectionHeader extends SliverPersistentHeaderDelegate {
                     decoration: BoxDecoration(
                       color: dark ? AppColors.dark : Colors.white,
                       border: Border.all(
-                        color:
-                            isSelected
-                                ? AppColors.primaryColor
-                                : (Colors.grey[200] ?? Colors.grey),
+                        color: isSelected
+                            ? AppColors.primaryColor
+                            : (Colors.grey[200] ?? Colors.grey),
                         width: 0.5,
                       ),
                       borderRadius: BorderRadius.circular(50),
