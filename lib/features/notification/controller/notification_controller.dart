@@ -86,6 +86,9 @@ class NotificationController extends GetxController {
     try {
       var response = await NotificationRep().markAllNotification(context);
       debugPrint("Notification: $response");
+      notifications.value.result?.data?.forEach((notification) {
+        notification.isRead = true;
+      });
 
       notifications.refresh();
       await checkNotification();

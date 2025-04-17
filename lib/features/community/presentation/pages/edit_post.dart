@@ -68,7 +68,7 @@ class _EditPostPageState extends State<EditPostPage> {
       }
 
       // Populate the edit fields with the post data
-      controller.editPostController.text = widget.post.content ?? '';
+      controller.editPostController.text = Get.find<CommunityController>().cleanHtml(widget.post.content ?? '');
       controller.editVideoController.text = widget.post.videoUrl ?? '';
       controller.editSelectedImage.value = widget.post.image ?? '';
 

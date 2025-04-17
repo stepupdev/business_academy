@@ -164,30 +164,32 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
                 } else if (value == 'delete') {
                   showDialog(
                     context: context,
-                    builder: (context) => AlertDialog(
-                      title: Text('Delete Post'),
-                      content: Text('Are you sure you want to delete this post?'),
-                      actions: [
-                        TextButton(onPressed: () => Navigator.of(context).pop(), child: Text('Cancel')),
-                        TextButton(
-                          onPressed: () {
-                            controller.deletePost(widget.postId, context).then((_) {
-                              controller.getCommunityPosts();
-                              Navigator.of(context).pop(); // Navigate back after deletion
-                            });
-                          },
-                          child: Text('Delete'),
+                    builder:
+                        (context) => AlertDialog(
+                          title: Text('Delete Post'),
+                          content: Text('Are you sure you want to delete this post?'),
+                          actions: [
+                            TextButton(onPressed: () => Navigator.of(context).pop(), child: Text('Cancel')),
+                            TextButton(
+                              onPressed: () {
+                                controller.deletePost(widget.postId, context).then((_) {
+                                  controller.getCommunityPosts();
+                                  Navigator.of(context).pop(); // Navigate back after deletion
+                                });
+                              },
+                              child: Text('Delete'),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
                   );
                 }
               },
-              itemBuilder: (context) => [
-                PopupMenuItem(value: 'edit', child: Text('Edit Post')),
-                PopupMenuItem(value: 'delete', child: Text('Delete Post')),
-              ],
-            )
+              itemBuilder:
+                  (context) => [
+                    PopupMenuItem(value: 'edit', child: Text('Edit Post')),
+                    PopupMenuItem(value: 'delete', child: Text('Delete Post')),
+                  ],
+            ),
         ],
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: dark ? Colors.white : Colors.black),
@@ -213,89 +215,99 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      PostDetailsCard(
-                        onTap: () {},
-                        name: post?.user?.name ?? "",
-                        rank: post?.user?.rank?.name ?? "",
-                        topic: post?.topic?.name ?? "",
-                        postId: int.tryParse(widget.postId),
-                        time: HelperUtils.formatTime(post?.createdAt ?? DateTime.now()),
-                        postImage: post?.image ?? "",
-                        videoUrl: post?.videoUrl ?? "",
-                        dp: post?.user?.avatar ?? "",
-                        caption: post?.content ?? "",
-                        commentCount: controller.comments.value.result?.data?.length.toString() ?? "",
-                        isLiked: post?.isLiked ?? false,
-                        isSaved: post?.isSaved ?? false,
-                        onCommentTap: () {
-                          _commentFocusNode.requestFocus();
-                        },
-                        onLike: () {
-                          final postId = post?.id ?? 0;
-                          if (postId == 0) return;
+                      Obx(() {
+                        return PostDetailsCard(
+                          onTap: () {},
+                          name: post?.user?.name ?? "",
+                          rank: post?.user?.rank?.name ?? "",
+                          topic: post?.topic?.name ?? "",
+                          postId: int.tryParse(widget.postId),
+                          time: HelperUtils.formatTime(post?.createdAt ?? DateTime.now()),
+                          postImage: post?.image ?? "",
+                          videoUrl: post?.videoUrl ?? "",
+                          dp: post?.user?.avatar ?? "",
+                          caption: post?.content ?? "",
+                          commentCount: controller.comments.value.result?.data?.length.toString() ?? "",
+                          isLiked: post?.isLiked ?? false,
+                          isSaved: post?.isSaved ?? false,
+                          onCommentTap: () {
+                            _commentFocusNode.requestFocus();
+                          },
+                          onLike: () {
+                            final postId = post?.id ?? 0;
+                            if (postId == 0) return;
 
-                          // Update UI optimistically - this is still fine in the view
-                          final currentState = controller.communityPostsById.value.result?.isLiked ?? false;
-                          controller.communityPostsById.value.result?.isLiked = !currentState;
-                          controller.communityPostsById.refresh();
+                            // Update UI optimistically - this is still fine in the view
+                            final currentState = widget.post?.isLiked ?? false;
+                            if (mounted) {
+                              setState(() {
+                                post?.isLiked = !currentState;
+                              });
+                            }
+                            controller.communityPostsById.refresh();
 
-                          // Call controller method instead of direct API call
-                          controller.likePostAndSyncState(context, postId, currentState);
-                        },
-                        onSave: () {
-                          final postId = post?.id ?? 0;
-                          if (postId == 0) return;
+                            // Call controller method instead of direct API call
+                            controller.likePostAndSyncState(context, postId, currentState);
+                          },
+                          onSave: () {
+                            final postId = post?.id ?? 0;
+                            if (postId == 0) return;
 
-                          // Update UI optimistically - this is still fine in the view
-                          final currentState = controller.communityPostsById.value.result?.isSaved ?? false;
-                          controller.communityPostsById.value.result?.isSaved = !currentState;
-                          controller.communityPostsById.refresh();
+                            // Update UI optimistically - this is still fine in the view
+                            final currentState = post?.isSaved ?? false;
+                            if (mounted) {
+                              setState(() {
+                                post?.isSaved = !currentState;
+                              });
+                            }
+                            controller.communityPostsById.refresh();
 
-                          // Call controller method instead of direct API call
-                          controller.savePostAndSyncState(context, postId, currentState);
-                        },
-                        onTopicTap: () {
-                          if (widget.fromSearchPage) {
-                            if (widget.post?.groupId != null) {
-                              // Navigate to the group details page
+                            // Call controller method instead of direct API call
+                            controller.savePostAndSyncState(context, postId, currentState);
+                          },
+                          onTopicTap: () {
+                            if (widget.fromSearchPage) {
+                              if (widget.post?.groupId != null) {
+                                // Navigate to the group details page
+                                final groupController = Get.find<GroupsController>();
+                                groupController.isLoading(true);
+                                groupController.currentGroupId.value = widget.post?.groupId.toString() ?? '';
+                                groupController.selectedTopic.value = post?.topic?.name ?? "";
+                                // groupController.currentGroupId.value = widget.groupId ?? '';
+                                debugPrint("Here is the group id: ${widget.post?.groupId}");
+
+                                var topicId = post?.topic?.id?.toString();
+                                groupController.fetchGroupsTopic(widget.post?.groupId.toString() ?? '');
+                                // groupController.fetchGroupPosts(widget.groupId!);
+                                // groupController.filterPostsByTopic(post?.topic?.name ?? "", topicId: topicId);
+
+                                groupController.filterPostsByTopic(post?.topic?.name ?? "", topicId: topicId);
+                                context.push(AppRoutes.groupDetails);
+                              } else {
+                                // Navigate to the community feed page
+                                controller.selectedTopic.value = post?.topic?.name ?? "";
+                                controller.selectedTopicId.value = post?.topic?.id?.toString() ?? "";
+                                context.go(AppRoutes.communityFeed);
+                              }
+                            } else if (widget.post?.groupId != null) {
+                              // Navigate to the group details page with the selected topic
                               final groupController = Get.find<GroupsController>();
-                              groupController.isLoading(true);
-                              groupController.currentGroupId.value = widget.post?.groupId.toString() ?? '';
                               groupController.selectedTopic.value = post?.topic?.name ?? "";
-                              // groupController.currentGroupId.value = widget.groupId ?? '';
-                              debugPrint("Here is the group id: ${widget.post?.groupId}");
-
-                              var topicId = post?.topic?.id?.toString();
-                              groupController.fetchGroupsTopic(widget.post?.groupId.toString() ?? '');
-                              // groupController.fetchGroupPosts(widget.groupId!);
-                              // groupController.filterPostsByTopic(post?.topic?.name ?? "", topicId: topicId);
-
-                              groupController.filterPostsByTopic(post?.topic?.name ?? "", topicId: topicId);
-                              context.push(AppRoutes.groupDetails);
+                              groupController.currentGroupId.value = widget.post?.groupId.toString() ?? '';
+                              groupController.filterPostsByTopic(
+                                post?.topic?.name ?? "",
+                                topicId: post?.topic?.id?.toString(),
+                              );
+                              context.pop();
                             } else {
-                              // Navigate to the community feed page
+                              // Navigate to the community feed page with the selected topic
                               controller.selectedTopic.value = post?.topic?.name ?? "";
                               controller.selectedTopicId.value = post?.topic?.id?.toString() ?? "";
                               context.go(AppRoutes.communityFeed);
                             }
-                          } else if (widget.post?.groupId != null) {
-                            // Navigate to the group details page with the selected topic
-                            final groupController = Get.find<GroupsController>();
-                            groupController.selectedTopic.value = post?.topic?.name ?? "";
-                            groupController.currentGroupId.value = widget.post?.groupId.toString() ?? '';
-                            groupController.filterPostsByTopic(
-                              post?.topic?.name ?? "",
-                              topicId: post?.topic?.id?.toString(),
-                            );
-                            context.pop();
-                          } else {
-                            // Navigate to the community feed page with the selected topic
-                            controller.selectedTopic.value = post?.topic?.name ?? "";
-                            controller.selectedTopicId.value = post?.topic?.id?.toString() ?? "";
-                            context.go(AppRoutes.communityFeed);
-                          }
-                        },
-                      ),
+                          },
+                        );
+                      }),
                       Divider(height: 1.h),
                       Padding(
                         padding: const EdgeInsets.all(8.0),

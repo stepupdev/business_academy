@@ -36,8 +36,6 @@ class NotificationPage extends GetView<NotificationController> {
                     child: Text('Mark all read'),
                     onTap: () {
                       controller.markAllReadNotification(context);
-                      controller.fetchNotifications();
-                      controller.fetchNotifications();
                     },
                   ),
                 ],
