@@ -40,13 +40,14 @@ class PostDetailsPage extends StatefulWidget {
     debugPrint(
       "POST DETAILS PAGE CONSTRUCTOR: isGroupPost=$isGroupPost, groupId=$groupId, postId=$postId, fromSearchPage=$fromSearchPage",
     );
-
   }
   @override
   PostDetailsPageState createState() => PostDetailsPageState();
 }
 
 class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliveClientMixin {
+  late ScrollController commentsScrollController;
+
   @override
   bool get wantKeepAlive => true;
   late CommunityController communityController;
@@ -59,6 +60,14 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
   @override
   void initState() {
     super.initState();
+    commentsScrollController = ScrollController();
+    commentsScrollController.addListener(() {
+      if (commentsScrollController.hasClients) {
+        if (commentsScrollController.position.pixels >= commentsScrollController.position.maxScrollExtent - 300) {
+          communityController.loadNextCommentsPage(widget.postId);
+        }
+      }
+    });
     debugPrint("Widget group id: ${widget.groupId}");
     debugPrint("Widget isGroupPost: ${widget.isGroupPost}");
     communityController = Get.find<CommunityController>();
@@ -111,6 +120,14 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
 
       _isInitialized = true;
     }
+  }
+
+  @override
+  void dispose() {
+    commentsScrollController.dispose();
+    _commentController.dispose();
+    _commentFocusNode.dispose();
+    super.dispose();
   }
 
   @override
@@ -206,7 +223,7 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
               Expanded(
                 child: SingleChildScrollView(
                   physics: const BouncingScrollPhysics(),
-                  controller: communityController.commentsScrollController,
+                  controller: commentsScrollController, // Use the dedicated ScrollController
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

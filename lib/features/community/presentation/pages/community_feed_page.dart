@@ -26,6 +26,7 @@ class CommunityFeedScreen extends StatefulWidget {
 class CommunityFeedScreenState extends State<CommunityFeedScreen>
     with AutomaticKeepAliveClientMixin {
   late CommunityController controller;
+  late ScrollController feedScrollController;
 
   // The bucket to store scroll positions
   static final _bucket = PageStorageBucket();
@@ -38,11 +39,11 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen>
   void initState() {
     super.initState();
     controller = Get.find<CommunityController>();
-    controller.scrollController.addListener(() {
-      if (controller.scrollController.hasClients) {
-        // Access the scrollController safely
-        if (controller.scrollController.position.pixels >=
-            controller.scrollController.position.maxScrollExtent - 300) {
+    feedScrollController = ScrollController();
+    feedScrollController.addListener(() {
+      if (feedScrollController.hasClients) {
+        controller.scrollOffset.value = feedScrollController.position.pixels;
+        if (feedScrollController.position.pixels >= feedScrollController.position.maxScrollExtent - 300) {
           controller.loadNextPage();
         }
       }
@@ -58,11 +59,21 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen>
 
     // Try to restore scroll position when coming back to this screen
     if (controller.shouldRestorePosition.value) {
-      debugPrint(
-        "Attempting to restore position to: ${controller.scrollOffset.value}",
-      );
-      controller.restoreScrollPosition();
+      debugPrint("Attempting to restore position to: ${controller.scrollOffset.value}");
+      controller.restoreScrollPosition(feedScrollController);
     }
+  }
+
+  @override
+  void dispose() {
+    feedScrollController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void dispose() {
+    feedScrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -193,7 +204,7 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen>
             },
             child: CustomScrollView(
               key: PageStorageKey<String>('communityFeed'),
-              controller: controller.scrollController,
+              controller: feedScrollController, // Use the dedicated ScrollController
               slivers: [
                 SliverAppBar(
                   pinned: false,

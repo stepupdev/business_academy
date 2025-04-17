@@ -98,89 +98,92 @@ class _PostDetailsState extends State<PostDetailsCard> {
     return GestureDetector(
       onTap: widget.onTap,
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 12.h),
+        padding: EdgeInsets.symmetric(vertical: 12.h),
         color: dark ? AppColors.dark : Colors.white,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             /// User Info
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CircleAvatar(backgroundImage: NetworkImage(widget.dp)),
-                10.wS,
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Text(widget.name, style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600)),
-                        5.wS,
-                        Container(
-                          margin: EdgeInsets.only(left: 5.w),
-                          padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
-                          decoration: BoxDecoration(
-                            color: AppColors.primaryColor.withAlpha(200),
-                            borderRadius: BorderRadius.circular(50),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10.w),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CircleAvatar(backgroundImage: NetworkImage(widget.dp)),
+                  10.wS,
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(widget.name, style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600)),
+                          5.wS,
+                          Container(
+                            margin: EdgeInsets.only(left: 5.w),
+                            padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
+                            decoration: BoxDecoration(
+                              color: AppColors.primaryColor.withAlpha(200),
+                              borderRadius: BorderRadius.circular(50),
+                            ),
+                            child: Text(
+                              widget.rank,
+                              style: GoogleFonts.plusJakartaSans(color: Colors.white, fontSize: 10.sp),
+                            ),
                           ),
-                          child: Text(
-                            widget.rank,
-                            style: GoogleFonts.plusJakartaSans(color: Colors.white, fontSize: 10.sp),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Text(widget.time, style: GoogleFonts.plusJakartaSans(color: Colors.grey)),
-                  ],
-                ),
-                10.wS,
-                Expanded(
-                  child: GestureDetector(
-                    onTap: widget.onTopicTap, // Add this line
-                    child: Text(
-                      widget.topic,
-                      style: GoogleFonts.plusJakartaSans(color: Colors.grey, fontSize: 12.sp),
-                      overflow: TextOverflow.ellipsis,
+                        ],
+                      ),
+                      Text(widget.time, style: GoogleFonts.plusJakartaSans(color: Colors.grey)),
+                    ],
+                  ),
+                  10.wS,
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: widget.onTopicTap, // Add this line
+                      child: Text(
+                        widget.topic,
+                        style: GoogleFonts.plusJakartaSans(color: Colors.grey, fontSize: 12.sp),
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
 
             /// Caption
             15.hS,
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  Get.find<CommunityController>().cleanHtml(widget.caption),
-                  style: GoogleFonts.plusJakartaSans(color: dark ? Colors.white : Colors.black),
-                  maxLines: _isExpanded ? null : 3,
-                  overflow: _isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
-                ),
-                if (_isOverflowing)
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _isExpanded = !_isExpanded;
-                      });
-                    },
-                    child: Text(
-                      _isExpanded ? 'Show less' : 'Show more',
-                      style: TextStyle(color: Colors.blue, fontSize: 14.sp, fontWeight: FontWeight.bold),
-                    ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    Get.find<CommunityController>().cleanHtml(widget.caption),
+                    style: GoogleFonts.plusJakartaSans(color: dark ? Colors.white : Colors.black),
+                    maxLines: _isExpanded ? null : 3,
+                    overflow: _isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
                   ),
-              ],
+                  if (_isOverflowing)
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _isExpanded = !_isExpanded;
+                        });
+                      },
+                      child: Text(
+                        _isExpanded ? 'Show less' : 'Show more',
+                        style: TextStyle(color: Colors.blue, fontSize: 14.sp, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                ],
+              ),
             ),
             10.hS,
 
             /// Post Image/Video Thumbnail with Play Icon
             if (widget.postImage!.isNotEmpty)
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10.r),
-                child: Image.network(widget.postImage!, width: 1.sw, height: 200.h, fit: BoxFit.cover),
-              ),
+              ClipRRect(child: Image.network(widget.postImage!, width: 1.sw, height: 200.h, fit: BoxFit.cover)),
             if (widget.videoUrl!.isNotEmpty &&
                 widget.postImage!.isEmpty &&
                 !_isPlaying) // Show play icon overlay if it's a video
@@ -193,10 +196,7 @@ class _PostDetailsState extends State<PostDetailsCard> {
                 },
                 child: Stack(
                   children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(10.r),
-                      child: Image.network(videoThumbnail!, width: 1.sw, height: 200.h, fit: BoxFit.cover),
-                    ),
+                    ClipRRect(child: Image.network(videoThumbnail!, width: 1.sw, height: 200.h, fit: BoxFit.cover)),
                     Positioned(
                       top: 70.h,
                       left: 150.w,

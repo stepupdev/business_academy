@@ -70,9 +70,9 @@ class CommunityController extends GetxController {
         filterPostsByTopic(value, topicId: topic?.id?.toString());
       }
     });
-    scrollController.addListener(() {
-      scrollOffset.value = scrollController.offset;
-    });
+    // scrollController.addListener(() {
+    //   scrollOffset.value = scrollController.offset;
+    // });
     super.onInit();
   }
 
@@ -83,7 +83,13 @@ class CommunityController extends GetxController {
     editPostController.dispose();
     videoLinkController.dispose();
     postFocusNode.dispose();
-    scrollController.dispose();
+    if (scrollController.hasClients) {
+      scrollController.dispose();
+    }
+    if (commentsScrollController.hasClients) {
+      commentsScrollController.dispose();
+    }
+
     super.onClose();
   }
 
@@ -100,23 +106,19 @@ class CommunityController extends GetxController {
     }
   }
 
-  void restoreScrollPosition() {
+  void restoreScrollPosition(ScrollController controller) {
     if (shouldRestorePosition.value && scrollOffset.value > 0) {
-      // Use a more reliable approach with WidgetsBinding
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        // Using a small delay to ensure the ListView is fully built
-        Future.delayed(const Duration(milliseconds: 200), () {
-          if (scrollController.hasClients) {
-            try {
-              scrollController.jumpTo(scrollOffset.value);
-              debugPrint("Restored scroll position to: ${scrollOffset.value}");
-            } catch (e) {
-              debugPrint("Error restoring scroll position: $e");
-            }
-          } else {
-            debugPrint("ScrollController has no clients");
+        if (controller.hasClients) {
+          try {
+            controller.jumpTo(scrollOffset.value);
+            debugPrint("Restored scroll position to: ${scrollOffset.value}");
+          } catch (e) {
+            debugPrint("Error restoring scroll position: $e");
           }
-        });
+        } else {
+          debugPrint("ScrollController has no clients");
+        }
       });
     }
   }

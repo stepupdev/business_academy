@@ -92,7 +92,7 @@ class _UserPostWidgetState extends State<UserPostWidget> {
   Widget build(BuildContext context) {
     final dark = Ui.isDarkMode(context);
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 12.h),
+      padding: EdgeInsets.symmetric(vertical: 12.h),
       color: dark ? AppColors.dark : Colors.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -105,79 +105,85 @@ class _UserPostWidgetState extends State<UserPostWidget> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    CircleAvatar(backgroundImage: NetworkImage(widget.dp)),
-                    10.wS,
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(widget.name, style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600)),
-                            5.wS,
-                            Container(
-                              margin: EdgeInsets.only(left: 5.w),
-                              padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
-                              decoration: BoxDecoration(
-                                color: AppColors.primaryColor.withAlpha(200),
-                                borderRadius: BorderRadius.circular(50),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10.w),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CircleAvatar(backgroundImage: NetworkImage(widget.dp)),
+                      10.wS,
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(widget.name, style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600)),
+                              5.wS,
+                              Container(
+                                margin: EdgeInsets.only(left: 5.w),
+                                padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
+                                decoration: BoxDecoration(
+                                  color: AppColors.primaryColor.withAlpha(200),
+                                  borderRadius: BorderRadius.circular(50),
+                                ),
+                                child: Text(
+                                  widget.rank,
+                                  style: GoogleFonts.plusJakartaSans(color: Colors.white, fontSize: 10.sp),
+                                ),
                               ),
-                              child: Text(
-                                widget.rank,
-                                style: GoogleFonts.plusJakartaSans(color: Colors.white, fontSize: 10.sp),
+                              10.wS,
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.2.w,
+                                child: Text(
+                                  widget.topic,
+                                  style: GoogleFonts.plusJakartaSans(color: Colors.grey, fontSize: 12.sp),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
-                            ),
-                            10.wS,
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.2.w,
-                              child: Text(
-                                widget.topic,
-                                style: GoogleFonts.plusJakartaSans(color: Colors.grey, fontSize: 12.sp),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Text(dateTime!, style: GoogleFonts.plusJakartaSans(color: Colors.grey)),
-                      ],
-                    ),
-                  ],
+                            ],
+                          ),
+                          Text(dateTime!, style: GoogleFonts.plusJakartaSans(color: Colors.grey)),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
                 15.hS,
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      Get.find<CommunityController>().cleanHtml(widget.caption),
-                      style: GoogleFonts.plusJakartaSans(color: dark ? Colors.white : Colors.black),
-                      maxLines: _isExpanded ? null : 3,
-                      overflow: _isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
-                    ),
-                    if (_isOverflowing)
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            _isExpanded = !_isExpanded;
-                          });
-                        },
-                        child: Text(
-                          _isExpanded ? 'Show less' : 'Show more',
-                          style: TextStyle(color: Colors.blue, fontSize: 14.sp, fontWeight: FontWeight.bold),
-                        ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10.w),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        Get.find<CommunityController>().cleanHtml(widget.caption),
+                        style: GoogleFonts.plusJakartaSans(color: dark ? Colors.white : Colors.black),
+                        maxLines: _isExpanded ? null : 3,
+                        overflow: _isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
                       ),
-                  ],
+                      if (_isOverflowing)
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _isExpanded = !_isExpanded;
+                            });
+                          },
+                          child: Text(
+                            _isExpanded ? 'Show less' : 'Show more',
+                            style: TextStyle(color: Colors.blue, fontSize: 14.sp, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
                 10.hS,
 
                 /// Post Image/Video Thumbnail with Play Icon
                 if (widget.postImage.isNotEmpty)
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(10.r),
+                    // borderRadius: BorderRadius.circular(10.r),
                     child: CachedNetworkImage(
                       imageUrl: widget.postImage,
                       width: 1.sw,
@@ -191,7 +197,6 @@ class _UserPostWidgetState extends State<UserPostWidget> {
                   Stack(
                     children: [
                       ClipRRect(
-                        borderRadius: BorderRadius.circular(10.r),
                         child: CachedNetworkImage(
                           imageUrl: videoThumbnail ?? "",
                           width: 1.sw,
