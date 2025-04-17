@@ -45,7 +45,7 @@ class NotificationController extends GetxController {
   }
 
   markReadNotification(String id, BuildContext context) async {
-    isLoading(true);
+    // isLoading(true);
     try {
       var response = await NotificationRep().markNotification(id, context);
       debugPrint("Notification: $response");
@@ -53,7 +53,7 @@ class NotificationController extends GetxController {
     } catch (e) {
       debugPrint("Error marking notification as read: $e");
     } finally {
-      isLoading(false);
+      // isLoading(false);
     }
   }
 

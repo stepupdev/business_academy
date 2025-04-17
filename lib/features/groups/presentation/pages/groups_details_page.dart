@@ -215,8 +215,6 @@ class GroupDetailsPage extends GetView<GroupsController> {
                               context.push(
                                 '/post-details/${posts.id}',
                                 extra: {
-                                  'isGroupPost': true, // Ensure this is set to true
-                                  'groupId': controller.currentGroupId.value,
                                   'postId': posts.id.toString(),
                                   'post': posts,
                                 },

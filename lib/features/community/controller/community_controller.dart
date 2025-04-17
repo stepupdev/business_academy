@@ -58,10 +58,10 @@ class CommunityController extends GetxController {
   final ScrollController commentsScrollController = ScrollController();
 
   @override
-  void onInit() {
+  void onInit() async {
     Get.find<AuthService>().getCurrentUser();
-    getCommunityPosts();
-    getTopic();
+    await getCommunityPosts();
+    await getTopic();
 
     Get.find<NotificationController>().checkNotification();
     selectedTopic.listen((value) {
@@ -193,7 +193,7 @@ class CommunityController extends GetxController {
     selectedCommunityId.value = communityId;
   }
 
-  getCommunityPosts() async {
+  Future<void> getCommunityPosts() async {
     try {
       isLoading(true);
       final response = await CommunityRep().getCommunityPosts();
@@ -209,7 +209,7 @@ class CommunityController extends GetxController {
     }
   }
 
-  loadNextPage() async {
+  Future<void> loadNextPage() async {
     if (isPaginating.value || nextPageUrl.value.isEmpty) return;
     try {
       isPaginating(true);
@@ -306,7 +306,7 @@ class CommunityController extends GetxController {
     getComments(postId);
   }
 
-  deleteComments(String id, String postId, BuildContext context) async {
+  Future<void> deleteComments(String id, String postId, BuildContext context) async {
     try {
       isLoading(true);
       final response = await CommunityRep().deleteComment(id, context);
@@ -486,7 +486,7 @@ class CommunityController extends GetxController {
     }
   }
 
-  getComments(String id) async {
+  Future<void> getComments(String id) async {
     try {
       commentLoading(true);
       final response = await CommunityRep().getCommentsByPostId(id: id);
@@ -653,9 +653,8 @@ class CommunityController extends GetxController {
     }
   }
 
-  void loadEditPostData(String postId) {
-    final post = communityPostsById.value.result;
-    if (post != null && post.id.toString() == postId) {
+  void loadEditPostData(Posts post) {
+    if (post.id != null) {
       // Set content, image, and video
       editPostController.text = post.content ?? '';
       editSelectedImage.value = post.image ?? '';

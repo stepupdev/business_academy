@@ -92,7 +92,7 @@ class _MyPostsPageState extends State<MyPostsPage> {
                   Get.find<CommunityController>().getComments(post.id.toString());
                   Get.find<CommunityController>().selectedPostId.value = post.id ?? 0;
 
-                  context.push('/post-details/${post.id}');
+                  context.push('/post-details/${post.id}', extra: {'post' : post});
                 },
                 name: post.user?.name ?? "",
                 rank: post.user?.rank?.name ?? "",

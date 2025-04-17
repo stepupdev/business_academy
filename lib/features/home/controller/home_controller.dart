@@ -52,11 +52,11 @@ class HomeController extends GetxController {
     currentIndex.value = index;
 
     // Update resources based on selected tab
-    if (index == 3) {
-      final menuController = Get.find<UserMenuController>();
-      menuController.fetchCommunities();
-      menuController.getUser();
-    }
+    // if (index == 3) {
+    //   final menuController = Get.find<UserMenuController>();
+    //   menuController.fetchCommunities();
+    //   menuController.getUser();
+    // }
 
     // Navigate using GoRouter if context is provided
     if (context != null) {

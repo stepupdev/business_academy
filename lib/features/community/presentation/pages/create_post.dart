@@ -7,7 +7,6 @@ import 'package:business_application/core/utils/app_strings.dart';
 import 'package:business_application/core/utils/ui_support.dart';
 import 'package:business_application/data/posts/topic_models.dart';
 import 'package:business_application/features/community/controller/community_controller.dart';
-import 'package:business_application/features/community/data/topics_model.dart';
 import 'package:business_application/features/groups/controller/groups_controller.dart';
 import 'package:business_application/features/groups/data/groups_topic_response_model.dart';
 import 'package:flutter/material.dart';

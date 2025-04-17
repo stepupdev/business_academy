@@ -27,6 +27,7 @@ class SplashPageState extends State<SplashPage> {
 
     bool isLoggedIn = await AuthUtlity.checkUserLogin();
     final isConnect = await Get.find<ConnectivityService>().checkNow();
+    final hasSeenOnboarding = await AuthUtlity.checkSeenOnboarding();
     if (!isConnect) {
       debugPrint("No internet connection");
       context.go(AppRoutes.noInternet);
@@ -38,9 +39,12 @@ class SplashPageState extends State<SplashPage> {
       debugPrint("✅ Redirecting to Home Page...");
       context.go(AppRoutes.communityFeed);
       await Get.find<AuthService>().getCurrentUser();
-    } else {
+    } else if (hasSeenOnboarding) {
       debugPrint("❌ Redirecting to Sign-In Page...");
       context.go(AppRoutes.signIn);
+    } else {
+      debugPrint("❌ Redirecting to Onboarding Page...");
+      context.go(AppRoutes.onboarding);
     }
   }
 

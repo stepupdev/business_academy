@@ -2,12 +2,13 @@
 import 'dart:io';
 
 import 'package:business_application/core/config/app_colors.dart';
+import 'package:business_application/core/config/app_routes.dart';
 import 'package:business_application/core/config/app_size.dart';
 import 'package:business_application/core/utils/app_strings.dart';
 import 'package:business_application/core/utils/ui_support.dart';
+import 'package:business_application/data/posts/posts_models.dart';
 import 'package:business_application/data/posts/topic_models.dart';
 import 'package:business_application/features/community/controller/community_controller.dart';
-import 'package:business_application/features/community/data/topics_model.dart';
 import 'package:business_application/features/groups/controller/groups_controller.dart';
 import 'package:business_application/features/groups/data/groups_topic_response_model.dart';
 import 'package:flutter/material.dart';
@@ -17,11 +18,9 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
 class EditPostPage extends StatefulWidget {
-  final bool isGroupTopics;
-  final String postId;
-  final String? groupId;
+  final Posts post;
 
-  const EditPostPage({super.key, required this.isGroupTopics, required this.postId, this.groupId});
+  const EditPostPage({super.key, required this.post});
 
   @override
   State<EditPostPage> createState() => _EditPostPageState();
@@ -39,19 +38,17 @@ class _EditPostPageState extends State<EditPostPage> {
     Future.microtask(() async {
       if (isDebug) {
         debugPrint("\n\n=========== EDIT POST PAGE DIAGNOSTICS ===========");
-        debugPrint("isGroupTopics = ${widget.isGroupTopics}");
-        debugPrint("postId = ${widget.postId}");
-        debugPrint("groupId = ${widget.groupId}");
+        debugPrint("EDIT POST PAGE: Initializing EditPostPage with post ID ${widget.post.id}");
       }
 
       // Clear the edit post data
       controller.clearEditPostData();
 
       // Load topics first
-      if (widget.isGroupTopics && widget.groupId != null) {
-        if (isDebug) debugPrint("EDIT POST PAGE: Loading group topics for group ID ${widget.groupId}");
+      if (widget.post.groupId != null) {
+        if (isDebug) debugPrint("EDIT POST PAGE: Loading group topics for group ID ${widget.post.groupId}");
         final groupsController = Get.find<GroupsController>();
-        await groupsController.fetchGroupsTopic(widget.groupId!);
+        await groupsController.fetchGroupsTopic(widget.post.groupId.toString());
 
         if (isDebug) {
           final topics = groupsController.groupsTopicResponse.value.result?.data ?? [];
@@ -70,9 +67,24 @@ class _EditPostPageState extends State<EditPostPage> {
         }
       }
 
-      // Load post data
-      if (isDebug) debugPrint("EDIT POST PAGE: Loading post with ID ${widget.postId}");
-      controller.loadEditPostData(widget.postId);
+      // Populate the edit fields with the post data
+      controller.editPostController.text = widget.post.content ?? '';
+      controller.editVideoController.text = widget.post.videoUrl ?? '';
+      controller.editSelectedImage.value = widget.post.image ?? '';
+
+      // Set the selected topic
+      if (widget.post.topic?.name != null) {
+        controller.editSelectedTopic.value = widget.post.topic!.name!;
+        controller.editSelectedTopicId.value = widget.post.topic!.id?.toString() ?? '';
+      }
+
+      if (isDebug) {
+        debugPrint("EDIT POST PAGE: Loaded post data:");
+        debugPrint("  Content: ${controller.editPostController.text}");
+        debugPrint("  Video URL: ${controller.editVideoController.text}");
+        debugPrint("  Image: ${controller.editSelectedImage.value}");
+        debugPrint("  Topic: ${controller.editSelectedTopic.value}");
+      }
     });
   }
 
@@ -106,13 +118,13 @@ class _EditPostPageState extends State<EditPostPage> {
                 }
 
                 controller.updatePost(
-                  postId: widget.postId,
+                  postId: widget.post.id.toString(),
                   content: controller.editPostController.text,
                   topicId: controller.editSelectedTopicId.value,
                   videoUrl: controller.editVideoController.text,
-                  groupId: widget.isGroupTopics ? widget.groupId : null,
+                  groupId: widget.post.groupId?.toString(),
                 );
-                context.pop();
+                context.go(AppRoutes.communityFeed);
               },
               style: FilledButton.styleFrom(
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -257,7 +269,7 @@ class _EditPostPageState extends State<EditPostPage> {
                     20.hS,
                     Obx(() {
                       final topicsToShow =
-                          widget.isGroupTopics
+                          widget.post.groupId != null
                               ? Get.find<GroupsController>().groupsTopicResponse.value.result?.data
                               : controller.topics.value.result?.data;
 
@@ -287,7 +299,7 @@ class _EditPostPageState extends State<EditPostPage> {
                           if (val == null) return;
 
                           controller.editSelectedTopic.value = val;
-                          if (widget.isGroupTopics) {
+                          if (widget.post.groupId != null) {
                             final editSelectedTopic = Get.find<GroupsController>()
                                 .groupsTopicResponse
                                 .value
@@ -305,7 +317,7 @@ class _EditPostPageState extends State<EditPostPage> {
                         },
                         dropdownMenuEntries:
                             topicsToShow?.map((topic) {
-                              if (widget.isGroupTopics) {
+                              if (widget.post.groupId != null) {
                                 final groupTopic = topic as GroupTopics;
                                 return DropdownMenuEntry<String>(
                                   value: groupTopic.name ?? '',

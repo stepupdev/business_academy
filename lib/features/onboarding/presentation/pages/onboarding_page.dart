@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:business_application/core/config/app_colors.dart';
 import 'package:business_application/core/config/app_routes.dart';
+import 'package:business_application/core/utils/ui_support.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
@@ -20,8 +21,9 @@ class OnboardingPageState extends State<OnboardingPage> {
 
   @override
   Widget build(BuildContext context) {
+    final dark = Ui.isDarkMode(context);
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: dark ? AppColors.dark : Colors.white,
       body: Stack(
         children: [
           PageView(
@@ -114,6 +116,7 @@ class OnboardingContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final dark = Ui.isDarkMode(context);
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(50),
@@ -123,11 +126,19 @@ class OnboardingContent extends StatelessWidget {
             SvgPicture.asset(assetName, height: 300),
             Text(
               content,
-              style: GoogleFonts.plusJakartaSans(fontSize: 24, fontWeight: FontWeight.w700),
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 24,
+                fontWeight: FontWeight.w700,
+                color: dark ? Colors.white : Colors.black,
+              ),
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 30),
-            Text(subContent, style: Theme.of(context).textTheme.bodyLarge, textAlign: TextAlign.center),
+            Text(
+              subContent,
+              style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: dark ? Colors.white : Colors.black),
+              textAlign: TextAlign.center,
+            ),
           ],
         ),
       ),

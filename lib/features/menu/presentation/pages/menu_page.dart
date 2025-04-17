@@ -149,7 +149,7 @@ class MenuPage extends GetView<UserMenuController> {
                                                   controller.communities.refresh();
                                                   controller.user.refresh();
                                                 });
-                                                GoRouter.of(context).pop();
+                                                context.go(AppRoutes.communityFeed);
                                               },
                                             );
                                           },

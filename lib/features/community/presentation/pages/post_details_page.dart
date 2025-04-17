@@ -23,8 +23,8 @@ class PostDetailsPage extends StatefulWidget {
   final String postId;
   final Posts? post;
   final bool isVideo;
-  late bool isGroupPost;
-  late String? groupId;
+  // late bool isGroupPost;
+  // late String? groupId;
   final bool fromSearchPage;
 
   PostDetailsPage({
@@ -33,13 +33,11 @@ class PostDetailsPage extends StatefulWidget {
     this.post,
     this.isVideo = true,
     this.fromSearchPage = false,
-    required this.isGroupPost,
-    this.groupId,
+    // required this.isGroupPost,
+    // this.groupId,
   }) {
     // Add debug print to see the values being passed
-    debugPrint(
-      "POST DETAILS PAGE CONSTRUCTOR: isGroupPost=$isGroupPost, groupId=$groupId, postId=$postId, fromSearchPage=$fromSearchPage",
-    );
+    debugPrint("POST DETAILS PAGE CONSTRUCTOR:  postId=$postId, fromSearchPage=$fromSearchPage");
   }
   @override
   PostDetailsPageState createState() => PostDetailsPageState();
@@ -68,8 +66,7 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
         }
       }
     });
-    debugPrint("Widget group id: ${widget.groupId}");
-    debugPrint("Widget isGroupPost: ${widget.isGroupPost}");
+    debugPrint("Widget group id: ${widget.post?.groupId}");
     communityController = Get.find<CommunityController>();
     communityController.scrollController.addListener(() {
       if (communityController.scrollController.hasClients) {
@@ -79,43 +76,42 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
         }
       }
     });
-    if (widget.post != null) {
-      // find the topic name and match it with groups fetches topic name, if it's matches, then set the isGroupPost to true
-      final groupController = Get.find<GroupsController>();
-      if (groupController.groupsTopicResponse.value.result?.data?.isNotEmpty ?? false) {
-        for (var topic in groupController.groupsTopicResponse.value.result!.data!) {
-          if (topic.name == widget.post?.topic?.name) {
-            widget.isGroupPost = true;
+    // if (widget.post != null) {
+    //   // find the topic name and match it with groups fetches topic name, if it's matches, then set the isGroupPost to true
+    //   final groupController = Get.find<GroupsController>();
+    //   if (groupController.groupsTopicResponse.value.result?.data?.isNotEmpty ?? false) {
+    //     for (var topic in groupController.groupsTopicResponse.value.result!.data!) {
+    //       if (topic.name == widget.post?.topic?.name) {
+    //         widget.isGroupPost = true;
 
-            break;
-          }
-        }
-      }
-    }
+    //         break;
+    //       }
+    //     }
+    //   }
+    // }
   }
 
   @override
-  void didChangeDependencies() {
+  void didChangeDependencies() async {
     super.didChangeDependencies();
     if (!_isInitialized) {
-      debugPrint("POST DETAILS: Initializing with isGroupPost=${widget.isGroupPost}, groupId=${widget.groupId}");
       debugPrint("From search Page: ${widget.fromSearchPage}");
 
       final controller = Get.find<CommunityController>();
       controller.selectedPostId.value = int.tryParse(widget.postId) ?? 0;
       // controller.getCommunityPostsById(widget.postId);
       if (widget.post?.commentsCount != null) {
-        controller.getComments(widget.postId);
+        await controller.getComments(widget.postId);
       }
 
       // Initialize group controller if this is a group post
-      if (widget.isGroupPost && widget.groupId != null) {
+      if (widget.post?.groupId != null) {
         debugPrint("POST DETAILS: This is a group post! Loading group details...");
         final groupController = Get.find<GroupsController>();
         groupController.selectedPostId.value = int.tryParse(widget.postId) ?? 0;
-        groupController.currentGroupId.value = widget.groupId ?? '';
+        groupController.currentGroupId.value = widget.post?.groupId.toString() ?? "";
         // Preload group topics
-        groupController.fetchGroupsTopic(widget.groupId!);
+        groupController.fetchGroupsTopic(widget.post?.groupId.toString() ?? "");
       }
 
       _isInitialized = true;
@@ -140,68 +136,58 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
     return Scaffold(
       appBar: AppBar(
         backgroundColor: dark ? AppColors.dark : AppColors.light,
-        title: Text(widget.isGroupPost ? 'Group Post Details' : 'Post Details'),
+        title: Text(widget.post?.groupId != null ? 'Group Post Details' : 'Post Details'),
         actions: [
-          Obx(() {
-            final post = controller.communityPostsById.value.result;
-            if (post?.user?.id == currentUserId) {
-              return PopupMenuButton<String>(
-                onSelected: (value) {
-                  if (value == 'edit') {
-                    // Debug information to verify values
-                    final isGroupPost = widget.isGroupPost;
-                    final groupId = widget.groupId;
+          if (widget.post?.user?.id == currentUserId)
+            PopupMenuButton<String>(
+              onSelected: (value) {
+                if (value == 'edit') {
+                  // Debug information to verify values
+                  final isGroupPost = true;
+                  final groupId = widget.post?.groupId.toString();
 
-                    debugPrint("POST DETAILS: Navigating to edit. isGroupPost=$isGroupPost, groupId=$groupId");
+                  debugPrint("POST DETAILS: Navigating to edit. isGroupPost=$isGroupPost, groupId=$groupId");
 
-                    // Force fetch group topics if needed
-                    if (isGroupPost && groupId != null) {
-                      try {
-                        debugPrint("POST DETAILS: Pre-loading group topics for groupId=$groupId");
-                        final groupsController = Get.find<GroupsController>();
-                        groupsController.fetchGroupsTopic(groupId);
-                      } catch (e) {
-                        debugPrint("Error pre-loading group topics: $e");
-                      }
+                  // Force fetch group topics if needed
+                  if (isGroupPost && groupId != null) {
+                    try {
+                      debugPrint("POST DETAILS: Pre-loading group topics for groupId=$groupId");
+                      final groupsController = Get.find<GroupsController>();
+                      groupsController.fetchGroupsTopic(groupId);
+                    } catch (e) {
+                      debugPrint("Error pre-loading group topics: $e");
                     }
-
-                    // Navigate with explicit parameters
-                    context.push(
-                      '/edit-post',
-                      extra: {'isGroupTopics': isGroupPost, 'postId': widget.postId, 'groupId': groupId},
-                    );
-                  } else if (value == 'delete') {
-                    showDialog(
-                      context: context,
-                      builder:
-                          (context) => AlertDialog(
-                            title: Text('Delete Post'),
-                            content: Text('Are you sure you want to delete this post?'),
-                            actions: [
-                              TextButton(onPressed: () => Navigator.of(context).pop(), child: Text('Cancel')),
-                              TextButton(
-                                onPressed: () {
-                                  controller.deletePost(widget.postId, context).then((_) {
-                                    controller.getCommunityPosts();
-                                    Navigator.of(context).pop(); // Navigate back after deletion
-                                  });
-                                },
-                                child: Text('Delete'),
-                              ),
-                            ],
-                          ),
-                    );
                   }
-                },
-                itemBuilder:
-                    (context) => [
-                      PopupMenuItem(value: 'edit', child: Text('Edit Post')),
-                      PopupMenuItem(value: 'delete', child: Text('Delete Post')),
-                    ],
-              );
-            }
-            return SizedBox.shrink();
-          }),
+
+                  // Navigate with explicit parameters
+                  context.push('/edit-post', extra: {'post': widget.post});
+                } else if (value == 'delete') {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Text('Delete Post'),
+                      content: Text('Are you sure you want to delete this post?'),
+                      actions: [
+                        TextButton(onPressed: () => Navigator.of(context).pop(), child: Text('Cancel')),
+                        TextButton(
+                          onPressed: () {
+                            controller.deletePost(widget.postId, context).then((_) {
+                              controller.getCommunityPosts();
+                              Navigator.of(context).pop(); // Navigate back after deletion
+                            });
+                          },
+                          child: Text('Delete'),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+              },
+              itemBuilder: (context) => [
+                PopupMenuItem(value: 'edit', child: Text('Edit Post')),
+                PopupMenuItem(value: 'delete', child: Text('Delete Post')),
+              ],
+            )
         ],
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: dark ? Colors.white : Colors.black),
@@ -270,17 +256,17 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
                         },
                         onTopicTap: () {
                           if (widget.fromSearchPage) {
-                            if (widget.isGroupPost) {
+                            if (widget.post?.groupId != null) {
                               // Navigate to the group details page
                               final groupController = Get.find<GroupsController>();
                               groupController.isLoading(true);
-                              groupController.currentGroupId.value = widget.groupId ?? '';
+                              groupController.currentGroupId.value = widget.post?.groupId.toString() ?? '';
                               groupController.selectedTopic.value = post?.topic?.name ?? "";
                               // groupController.currentGroupId.value = widget.groupId ?? '';
-                              debugPrint("Here is the group id: ${widget.groupId}");
+                              debugPrint("Here is the group id: ${widget.post?.groupId}");
 
                               var topicId = post?.topic?.id?.toString();
-                              groupController.fetchGroupsTopic(widget.groupId!);
+                              groupController.fetchGroupsTopic(widget.post?.groupId.toString() ?? '');
                               // groupController.fetchGroupPosts(widget.groupId!);
                               // groupController.filterPostsByTopic(post?.topic?.name ?? "", topicId: topicId);
 
@@ -292,11 +278,11 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
                               controller.selectedTopicId.value = post?.topic?.id?.toString() ?? "";
                               context.go(AppRoutes.communityFeed);
                             }
-                          } else if (widget.isGroupPost && widget.groupId != null) {
+                          } else if (widget.post?.groupId != null) {
                             // Navigate to the group details page with the selected topic
                             final groupController = Get.find<GroupsController>();
                             groupController.selectedTopic.value = post?.topic?.name ?? "";
-                            groupController.currentGroupId.value = widget.groupId!;
+                            groupController.currentGroupId.value = widget.post?.groupId.toString() ?? '';
                             groupController.filterPostsByTopic(
                               post?.topic?.name ?? "",
                               topicId: post?.topic?.id?.toString(),

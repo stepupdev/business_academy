@@ -2,22 +2,21 @@ import 'package:business_application/core/config/app_routes.dart';
 import 'package:business_application/data/posts/posts_models.dart';
 import 'package:business_application/features/announcements/presentation/page/announcements_page.dart';
 import 'package:business_application/features/auth/presentation/pages/signin_page.dart';
-import 'package:business_application/features/community/data/community_posts_model.dart';
 import 'package:business_application/features/community/presentation/pages/community_feed_page.dart';
 import 'package:business_application/features/community/presentation/pages/create_post.dart';
-import 'package:business_application/features/community/presentation/pages/post_details_page.dart';
 import 'package:business_application/features/community/presentation/pages/edit_post.dart';
+import 'package:business_application/features/community/presentation/pages/post_details_page.dart';
 import 'package:business_application/features/groups/presentation/pages/groups_details_page.dart';
 import 'package:business_application/features/groups/presentation/pages/groups_page.dart';
 import 'package:business_application/features/home/presentation/pages/home_page.dart';
 import 'package:business_application/features/menu/presentation/pages/menu_page.dart';
 import 'package:business_application/features/my_posts/presentation/page/my_posts_page.dart';
+import 'package:business_application/features/no_internet/presentation/pages/no_internet_page.dart';
 import 'package:business_application/features/notification/presentation/pages/notification_page.dart';
 import 'package:business_application/features/onboarding/presentation/pages/onboarding_page.dart';
 import 'package:business_application/features/onboarding/presentation/pages/splash_page.dart';
 import 'package:business_application/features/save_posts/presentation/pages/save_posts.dart';
 import 'package:business_application/features/search/presentation/page/search_page.dart';
-import 'package:business_application/features/no_internet/presentation/pages/no_internet_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -94,20 +93,18 @@ class AppRouter {
         path: AppRoutes.postDetails,
         pageBuilder: (context, state) {
           final Map<String, dynamic> extra = state.extra as Map<String, dynamic>? ?? {};
-          final bool isGroupPost = extra['isGroupPost'] as bool? ?? false;
+          // final bool isGroupPost = extra['isGroupPost'] as bool? ?? false;
           final String? postId = state.params['postId'];
-          final String? groupId = extra['groupId'] as String?;
+          // final String? groupId = extra['groupId'] as String?;
           final bool fromSearchPage = extra['fromSearchPage'] as bool? ?? false;
           var post = extra['post'] as Posts?;
-          debugPrint(
-            "ROUTER: Creating PostDetailsPage with postId: $postId, isGroupPost: $isGroupPost, groupId: $groupId",
-          );
+          debugPrint("ROUTER: Creating PostDetailsPage with postId: $postId ");
           return CustomTransitionPage<void>(
             key: state.pageKey,
             child: PostDetailsPage(
               postId: postId!,
-              isGroupPost: isGroupPost,
-              groupId: groupId,
+              // isGroupPost: isGroupPost,
+              // groupId: groupId,
               post: post,
               fromSearchPage: fromSearchPage,
             ),
@@ -158,13 +155,8 @@ class AppRouter {
         path: AppRoutes.editPost,
         pageBuilder: (context, state) {
           final extra = state.extra as Map<String, dynamic>? ?? {};
-          final bool isGroup = extra['isGroupTopics'] as bool? ?? false;
-          final String postId = extra['postId'] as String;
-          final String? groupId = extra['groupId'] as String?;
-          return MaterialPage(
-            key: state.pageKey,
-            child: EditPostPage(isGroupTopics: isGroup, postId: postId, groupId: groupId),
-          );
+          final post = extra['post'] as Posts?;
+          return MaterialPage(key: state.pageKey, child: EditPostPage(post: post!));
         },
         parentNavigatorKey: _rootNavigatorKey,
       ),

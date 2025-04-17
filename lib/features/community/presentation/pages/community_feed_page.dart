@@ -70,11 +70,6 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen>
     super.dispose();
   }
 
-  @override
-  void dispose() {
-    feedScrollController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {

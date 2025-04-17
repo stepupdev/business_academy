@@ -82,4 +82,10 @@ class AuthUtlity {
     debugPrint("❌ User is NOT logged in.");
     return false;
   }
+  static Future<bool> checkSeenOnboarding() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool hasSeenOnboarding = prefs.getBool('hasSeenOnboarding') ?? false;
+    debugPrint("🔍 Checking Onboarding State: $hasSeenOnboarding");
+    return hasSeenOnboarding;
+  }
 }

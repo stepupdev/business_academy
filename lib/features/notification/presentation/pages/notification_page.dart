@@ -1,4 +1,5 @@
 import 'package:business_application/core/config/app_size.dart';
+import 'package:business_application/core/utils/helper_utils.dart';
 import 'package:business_application/features/community/controller/community_controller.dart';
 import 'package:business_application/features/notification/controller/notification_controller.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +9,6 @@ import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:heroicons/heroicons.dart';
-import 'package:timeago/timeago.dart' as timeago;
 
 class NotificationPage extends GetView<NotificationController> {
   const NotificationPage({super.key});
@@ -18,11 +18,6 @@ class NotificationPage extends GetView<NotificationController> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       controller.fetchNotifications();
     });
-
-    String formatTime(DateTime time) {
-      final dateTime = DateTime.now().subtract(DateTime.now().difference(time));
-      return timeago.format(dateTime, locale: 'en');
-    }
 
     return Scaffold(
       appBar: AppBar(
@@ -86,15 +81,42 @@ class NotificationPage extends GetView<NotificationController> {
               itemBuilder: (context, index) {
                 final notification = controller.notifications.value.result?.data?[index];
                 return InkWell(
-                  onTap: ()async {
-                    controller.markReadNotification(notification?.id.toString() ?? "", context);
-                    await Get.find<CommunityController>().getCommunityPostsById(notification?.notifiableId.toString() ?? "");
-                   await Get.find<CommunityController>().getComments(notification?.notifiableId.toString() ?? "");
-                    Get.find<CommunityController>().selectedPostId.value = notification?.notifiableId ?? 0;
-                    GoRouter.of(context).push('/post-details/${notification?.notifiableId}');
-                    await controller.checkNotification();
-                    // context.push(AppRoutes.postDetails, extra: {'postId': notification?.notifiableId});
+                  onTap: () async {
+                    // Show a loading dialog while fetching the post
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (context) => Center(child: CircularProgressIndicator()),
+                    );
+
+                    try {
+                      if (notification?.isRead == false) {
+                        controller.markReadNotification(notification?.id.toString() ?? "", context);
+                      }
+                      // Fetch the post by ID
+                      final postId = notification?.notifiableId.toString() ?? "";
+                      await Get.find<CommunityController>().getCommunityPostsById(postId);
+
+                      // Get the fetched post data
+                      final post = Get.find<CommunityController>().communityPostsById.value.result;
+
+                      // Close the loading dialog
+                      Navigator.of(context).pop();
+
+                      // Navigate to the PostDetailsPage with the post data
+                      if (post != null) {
+                        GoRouter.of(context).push('/post-details/$postId', extra: {'post': post});
+                      } else {
+                        // Show an error if the post is not found
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Post not found')));
+                      }
+                    } catch (e) {
+                      // Close the loading dialog and show an error message
+                      Navigator.of(context).pop();
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to load post')));
+                    }
                   },
+
                   child: Padding(
                     padding: EdgeInsets.all(16.0),
                     child: Row(
@@ -123,7 +145,7 @@ class NotificationPage extends GetView<NotificationController> {
                                     ),
                                   ),
                                   Text(
-                                    formatTime(notification?.createdAt ?? DateTime.now()),
+                                    HelperUtils.formatTime(notification?.createdAt ?? DateTime.now()),
                                     style: TextStyle(fontSize: 12.0, color: Colors.grey),
                                   ),
                                 ],

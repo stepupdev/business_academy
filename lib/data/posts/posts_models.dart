@@ -6,6 +6,7 @@ class Posts {
     String? content;
     String? image;
     String? videoUrl;
+    int? groupId;
     int? commentsCount;
     User? user;
     Topic? topic;
@@ -19,6 +20,7 @@ class Posts {
         this.content,
         this.image,
         this.videoUrl,
+        this.groupId,
         this.commentsCount,
         this.user,
         this.topic,
@@ -33,6 +35,7 @@ class Posts {
         content: json["content"],
         image: json["image"],
         videoUrl: json["video_url"],
+        groupId: json["group_id"],
         commentsCount: json["comments_count"],
         user: json["user"] == null ? null : User.fromJson(json["user"]),
         topic: json["topic"] == null ? null : Topic.fromJson(json["topic"]),
@@ -47,6 +50,7 @@ class Posts {
         "content": content,
         "image": image,
         "video_url": videoUrl,
+        "group_id": groupId,
         "comments_count": commentsCount,
         "user": user?.toJson(),
         "topic": topic?.toJson(),
