@@ -21,9 +21,7 @@ class GroupDetailsPage extends GetView<GroupsController> {
 
     // Check if we need to load data (if coming directly to this page)
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (controller.groupPosts.isEmpty && controller.currentGroupId.value.isNotEmpty) {
-        _loadData();
-      }
+      _loadData();
     });
 
     // Add scroll listener for pagination
@@ -35,7 +33,9 @@ class GroupDetailsPage extends GetView<GroupsController> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(controller.groupsDetails.value.result?.name ?? ""),
+        title: Obx(() {
+          return Text(controller.groupsDetails.value.result?.name ?? "");
+        }),
         actions: [
           // search button
           IconButton(
@@ -48,23 +48,24 @@ class GroupDetailsPage extends GetView<GroupsController> {
       ),
       body: RefreshIndicator(
         onRefresh: () => _loadData(),
-        child: Obx(() {
-          if (controller.isLoading.value) {
-            return Center(child: CircularProgressIndicator());
-          }
-          if (controller.groupPosts.isEmpty) {
-            return Center(
-              child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 20.h),
-                child: Text(
-                  AppStrings.noGroupPostsAvailable,
-                  style: TextStyle(color: Colors.grey, fontSize: 14.sp, fontWeight: FontWeight.w500),
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Obx(() {
+            if (controller.isLoading.value) {
+              return SizedBox(height: 1.sh - kToolbarHeight.h, child: Center(child: CircularProgressIndicator()));
+            }
+            if (controller.groupPosts.isEmpty) {
+              return Center(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 20.h),
+                  child: Text(
+                    AppStrings.noGroupPostsAvailable,
+                    style: TextStyle(color: Colors.grey, fontSize: 14.sp, fontWeight: FontWeight.w500),
+                  ),
                 ),
-              ),
-            );
-          }
-          return SingleChildScrollView(
-            child: Column(
+              );
+            }
+            return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Image.network(
@@ -246,9 +247,9 @@ class GroupDetailsPage extends GetView<GroupsController> {
                   ],
                 ),
               ],
-            ),
-          );
-        }),
+            );
+          }),
+        ),
       ),
     );
   }

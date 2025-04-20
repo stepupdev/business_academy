@@ -228,22 +228,24 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen> with Automatic
                 if (controller.filteredPosts.isEmpty ||
                     controller.communityPosts.value.result?.data == null ||
                     controller.communityPosts.value.result!.data!.isEmpty)
-                  SliverFillRemaining(
-                    hasScrollBody: false,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.post_add, size: 80.sp, color: Colors.grey.shade400),
-                        10.hS,
-                        Text(
-                          AppStrings.noPostsFound,
-                          style: GoogleFonts.plusJakartaSans(
-                            fontSize: 20.sp,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.grey.shade600,
+                  SliverToBoxAdapter(
+                    child: SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.8, // enough height to make it scrollable
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.post_add, size: 80.sp, color: Colors.grey.shade400),
+                          10.hS,
+                          Text(
+                            AppStrings.noPostsFound,
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 20.sp,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey.shade600,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   )
                 else ...[
