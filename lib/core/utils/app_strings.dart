@@ -1,6 +1,6 @@
 class AppStrings {
   // General
-  static const String appName = "Business Academy";
+  static const String appName = "Business Workshop";
 
   // search
   static const String search = "Search";

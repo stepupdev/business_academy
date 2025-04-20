@@ -4,7 +4,7 @@
         android:enableOnBackInvokedCallback="true"
         android:label="Business Workshop"
         android:name="${applicationName}"
-        android:icon="@mipmap/launcher_icon">
+        android:icon="@mipmap/ic_launcher">
          <meta-data
             android:name="com.google.android.gms.auth.api.signin"
             android:value="@string/default_web_client_id"/>
