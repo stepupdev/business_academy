@@ -1,6 +1,7 @@
 import 'package:business_application/core/config/app_colors.dart';
 import 'package:business_application/core/services/connectivity_service.dart';
 import 'package:business_application/core/utils/ui_support.dart';
+import 'package:business_application/features/community/controller/community_controller.dart';
 import 'package:business_application/features/home/controller/home_controller.dart';
 import 'package:business_application/features/no_internet/presentation/pages/no_internet_page.dart';
 import 'package:flutter/material.dart';
@@ -57,7 +58,19 @@ class _HomePageState extends State<HomePage> {
                     unselectedItemColor: dark ? Colors.white : Colors.grey,
                     selectedItemColor: AppColors.primaryColor,
                     showUnselectedLabels: true,
-                    onTap: (index) => controller.changeTabIndex(index, context), // Pass context for navigation
+                    onTap: (index) {
+                      // if already on the "Home" tab, then trigger the refresh api, else switch tab
+                      if (controller.currentIndex.value == index) {
+                        if (index == 0) {
+                          final communityController = Get.find<CommunityController>();
+                          communityController.getCommunityPosts();
+                          communityController.scrollToTop();
+                        }
+                        return;
+                      } else {
+                        controller.changeTabIndex(index, context);
+                      }
+                    },
                     items: const [
                       BottomNavigationBarItem(icon: HeroIcon(HeroIcons.home), label: 'Home'),
                       BottomNavigationBarItem(icon: HeroIcon(HeroIcons.users), label: 'Groups'),

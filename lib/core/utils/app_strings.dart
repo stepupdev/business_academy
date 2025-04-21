@@ -62,4 +62,6 @@ class AppStrings {
   // Delete comments
   static const String deleteComment = "Delete Comment";
   static const String deleteCommentConfirmation = "Are you sure you want to delete this comment?";
+
+  static const String scrollToTop = "Scroll to Top";
 }

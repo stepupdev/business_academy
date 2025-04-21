@@ -872,4 +872,12 @@ class CommunityController extends GetxController {
     Map<String, dynamic> data = {"post_id": postId};
     await CommunityRep().savePost(data, context);
   }
+
+  void scrollToTop() {
+    if (feedScrollController.hasClients) {
+      feedScrollController.jumpTo(0);
+    } else {
+      debugPrint("ScrollController has no clients");
+    }
+  }
 }
