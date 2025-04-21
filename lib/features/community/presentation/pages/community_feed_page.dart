@@ -98,18 +98,6 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen> with Automatic
     super.build(context); // Required for AutomaticKeepAliveClientMixin
     final dark = Ui.isDarkMode(context);
     return Scaffold(
-      floatingActionButton:
-          showTopButton
-              ? FloatingActionButton(
-                mini: true,
-                tooltip: AppStrings.scrollToTop,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-                enableFeedback: true,
-                onPressed: scrollToTop,
-                backgroundColor: AppColors.primaryColor,
-                child: Icon(Icons.arrow_upward, color: Colors.white),
-              )
-              : null,
       appBar: AppBar(
         flexibleSpace: Container(
           decoration: BoxDecoration(
