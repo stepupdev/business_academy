@@ -1,5 +1,6 @@
 import 'package:business_application/core/config/app_size.dart';
 import 'package:business_application/core/utils/helper_utils.dart';
+import 'package:business_application/core/utils/ui_support.dart';
 import 'package:business_application/features/community/controller/community_controller.dart';
 import 'package:business_application/features/notification/controller/notification_controller.dart';
 import 'package:flutter/material.dart';
@@ -92,22 +93,49 @@ class NotificationPage extends GetView<NotificationController> {
                       if (notification?.isRead == false) {
                         controller.markReadNotification(notification?.id.toString() ?? "", context);
                       }
-                      // Fetch the post by ID
-                      final postId = notification?.notifiableId.toString() ?? "";
-                      await Get.find<CommunityController>().getCommunityPostsById(postId);
+                      controller.checkNotification();
 
-                      // Get the fetched post data
-                      final post = Get.find<CommunityController>().communityPostsById.value.result;
+                      final isComment = notification?.notifiableType == "App\\Models\\Comment";
+                      debugPrint("Notification Type: ${notification?.notifiableType}");
+                      debugPrint("Is Comment: $isComment");
 
-                      // Close the loading dialog
-                      Navigator.of(context).pop();
+                      if (isComment) {
+                        final commentId = notification?.notifiableId.toString() ?? "";
+                        debugPrint("Comment ID: $commentId");
+                        await Get.find<CommunityController>().getCommentById(commentId).then((comment) async {
+                          Navigator.of(context).pop();
+                          final postId =
+                              Get.find<CommunityController>().commentById.value.result?.postId.toString() ?? "";
 
-                      // Navigate to the PostDetailsPage with the post data
-                      if (post != null) {
-                        GoRouter.of(context).push('/post-details/$postId', extra: {'post': post});
+                          await Get.find<CommunityController>().getCommunityPostsById(postId);
+                          debugPrint("Post ID: $postId");
+                          if (postId.isNotEmpty) {
+                            GoRouter.of(context).push('/post-details/$postId', extra: {'commentId': commentId});
+                          } else {
+                            Ui.showErrorSnackBar(context, message: "Post not found");
+                          }
+                        });
                       } else {
-                        // Show an error if the post is not found
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Post not found')));
+                        // Fetch the post by ID
+                        final postId = notification?.notifiableId.toString() ?? "";
+                        debugPrint("Post ID: $postId");
+                        debugPrint("Notification ID: ${notification?.id}");
+                        debugPrint("Notifiable ID: ${notification?.notifiableId}");
+                        await Get.find<CommunityController>().getCommunityPostsById(postId);
+
+                        // Get the fetched post data
+                        final post = Get.find<CommunityController>().communityPostsById.value.result;
+
+                        // Close the loading dialog
+                        Navigator.of(context).pop();
+
+                        // Navigate to the PostDetailsPage with the post data
+                        if (post != null) {
+                          GoRouter.of(context).push('/post-details/$postId', extra: {'post': post});
+                        } else {
+                          // Show an error if the post is not found
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Post not found')));
+                        }
                       }
                     } catch (e) {
                       // Close the loading dialog and show an error message

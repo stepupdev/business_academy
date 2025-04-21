@@ -154,7 +154,7 @@ class _EditPostPageState extends State<EditPostPage> {
                       focusNode: controller.postFocusNode,
                       maxLines: 5,
                       decoration: InputDecoration(
-                        hintText: AppStrings.createPostPrompt,
+                        hintText: AppStrings.edit,
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide: BorderSide(color: AppColors.borderColor, width: 0.5),

@@ -66,7 +66,9 @@ class _UserPostWidgetState extends State<UserPostWidget> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _checkOverflow();
+      if (mounted) {
+        _checkOverflow();
+      }
     });
     videoThumbnail = getVideoThumbnail(widget.videoUrl);
     dateTime = HelperUtils.formatTime(widget.time);

@@ -25,11 +25,10 @@ class CommunityFeedScreen extends StatefulWidget {
 
 class CommunityFeedScreenState extends State<CommunityFeedScreen> with AutomaticKeepAliveClientMixin {
   late CommunityController controller;
-  late ScrollController feedScrollController;
 
   // The bucket to store scroll positions
   static final _bucket = PageStorageBucket();
-
+  bool showTopButton = false;
   // This helps preserve the state when the widget might otherwise be disposed
   @override
   bool get wantKeepAlive => true;
@@ -38,15 +37,40 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen> with Automatic
   void initState() {
     super.initState();
     controller = Get.find<CommunityController>();
-    feedScrollController = ScrollController();
-    feedScrollController.addListener(() {
-      if (feedScrollController.hasClients) {
-        controller.scrollOffset.value = feedScrollController.position.pixels;
-        if (feedScrollController.position.pixels >= feedScrollController.position.maxScrollExtent - 300) {
+    controller.feedScrollController = ScrollController();
+    controller.feedScrollController.addListener(() {
+      if (controller.feedScrollController.hasClients) {
+        controller.scrollOffset.value = controller.feedScrollController.position.pixels;
+        if (controller.feedScrollController.position.pixels >=
+            controller.feedScrollController.position.maxScrollExtent - 300) {
           controller.loadNextPage();
         }
       }
+
+      if (controller.feedScrollController.offset >= 300) {
+        if (mounted) {
+          setState(() {
+            showTopButton = true;
+          });
+        }
+      } else {
+        if (mounted) {
+          setState(() {
+            showTopButton = false;
+          });
+        }
+      }
     });
+  }
+
+  void scrollToTop() {
+    if (controller.feedScrollController.hasClients) {
+      controller.feedScrollController.animateTo(
+        0.0,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
   }
 
   @override
@@ -59,13 +83,13 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen> with Automatic
     // Try to restore scroll position when coming back to this screen
     if (controller.shouldRestorePosition.value) {
       debugPrint("Attempting to restore position to: ${controller.scrollOffset.value}");
-      controller.restoreScrollPosition(feedScrollController);
+      controller.restoreScrollPosition(controller.feedScrollController);
     }
   }
 
   @override
   void dispose() {
-    feedScrollController.dispose();
+    controller.feedScrollController.dispose();
     super.dispose();
   }
 
@@ -74,6 +98,14 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen> with Automatic
     super.build(context); // Required for AutomaticKeepAliveClientMixin
     final dark = Ui.isDarkMode(context);
     return Scaffold(
+      floatingActionButton:
+          showTopButton
+              ? FloatingActionButton(
+                onPressed: scrollToTop,
+                backgroundColor: AppColors.primaryColor,
+                child: Icon(Icons.arrow_upward, color: Colors.white),
+              )
+              : null,
       appBar: AppBar(
         flexibleSpace: Container(
           decoration: BoxDecoration(
@@ -170,7 +202,7 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen> with Automatic
             },
             child: CustomScrollView(
               key: PageStorageKey<String>('communityFeed'),
-              controller: feedScrollController, // Use the dedicated ScrollController
+              controller: controller.feedScrollController, // Use the dedicated ScrollController
               slivers: [
                 SliverAppBar(
                   pinned: false,

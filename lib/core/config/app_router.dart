@@ -98,14 +98,15 @@ class AppRouter {
           // final String? groupId = extra['groupId'] as String?;
           final bool fromSearchPage = extra['fromSearchPage'] as bool? ?? false;
           var post = extra['post'] as Posts?;
+          final String? commentId = extra['commentId'] as String?;
           debugPrint("ROUTER: Creating PostDetailsPage with postId: $postId ");
           return CustomTransitionPage<void>(
             key: state.pageKey,
             child: PostDetailsPage(
               postId: postId!,
               // isGroupPost: isGroupPost,
-              // groupId: groupId,
               post: post,
+              commentId: commentId,
               fromSearchPage: fromSearchPage,
             ),
             transitionsBuilder: (context, animation, secondaryAnimation, child) {

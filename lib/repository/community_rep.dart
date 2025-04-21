@@ -36,6 +36,14 @@ class CommunityRep {
     return response;
   }
 
+  Future getCommentsById(String id) async {
+    APIManager manager = APIManager();
+    final response = await manager.getWithHeader("${ApiUrl.comments}/$id", {
+      "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
+    });
+    return response;
+  }
+
   Future deleteComment(String commentId, BuildContext context) async {
     APIManager manager = APIManager();
     final response = await manager.deleteAPICallWithHeader(

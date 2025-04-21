@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:business_application/core/services/auth_services.dart';
 import 'package:business_application/data/posts/posts_models.dart';
 import 'package:business_application/data/posts/topic_models.dart' as topics_model;
+import 'package:business_application/features/community/data/comments_by_id_response.dart';
 import 'package:business_application/features/community/data/comments_response_model.dart';
 import 'package:business_application/features/community/data/community_posts_model.dart';
 import 'package:business_application/features/community/data/posts_by_id_model.dart';
@@ -22,9 +23,11 @@ import 'package:path_provider/path_provider.dart';
 
 class CommunityController extends GetxController {
   var isLoading = false.obs;
+  var shouldScrollToTop = false.obs;
   var commentLoading = false.obs;
   var communityPosts = PostsResponseModel().obs;
   var comments = CommentsResponseModel().obs;
+  var commentById = CommentsByIdResponseModel().obs;
   var selectedPostId = 0.obs;
   var communityPostsById = PostByIdResponseModel().obs;
   var topics = TopicsResponseModel().obs;
@@ -43,6 +46,7 @@ class CommunityController extends GetxController {
   final RxInt selectedTabIndex = 0.obs;
   var filteredPosts = <Posts>[].obs;
   ScrollController scrollController = ScrollController();
+  ScrollController feedScrollController = ScrollController();
   RxDouble scrollOffset = 0.0.obs; // Change to RxDouble for reactivity
   RxBool shouldRestorePosition = false.obs;
 
@@ -85,6 +89,9 @@ class CommunityController extends GetxController {
     postFocusNode.dispose();
     if (scrollController.hasClients) {
       scrollController.dispose();
+    }
+    if (feedScrollController.hasClients) {
+      feedScrollController.dispose();
     }
     if (commentsScrollController.hasClients) {
       commentsScrollController.dispose();
@@ -307,6 +314,21 @@ class CommunityController extends GetxController {
 
     debugPrint("comments response $response");
     getComments(postId);
+  }
+
+  Future<bool> getCommentById(String id) async {
+    try {
+      commentLoading(true);
+      final response = await CommunityRep().getCommentsById(id);
+      commentById(CommentsByIdResponseModel.fromJson(response));
+      debugPrint("comments by id response: ${commentById.value.result}");
+      return true;
+    } catch (e) {
+      debugPrint("Error fetching comment by ID: $e");
+      return false;
+    } finally {
+      commentLoading(false);
+    }
   }
 
   Future<void> deleteComments(String id, String postId, BuildContext context) async {

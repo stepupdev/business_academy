@@ -100,7 +100,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
             FilledButton(
               onPressed: () {
                 if (controller.createPostController.value.text.isEmpty) {
-                  Ui.showErrorSnackBar(context, message: AppStrings.createPostPrompt);
+                  Ui.showErrorSnackBar(context, message: AppStrings.emptyPostContentMessage);
                   return;
                 }
                 if (controller.createPostController.value.text.length < 10) {
@@ -139,7 +139,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
                       focusNode: controller.postFocusNode,
                       maxLines: 5,
                       decoration: InputDecoration(
-                        hintText: AppStrings.createPostPrompt,
+                        hintText: AppStrings.createPost,
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide: BorderSide(color: AppColors.borderColor, width: 0.5),

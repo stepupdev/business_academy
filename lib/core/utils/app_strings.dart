@@ -29,11 +29,10 @@ class AppStrings {
   static const String loadingSavedPosts = "Loading saved posts...";
   static const String loadingGroupPosts = "Loading group posts...";
 
-
-
   // Empty Page Texts
   static const String noPostsAvailable = "No posts available for this group.";
-  static const String createPostPrompt = "Content is empty. Please add some content to create a post";
+  static const String createPost = "Create a Post";
+  static const String emptyPostContentMessage = "Content is empty. Please add some content to create a post";
   static const String announcementsComingSoon = "Announcements Coming Soon";
   static const String announcementsDescription = "Stay tuned! The announcements feature will be published soon.";
 

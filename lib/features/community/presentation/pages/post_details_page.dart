@@ -23,6 +23,7 @@ class PostDetailsPage extends StatefulWidget {
   final String postId;
   final Posts? post;
   final bool isVideo;
+  final String? commentId;
   // late bool isGroupPost;
   // late String? groupId;
   final bool fromSearchPage;
@@ -31,6 +32,7 @@ class PostDetailsPage extends StatefulWidget {
     super.key,
     required this.postId,
     this.post,
+    this.commentId,
     this.isVideo = true,
     this.fromSearchPage = false,
     // required this.isGroupPost,
@@ -63,6 +65,15 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
       if (commentsScrollController.hasClients) {
         if (commentsScrollController.position.pixels >= commentsScrollController.position.maxScrollExtent - 300) {
           communityController.loadNextCommentsPage(widget.postId);
+        }
+        if (widget.commentId != null) {
+          // jump to that specific comment
+          final index = communityController.comments.value.result?.data?.indexWhere(
+            (element) => element.id == widget.commentId,
+          );
+          if (index != null && index >= 0) {
+            commentsScrollController.jumpTo(index * 100.0); // Adjust the multiplier as needed
+          }
         }
       }
     });
@@ -210,7 +221,7 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
             children: [
               Expanded(
                 child: SingleChildScrollView(
-                  physics: const BouncingScrollPhysics(),
+                  physics: const AlwaysScrollableScrollPhysics(),
                   controller: commentsScrollController, // Use the dedicated ScrollController
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -336,7 +347,10 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
                           return Center(child: CircularProgressIndicator());
                         }
                         return SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.5,
+                          height:
+                              controller.comments.value.result?.data?.length != null
+                                  ? (controller.comments.value.result?.data?.length)! * 150.h
+                                  : 0,
                           child: ListView.builder(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(), // Allow smooth scrolling
