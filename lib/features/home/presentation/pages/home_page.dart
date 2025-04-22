@@ -63,8 +63,10 @@ class _HomePageState extends State<HomePage> {
                       if (controller.currentIndex.value == index) {
                         if (index == 0) {
                           final communityController = Get.find<CommunityController>();
+                          communityController.selectedTopic.value = "All";
                           communityController.getCommunityPosts();
                           communityController.scrollToTop();
+                          // communityController.triggerPullToRefresh();
                         }
                         return;
                       } else {

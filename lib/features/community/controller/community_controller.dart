@@ -49,6 +49,7 @@ class CommunityController extends GetxController {
   ScrollController feedScrollController = ScrollController();
   RxDouble scrollOffset = 0.0.obs; // Change to RxDouble for reactivity
   RxBool shouldRestorePosition = false.obs;
+  final refreshKey = GlobalKey<RefreshIndicatorState>();
 
   // pagination state variable
   var currentPage = 1.obs;
@@ -878,6 +879,14 @@ class CommunityController extends GetxController {
       feedScrollController.jumpTo(0);
     } else {
       debugPrint("ScrollController has no clients");
+    }
+  }
+
+  void triggerPullToRefresh() {
+    if (refreshKey.currentState != null) {
+      refreshKey.currentState!.show();
+    } else {
+      debugPrint("RefreshIndicatorState is null");
     }
   }
 }

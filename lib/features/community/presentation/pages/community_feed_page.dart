@@ -176,6 +176,7 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen> with Automatic
             return CustomShimmer();
           }
           return RefreshIndicator(
+            key: controller.refreshKey,
             onRefresh: () async {
               Get.find<NotificationController>().hasNewNotification.value;
               // return controller.getCommunityPosts();
