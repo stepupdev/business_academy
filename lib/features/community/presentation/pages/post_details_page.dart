@@ -238,7 +238,7 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
                           videoUrl: post?.videoUrl ?? "",
                           dp: post?.user?.avatar ?? "",
                           caption: post?.content ?? "",
-                          commentCount: controller.comments.value.result?.data?.length.toString() ?? "",
+                          commentCount: post?.commentsCount.toString() ?? "",
                           isLiked: post?.isLiked ?? false,
                           isSaved: post?.isSaved ?? false,
                           onCommentTap: () {
@@ -349,7 +349,7 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
                         return SizedBox(
                           height:
                               controller.comments.value.result?.data?.length != null
-                                  ? (controller.comments.value.result?.data?.length)! * 150.h
+                                  ? (controller.comments.value.result?.data?.length)! * 200.h
                                   : 0,
                           child: ListView.builder(
                             shrinkWrap: true,
