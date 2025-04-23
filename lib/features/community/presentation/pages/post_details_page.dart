@@ -226,8 +226,7 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Obx(() {
-                        return PostDetailsCard(
+                        PostDetailsCard(
                           onTap: () {},
                           name: post?.user?.name ?? "",
                           rank: post?.user?.rank?.name ?? "",
@@ -238,7 +237,7 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
                           videoUrl: post?.videoUrl ?? "",
                           dp: post?.user?.avatar ?? "",
                           caption: post?.content ?? "",
-                          commentCount: post?.commentsCount.toString() ?? "",
+                          commentCount: ((controller.comments.value.result?.data?.length)).toString() ?? "",
                           isLiked: post?.isLiked ?? false,
                           isSaved: post?.isSaved ?? false,
                           onCommentTap: () {
@@ -317,8 +316,7 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
                               context.go(AppRoutes.communityFeed);
                             }
                           },
-                        );
-                      }),
+                        ),
                       Divider(height: 1.h),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
