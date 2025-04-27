@@ -1,6 +1,8 @@
 import 'package:business_application/core/config/app_colors.dart';
 import 'package:business_application/core/config/app_routes.dart';
 import 'package:business_application/core/config/app_size.dart';
+import 'package:business_application/core/services/auth_services.dart';
+import 'package:business_application/core/utils/auth_utils.dart';
 import 'package:business_application/core/utils/ui_support.dart';
 import 'package:business_application/features/auth/controller/auth_controller.dart';
 import 'package:business_application/features/community/controller/community_controller.dart';
@@ -34,7 +36,10 @@ class MenuPage extends GetView<UserMenuController> {
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: dark ? [AppColors.dark, AppColors.darkerGrey] : [Color(0xFFFFFFFF), Color(0xffffdef3ff)],
+              colors:
+                  dark
+                      ? [AppColors.dark, AppColors.darkerGrey]
+                      : [Color(0xFFFFFFFF), Color(0xffffdef3ff)],
             ),
           ),
           child: Padding(
@@ -42,7 +47,10 @@ class MenuPage extends GetView<UserMenuController> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                CircleAvatar(radius: 50, backgroundImage: NetworkImage(controller.user.value.result?.avatar ?? "")),
+                CircleAvatar(
+                  radius: 50,
+                  backgroundImage: NetworkImage(controller.user.value.result?.avatar ?? ""),
+                ),
                 SizedBox(height: 10),
                 Text(
                   controller.user.value.result?.name ?? "",
@@ -83,27 +91,38 @@ class MenuPage extends GetView<UserMenuController> {
                                     children: [
                                       Text(
                                         "Switch Community",
-                                        style: GoogleFonts.plusJakartaSans(fontSize: 15, fontWeight: FontWeight.w700),
+                                        style: GoogleFonts.plusJakartaSans(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w700,
+                                        ),
                                       ),
                                       20.hS,
                                       Expanded(
                                         child: ListView.builder(
                                           padding: const EdgeInsets.all(16.0),
-                                          itemCount: controller.communities.value.result?.data?.length,
+                                          itemCount:
+                                              controller.communities.value.result?.data?.length,
                                           itemBuilder: (context, index) {
-                                            final community = controller.communities.value.result?.data?[index];
+                                            final community =
+                                                controller.communities.value.result?.data?[index];
                                             final isSelected =
-                                                controller.user.value.result?.community?.id == community?.id;
+                                                controller.user.value.result?.community?.id ==
+                                                community?.id;
                                             return ListTile(
                                               leading: CircleAvatar(
-                                                backgroundImage: AssetImage('assets/images/stepup_image.png'),
+                                                backgroundImage: AssetImage(
+                                                  'assets/images/stepup_image.png',
+                                                ),
                                                 radius: 20,
                                               ),
                                               title: Text(
-                                                (community?.name != null && community!.name!.isNotEmpty)
+                                                (community?.name != null &&
+                                                        community!.name!.isNotEmpty)
                                                     ? community.name!
                                                     : 'Unknown Community',
-                                                style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700),
+                                                style: GoogleFonts.plusJakartaSans(
+                                                  fontWeight: FontWeight.w700,
+                                                ),
                                               ),
                                               // subtitle: Row(
                                               //   children: [
@@ -134,21 +153,30 @@ class MenuPage extends GetView<UserMenuController> {
                                               // ),
                                               trailing:
                                                   isSelected
-                                                      ? Icon(Icons.check_circle, color: AppColors.primaryColor)
+                                                      ? Icon(
+                                                        Icons.check_circle,
+                                                        color: AppColors.primaryColor,
+                                                      )
                                                       : null,
                                               onTap: () async {
-                                                debugPrint("Selected Community: ${community?.name}");
-                                                await Get.find<CommunityController>().getCommunityPosts();
+                                                debugPrint(
+                                                  "Selected Community: ${community?.name}",
+                                                );
+                                                await Get.find<CommunityController>()
+                                                    .getCommunityPosts();
                                                 final communityId = community?.id?.toString() ?? "";
                                                 debugPrint("Community ID: $communityId");
-                                                await controller.changeCommunity(communityId, context).then((e) {
-                                                  final communityController = Get.find<CommunityController>();
-                                                  communityController.getCommunityPosts();
-                                                  communityController.getTopic();
-                                                  controller.getUser();
-                                                  controller.communities.refresh();
-                                                  controller.user.refresh();
-                                                });
+                                                await controller
+                                                    .changeCommunity(communityId, context)
+                                                    .then((e) {
+                                                      final communityController =
+                                                          Get.find<CommunityController>();
+                                                      communityController.getCommunityPosts();
+                                                      communityController.getTopic();
+                                                      controller.getUser();
+                                                      controller.communities.refresh();
+                                                      controller.user.refresh();
+                                                    });
                                                 context.go(AppRoutes.communityFeed);
                                               },
                                             );
@@ -191,7 +219,11 @@ class MenuPage extends GetView<UserMenuController> {
                       onPressed: () {
                         Get.find<AuthController>().signOut(context);
                       },
-                      icon: Icon(Icons.logout, color: dark ? AppColors.light : Colors.black, size: 20),
+                      icon: Icon(
+                        Icons.logout,
+                        color: dark ? AppColors.light : Colors.black,
+                        size: 20,
+                      ),
                       label: Text(
                         'Logout',
                         style: GoogleFonts.plusJakartaSans(
@@ -202,10 +234,22 @@ class MenuPage extends GetView<UserMenuController> {
                     ),
                   ],
                 ),
+                ElevatedButton(
+                  onPressed: () async {
+                    Get.find<AuthService>().removeCurrentUser();
+                    Get.find<AuthService>().currentUser.value.result?.token = null;
+                    await AuthUtlity.removeUserData();
+                  },
+                  child: Text("Clear Session"),
+                ),
                 const Spacer(),
                 Text(
                   "Version 1.0.0",
-                  style: GoogleFonts.lexend(fontSize: 14, color: Color(0xffA1A3AD), fontWeight: FontWeight.w700),
+                  style: GoogleFonts.lexend(
+                    fontSize: 14,
+                    color: Color(0xffA1A3AD),
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
                 Text(
                   "© 2025 StepUp. All rights reserved",

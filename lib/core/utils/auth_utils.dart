@@ -88,4 +88,12 @@ class AuthUtlity {
     debugPrint("🔍 Checking Onboarding State: $hasSeenOnboarding");
     return hasSeenOnboarding;
   }
+
+  // remove user data
+  static Future<void> removeUserData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove('user-data');
+    await prefs.remove('token');
+    debugPrint("✅ User data removed.");
+  }
 }

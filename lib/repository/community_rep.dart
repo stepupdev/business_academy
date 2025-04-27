@@ -40,6 +40,7 @@ class CommunityRep {
     APIManager manager = APIManager();
     final response = await manager.getWithHeader("${ApiUrl.comments}/$id", {
       "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
+      'Accept': 'application/json',
     });
     return response;
   }

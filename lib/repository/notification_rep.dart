@@ -1,3 +1,4 @@
+import 'package:business_application/core/api/api_helper.dart';
 import 'package:business_application/core/api/api_manager.dart';
 import 'package:business_application/core/api/api_url.dart';
 import 'package:business_application/core/services/auth_services.dart';
@@ -14,38 +15,55 @@ class NotificationRep {
     return response;
   }
 
-  Future checkNotification() async {
+  Future checkNotification(BuildContext context) async {
     APIManager manager = APIManager();
-    final response = await manager.getWithHeader("${ApiUrl.notification}/check", {
-      "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result?.token}",
-    });
+    final response = await safeApiCall(
+      context,
+      () => manager.getWithHeader("${ApiUrl.notification}/check", {
+        "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result?.token}",
+        "Accept": "application/json",
+      }),
+    );
+    // final response = await manager.getWithHeader("${ApiUrl.notification}/check", {
+    //   "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result?.token}",
+    //   "Accept": "application/json",
+    // });
     debugPrint("response: $response");
     return response;
   }
 
   Future markNotification(String id, BuildContext context) async {
     APIManager manager = APIManager();
-    final response = await manager.postAPICallWithHeader("${ApiUrl.notification}/$id/mark-read", {}, {
-      "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
-    }, context);
+    final response = await manager.postAPICallWithHeader(
+      "${ApiUrl.notification}/$id/mark-read",
+      {},
+      {"Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}"},
+      context,
+    );
     debugPrint("response: $response");
     return response;
   }
 
   Future markReadUnreadNotification(String id, BuildContext context) async {
     APIManager manager = APIManager();
-    final response = await manager.postAPICallWithHeader("${ApiUrl.notification}/$id/mark-read-unread", {}, {
-      "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
-    }, context);
+    final response = await manager.postAPICallWithHeader(
+      "${ApiUrl.notification}/$id/mark-read-unread",
+      {},
+      {"Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}"},
+      context,
+    );
     debugPrint("response: $response");
     return response;
   }
 
   Future markAllNotification(BuildContext context) async {
     APIManager manager = APIManager();
-    final response = await manager.postAPICallWithHeader("${ApiUrl.notification}/mark-all-read", {}, {
-      "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
-    }, context);
+    final response = await manager.postAPICallWithHeader(
+      "${ApiUrl.notification}/mark-all-read",
+      {},
+      {"Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}"},
+      context,
+    );
     debugPrint("response: $response");
     return response;
   }

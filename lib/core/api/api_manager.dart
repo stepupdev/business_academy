@@ -21,15 +21,17 @@ class APIManager {
 
     var responseJson;
     try {
-      final response = await http.post(Uri.parse(url), body: jsonEncode(param), headers: headerData);
+      final response = await http.post(
+        Uri.parse(url),
+        body: jsonEncode(param),
+        headers: headerData,
+      );
       debugPrint("api provider bro bro bro bro ${response.body}");
       var data = jsonDecode(response.body);
 
       if (response.statusCode == 422) {
         Ui.showErrorSnackBar(context, message: data["message"]);
       } else if (response.statusCode == 400) {
-        Ui.showErrorSnackBar(context, message: data["message"]);
-      } else if (response.statusCode == 401) {
         Ui.showErrorSnackBar(context, message: data["message"]);
       } else if (response.statusCode == 403) {
         Ui.showErrorSnackBar(context, message: data["message"]);
@@ -43,13 +45,21 @@ class APIManager {
     return responseJson;
   }
 
-  Future<dynamic> putAPICallWithHeader(String url, Map<String, dynamic> param, Map<String, String> headerData) async {
+  Future<dynamic> putAPICallWithHeader(
+    String url,
+    Map<String, dynamic> param,
+    Map<String, String> headerData,
+  ) async {
     debugPrint("Calling API: $url");
     debugPrint("Calling parameters: $param");
 
     var responseJson;
     try {
-      final response = await http.post(Uri.parse(url), body: jsonEncode(param), headers: headerData);
+      final response = await http.post(
+        Uri.parse(url),
+        body: jsonEncode(param),
+        headers: headerData,
+      );
       debugPrint("api provider bro bro bro bro ${response.body}");
       var data = jsonDecode(response.body);
       if (response.statusCode == 422) {
@@ -207,16 +217,28 @@ class APIManager {
     try {
       final response = await http.get(Uri.parse(url), headers: headerData);
       debugPrint("my getWithHeader method data response ${response.body}");
+      debugPrint("header is $headerData");
+      debugPrint("status code is ${response.statusCode}");
       responseJson = _response(response);
     } on FetchDataException catch (_) {
-      Get.snackbar("Error", "No Internet connection", backgroundColor: Colors.red, colorText: Colors.white);
+      Get.snackbar(
+        "Error",
+        "No Internet connection",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
     } on SocketException catch (_) {
-      Get.snackbar("Error", "No Internet connection", backgroundColor: Colors.red, colorText: Colors.white);
+      Get.snackbar(
+        "Error",
+        "No Internet connection",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
     }
     return responseJson;
   }
 
-  dynamic _response(http.Response response) {
+  dynamic _response(http.Response response) async {
     debugPrint('APIManager._response');
     debugPrint("status code: ${response.statusCode}");
     debugPrint("body: ${response.body}");
@@ -228,17 +250,26 @@ class APIManager {
         case 204:
           return null;
         case 400:
+        case 401:
+          // // clear current session
+          // Get.find<AuthService>().removeCurrentUser();
+          // await AuthUtlity.removeUserData();
+          // final context = scaffoldMessengerKey.currentContext!;
+          // context.go(AppRoutes.signIn);
+          var error = json.decode(response.body);
+          throw UnauthorisedException(error.toString());
         case 404:
         case 405:
           return json.decode(response.body);
-        case 401:
         case 403:
           var error = json.decode(response.body);
           throw UnauthorisedException(error.toString());
         case 500:
           throw UnauthorisedException("Internal Server Error");
         default:
-          throw FetchDataException('Error occurred while communicating with Server: ${response.statusCode}');
+          throw FetchDataException(
+            'Error occurred while communicating with Server: ${response.statusCode}',
+          );
       }
     } catch (e) {
       debugPrint("⚠️ Error decoding JSON or handling response: $e");
@@ -246,7 +277,11 @@ class APIManager {
     }
   }
 
-  Future<dynamic> deleteAPICallWithHeader(BuildContext context, String url, {Map<String, String>? headerData}) async {
+  Future<dynamic> deleteAPICallWithHeader(
+    BuildContext context,
+    String url, {
+    Map<String, String>? headerData,
+  }) async {
     debugPrint("Calling DELETE API: $url");
 
     var responseJson;
