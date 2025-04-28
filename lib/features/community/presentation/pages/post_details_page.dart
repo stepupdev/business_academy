@@ -237,7 +237,7 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
                           videoUrl: post?.videoUrl ?? "",
                           dp: post?.user?.avatar ?? "",
                           caption: post?.content ?? "",
-                          commentCount: ((controller.comments.value.result?.data?.length)).toString() ?? "",
+                          commentCount: ((controller.comments.value.result?.data?.length)).toString(),
                           isLiked: post?.isLiked ?? false,
                           isSaved: post?.isSaved ?? false,
                           onCommentTap: () {

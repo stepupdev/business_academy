@@ -68,7 +68,7 @@ class CommunityController extends GetxController {
     await getCommunityPosts();
     await getTopic();
 
-    Get.find<NotificationController>().checkNotification();
+    Get.find<NotificationController>().checkNotification(Get.context!);
     selectedTopic.listen((value) {
       if (value.isNotEmpty) {
         final topic = topics.value.result?.data?.firstWhere((t) => t.name == value, orElse: () => topics_model.Topic());

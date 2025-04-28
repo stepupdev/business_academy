@@ -27,40 +27,27 @@ class UserMenuController extends GetxController {
 
   getUser() async {
     isLoading(true);
-    try {
-      var response = await CommunityRep().getUser();
-      user(UserResponseModel.fromJson(response));
-    } catch (e) {
-      debugPrint("Error fetching user: $e");
-    } finally {
-      isLoading(false);
-    }
+    var response = await CommunityRep().getUser();
+    user(UserResponseModel.fromJson(response));
+    isLoading(false);
   }
 
   fetchCommunities() async {
     isLoading(true);
-    try {
-      var response = await CommunityRep().fetchCommunities();
-      communities(CommunitiesResponseModel.fromJson(response));
-    } catch (e) {
-      debugPrint("Error fetching communities: $e");
-    } finally {
-      isLoading(false);
-    }
+    var response = await CommunityRep().fetchCommunities();
+    communities(CommunitiesResponseModel.fromJson(response));
+    debugPrint("Error fetching communities ");
+    isLoading(false);
   }
 
   Future<void> changeCommunity(String id, BuildContext context) async {
     isLoading(true);
-    try {
-      Map<String, dynamic> data = {"community_id": id};
-      var response = CommunityRep().changeCommunity(data, context);
-      debugPrint("response: $response");
-      getUser();
-      fetchCommunities();
-    } catch (e) {
-      debugPrint("Error changing community: $e");
-    } finally {
-      isLoading(false);
-    }
+    Map<String, dynamic> data = {"community_id": id};
+    var response = CommunityRep().changeCommunity(data, context);
+    debugPrint("response: $response");
+    getUser();
+    fetchCommunities();
+    debugPrint("Error changing community");
+    isLoading(false);
   }
 }

@@ -1,6 +1,5 @@
 import 'package:business_application/features/notification/data/check_notification_model.dart';
 import 'package:business_application/features/notification/data/notification_models.dart';
-import 'package:business_application/main.dart';
 import 'package:business_application/repository/notification_rep.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -31,10 +30,10 @@ class NotificationController extends GetxController {
     }
   }
 
-  Future<bool> checkNotification() async {
+  Future<bool> checkNotification(BuildContext context) async {
     try {
       debugPrint("Checking for new notifications...");
-      var response = await NotificationRep().checkNotification(scaffoldMessengerKey.currentContext!);
+      var response = await NotificationRep().checkNotification();
       var checkResponse = CheckNotificationResponseModel.fromJson(response);
 
       // Update only the `hasNewNotification` flag
@@ -76,7 +75,7 @@ class NotificationController extends GetxController {
         notifications.value.result?.data?[notificationIndex].isRead =
             !(notifications.value.result?.data?[notificationIndex].isRead ?? false);
         notifications.refresh(); // Notify listeners about the change
-        await checkNotification();
+        await checkNotification(context);
       }
     } catch (e) {
       debugPrint("Error marking notification as read/unread: $e");
@@ -96,7 +95,7 @@ class NotificationController extends GetxController {
       });
 
       notifications.refresh();
-      await checkNotification();
+      await checkNotification(context);
     } catch (e) {
       debugPrint("Error marking all notifications as read: $e");
     } finally {

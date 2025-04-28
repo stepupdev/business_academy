@@ -2,7 +2,11 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:business_application/core/api/api_exception.dart';
+import 'package:business_application/core/config/app_router.dart';
+import 'package:business_application/core/config/app_routes.dart';
+import 'package:business_application/core/services/auth_services.dart';
 import 'package:business_application/core/services/connectivity_service.dart';
+import 'package:business_application/core/utils/auth_utils.dart';
 import 'package:business_application/core/utils/ui_support.dart';
 import 'package:business_application/main.dart';
 import 'package:flutter/material.dart';
@@ -252,10 +256,9 @@ class APIManager {
         case 400:
         case 401:
           // // clear current session
-          // Get.find<AuthService>().removeCurrentUser();
-          // await AuthUtlity.removeUserData();
-          // final context = scaffoldMessengerKey.currentContext!;
-          // context.go(AppRoutes.signIn);
+          Get.find<AuthService>().removeCurrentUser();
+          await AuthUtlity.removeUserData();
+          AppRouter.router.go(AppRoutes.signIn);
           var error = json.decode(response.body);
           throw UnauthorisedException(error.toString());
         case 404:
