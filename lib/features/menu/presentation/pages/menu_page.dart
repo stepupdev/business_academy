@@ -1,8 +1,6 @@
 import 'package:business_application/core/config/app_colors.dart';
 import 'package:business_application/core/config/app_routes.dart';
 import 'package:business_application/core/config/app_size.dart';
-import 'package:business_application/core/services/auth_services.dart';
-import 'package:business_application/core/utils/auth_utils.dart';
 import 'package:business_application/core/utils/ui_support.dart';
 import 'package:business_application/features/auth/controller/auth_controller.dart';
 import 'package:business_application/features/community/controller/community_controller.dart';
@@ -217,7 +215,10 @@ class MenuPage extends GetView<UserMenuController> {
                   children: [
                     TextButton.icon(
                       onPressed: () {
-                        Get.find<AuthController>().signOut(context);
+                        // Get.find<AuthController>().signOut(context);
+                        controller.logout().then((_) {
+                          Get.find<AuthController>().signOut(context);
+                        });
                       },
                       icon: Icon(
                         Icons.logout,
@@ -233,14 +234,6 @@ class MenuPage extends GetView<UserMenuController> {
                       ),
                     ),
                   ],
-                ),
-                ElevatedButton(
-                  onPressed: () async {
-                    Get.find<AuthService>().removeCurrentUser();
-                    Get.find<AuthService>().currentUser.value.result?.token = null;
-                    await AuthUtlity.removeUserData();
-                  },
-                  child: Text("Clear Session"),
                 ),
                 const Spacer(),
                 Text(

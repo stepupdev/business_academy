@@ -298,4 +298,17 @@ class CommunityRep {
     debugPrint("response: $response");
     return response;
   }
+
+  Future logout() async {
+    final response = await manager.postAPICall(
+      ApiUrl.logout,
+      {},
+      header: {
+        "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
+        "Accept": "application/json",
+      },
+    );
+    debugPrint("response: $response");
+    return response;
+  }
 }

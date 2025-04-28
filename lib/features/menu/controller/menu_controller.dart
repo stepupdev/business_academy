@@ -50,4 +50,11 @@ class UserMenuController extends GetxController {
     debugPrint("Error changing community");
     isLoading(false);
   }
+
+  Future<void> logout() async {
+    isLoading(true);
+    var response = await CommunityRep().logout();
+    debugPrint("response: $response");
+    isLoading(false);
+  }
 }

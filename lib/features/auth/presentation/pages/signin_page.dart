@@ -2,11 +2,13 @@ import 'package:business_application/core/config/app_colors.dart';
 import 'package:business_application/core/services/connectivity_service.dart';
 import 'package:business_application/core/utils/ui_support.dart';
 import 'package:business_application/features/auth/controller/auth_controller.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SignInPage extends GetView<AuthController> {
   const SignInPage({super.key});
@@ -14,6 +16,17 @@ class SignInPage extends GetView<AuthController> {
   @override
   Widget build(BuildContext context) {
     final dark = Ui.isDarkMode(context);
+
+    // Function to launch a URL
+    Future<void> _launchUrl(String url) async {
+      final Uri uri = Uri.parse(url);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      } else {
+        Ui.showErrorSnackBar(context, message: "Could not launch $url");
+      }
+    }
+
     return Scaffold(
       body: SafeArea(
         child: Obx(() {
@@ -23,7 +36,10 @@ class SignInPage extends GetView<AuthController> {
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: dark ? [AppColors.dark, AppColors.darkerGrey] : [Color(0xFFFFFFFF), Color(0xFFDEF3FF)],
+                    colors:
+                        dark
+                            ? [AppColors.dark, AppColors.darkerGrey]
+                            : [Color(0xFFFFFFFF), Color(0xFFDEF3FF)],
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                   ),
@@ -81,7 +97,10 @@ class SignInPage extends GetView<AuthController> {
                         children: [
                           SvgPicture.asset('assets/images/google.svg', height: 24),
                           const SizedBox(width: 10),
-                          Text('Continue with Google', style: TextStyle(color: dark ? Colors.white : Colors.black)),
+                          Text(
+                            'Continue with Google',
+                            style: TextStyle(color: dark ? Colors.white : Colors.black),
+                          ),
                         ],
                       ),
                     ),
@@ -95,24 +114,50 @@ class SignInPage extends GetView<AuthController> {
                         children: [
                           TextSpan(
                             text: 'Terms and Conditions',
-                            style: GoogleFonts.lexend(fontSize: 12.sp, color: AppColors.primaryColor),
+                            style: GoogleFonts.lexend(
+                              fontSize: 12.sp,
+                              color: AppColors.primaryColor,
+                            ),
+                            recognizer:
+                                TapGestureRecognizer()
+                                  ..onTap = () {
+                                    _launchUrl(
+                                      'https://stepup.com.bd',
+                                    ); // Replace with your Terms URL
+                                  },
                           ),
                           const TextSpan(text: ' and ', style: TextStyle(color: Color(0xffA1A3AD))),
                           TextSpan(
                             text: 'Privacy Policy',
-                            style: GoogleFonts.lexend(fontSize: 12.sp, color: AppColors.primaryColor),
+                            style: GoogleFonts.lexend(
+                              fontSize: 12.sp,
+                              color: AppColors.primaryColor,
+                            ),
+                            recognizer:
+                                TapGestureRecognizer()
+                                  ..onTap = () {
+                                    _launchUrl(
+                                      'https://stepup.com.bd',
+                                    ); // Replace with your Privacy Policy URL
+                                  },
                           ),
                         ],
                       ),
                     ),
                     const Spacer(),
                     Text("Step Up Your Game,", style: GoogleFonts.lexend(fontSize: 14.sp)),
-                    Text("Transform your Career!", style: GoogleFonts.lexend(fontSize: 14.sp, color: Colors.grey)),
+                    Text(
+                      "Transform your Career!",
+                      style: GoogleFonts.lexend(fontSize: 14.sp, color: Colors.grey),
+                    ),
                   ],
                 ),
               ),
               if (controller.isLoading.value)
-                Container(color: Colors.black.withOpacity(0.5), child: Center(child: CircularProgressIndicator())),
+                Container(
+                  color: Colors.black.withOpacity(0.5),
+                  child: Center(child: CircularProgressIndicator()),
+                ),
             ],
           );
         }),
