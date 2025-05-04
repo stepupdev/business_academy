@@ -170,6 +170,7 @@ class MenuPage extends GetView<UserMenuController> {
                                                       final communityController =
                                                           Get.find<CommunityController>();
                                                       communityController.getCommunityPosts();
+                                                      communityController.filterPostsByTopic('');
                                                       communityController.getTopic();
                                                       controller.getUser();
                                                       controller.communities.refresh();
