@@ -46,7 +46,8 @@ class _EditPostPageState extends State<EditPostPage> {
 
       // Load topics first
       if (widget.post.groupId != null) {
-        if (isDebug) debugPrint("EDIT POST PAGE: Loading group topics for group ID ${widget.post.groupId}");
+        if (isDebug)
+          debugPrint("EDIT POST PAGE: Loading group topics for group ID ${widget.post.groupId}");
         final groupsController = Get.find<GroupsController>();
         await groupsController.fetchGroupsTopic(widget.post.groupId.toString());
 
@@ -68,9 +69,15 @@ class _EditPostPageState extends State<EditPostPage> {
       }
 
       // Populate the edit fields with the post data
-      controller.editPostController.text = Get.find<CommunityController>().cleanHtml(widget.post.content ?? '');
+      controller.editPostController.text = Get.find<CommunityController>().cleanHtml(
+        widget.post.content ?? '',
+      );
       controller.editVideoController.text = widget.post.videoUrl ?? '';
       controller.editSelectedImage.value = widget.post.image ?? '';
+
+      if (widget.post.videoUrl != null) {
+        controller.selectedTabIndex.value = 1;
+      }
 
       // Set the selected topic
       if (widget.post.topic?.name != null) {
@@ -113,7 +120,10 @@ class _EditPostPageState extends State<EditPostPage> {
                 }
 
                 if (controller.editPostController.text.length < 10) {
-                  Ui.showErrorSnackBar(context, message: "Post content must be at least 10 characters");
+                  Ui.showErrorSnackBar(
+                    context,
+                    message: "Post content must be at least 10 characters",
+                  );
                   return;
                 }
 
@@ -190,9 +200,17 @@ class _EditPostPageState extends State<EditPostPage> {
                                               borderRadius: BorderRadius.circular(12),
                                               image: DecorationImage(
                                                 image:
-                                                    controller.editSelectedImage.value.contains("http")
-                                                        ? NetworkImage(controller.editSelectedImage.value)
-                                                        : FileImage(File(controller.editSelectedImage.value))
+                                                    controller.editSelectedImage.value.contains(
+                                                          "http",
+                                                        )
+                                                        ? NetworkImage(
+                                                          controller.editSelectedImage.value,
+                                                        )
+                                                        : FileImage(
+                                                              File(
+                                                                controller.editSelectedImage.value,
+                                                              ),
+                                                            )
                                                             as ImageProvider,
                                                 fit: BoxFit.cover,
                                               ),
@@ -225,10 +243,19 @@ class _EditPostPageState extends State<EditPostPage> {
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: const Color(0xFFE9F0FF),
                                       fixedSize: Size(165.w, 50.h),
-                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12.r),
+                                      ),
                                     ),
-                                    label: const Text("Camera", style: TextStyle(color: Colors.black)),
-                                    icon: Icon(Icons.photo_camera, size: 24, color: AppColors.primaryColor),
+                                    label: const Text(
+                                      "Camera",
+                                      style: TextStyle(color: Colors.black),
+                                    ),
+                                    icon: Icon(
+                                      Icons.photo_camera,
+                                      size: 24,
+                                      color: AppColors.primaryColor,
+                                    ),
                                   ),
                                 ),
                                 10.wS,
@@ -238,9 +265,14 @@ class _EditPostPageState extends State<EditPostPage> {
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: const Color(0xFFE9F0FF),
                                       fixedSize: Size(165.w, 50.h),
-                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12.r),
+                                      ),
                                     ),
-                                    label: const Text("Add Photos", style: TextStyle(color: Colors.black)),
+                                    label: const Text(
+                                      "Add Photos",
+                                      style: TextStyle(color: Colors.black),
+                                    ),
                                     icon: Icon(
                                       Icons.photo_size_select_actual_rounded,
                                       size: 24,
@@ -280,7 +312,9 @@ class _EditPostPageState extends State<EditPostPage> {
                       return DropdownMenu<String>(
                         hintText: "Select a topic",
                         initialSelection:
-                            controller.editSelectedTopic.value.isNotEmpty ? controller.editSelectedTopic.value : null,
+                            controller.editSelectedTopic.value.isNotEmpty
+                                ? controller.editSelectedTopic.value
+                                : null,
                         inputDecorationTheme: InputDecorationTheme(
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -309,14 +343,19 @@ class _EditPostPageState extends State<EditPostPage> {
                                 .value
                                 .result
                                 ?.data
-                                ?.firstWhere((topic) => topic.name == val, orElse: () => GroupTopics());
-                            controller.editSelectedTopicId.value = editSelectedTopic?.id?.toString() ?? '';
+                                ?.firstWhere(
+                                  (topic) => topic.name == val,
+                                  orElse: () => GroupTopics(),
+                                );
+                            controller.editSelectedTopicId.value =
+                                editSelectedTopic?.id?.toString() ?? '';
                           } else {
                             final selectedTopic = controller.topics.value.result?.data?.firstWhere(
                               (topic) => topic.name == val,
                               orElse: () => Topic(),
                             );
-                            controller.editSelectedTopicId.value = selectedTopic?.id?.toString() ?? '';
+                            controller.editSelectedTopicId.value =
+                                selectedTopic?.id?.toString() ?? '';
                           }
                         },
                         dropdownMenuEntries:
