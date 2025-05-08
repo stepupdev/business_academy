@@ -63,7 +63,8 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
     commentsScrollController = ScrollController();
     commentsScrollController.addListener(() {
       if (commentsScrollController.hasClients) {
-        if (commentsScrollController.position.pixels >= commentsScrollController.position.maxScrollExtent - 300) {
+        if (commentsScrollController.position.pixels >=
+            commentsScrollController.position.maxScrollExtent - 300) {
           communityController.loadNextCommentsPage(widget.postId);
         }
         if (widget.commentId != null) {
@@ -157,7 +158,9 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
                   final isGroupPost = true;
                   final groupId = widget.post?.groupId.toString();
 
-                  debugPrint("POST DETAILS: Navigating to edit. isGroupPost=$isGroupPost, groupId=$groupId");
+                  debugPrint(
+                    "POST DETAILS: Navigating to edit. isGroupPost=$isGroupPost, groupId=$groupId",
+                  );
 
                   // Force fetch group topics if needed
                   if (isGroupPost && groupId != null) {
@@ -180,7 +183,10 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
                           title: Text('Delete Post'),
                           content: Text('Are you sure you want to delete this post?'),
                           actions: [
-                            TextButton(onPressed: () => Navigator.of(context).pop(), child: Text('Cancel')),
+                            TextButton(
+                              onPressed: () => Navigator.of(context).pop(),
+                              child: Text('Cancel'),
+                            ),
                             TextButton(
                               onPressed: () {
                                 controller.deletePost(widget.postId, context).then((_) {
@@ -226,103 +232,113 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                        PostDetailsCard(
-                          onTap: () {},
-                          name: post?.user?.name ?? "",
-                          rank: post?.user?.rank?.name ?? "",
-                          topic: post?.topic?.name ?? "",
-                          postId: int.tryParse(widget.postId),
-                          time: HelperUtils.formatTime(post?.createdAt ?? DateTime.now()),
-                          postImage: post?.image ?? "",
-                          videoUrl: post?.videoUrl ?? "",
-                          dp: post?.user?.avatar ?? "",
-                          caption: post?.content ?? "",
-                          commentCount: ((controller.comments.value.result?.data?.length)).toString(),
-                          isLiked: post?.isLiked ?? false,
-                          isSaved: post?.isSaved ?? false,
-                          onCommentTap: () {
-                            _commentFocusNode.requestFocus();
-                          },
-                          onLike: () {
-                            final postId = post?.id ?? 0;
-                            if (postId == 0) return;
+                      PostDetailsCard(
+                        onTap: () {},
+                        name: post?.user?.name ?? "",
+                        rank: post?.user?.rank?.name ?? "",
+                        topic: post?.topic?.name ?? "",
+                        postId: int.tryParse(widget.postId),
+                        time: HelperUtils.formatTime(post?.createdAt ?? DateTime.now()),
+                        postImage: post?.image ?? "",
+                        videoUrl: post?.videoUrl ?? "",
+                        dp: post?.user?.avatar ?? "",
+                        caption: post?.content ?? "",
+                        commentCount: ((controller.comments.value.result?.data?.length)).toString(),
+                        isLiked: post?.isLiked ?? false,
+                        isSaved: post?.isSaved ?? false,
+                        onCommentTap: () {
+                          _commentFocusNode.requestFocus();
+                        },
+                        onLike: () {
+                          final postId = post?.id ?? 0;
+                          if (postId == 0) return;
 
-                            // Update UI optimistically - this is still fine in the view
-                            final currentState = widget.post?.isLiked ?? false;
-                            if (mounted) {
-                              setState(() {
-                                post?.isLiked = !currentState;
-                              });
-                            }
-                            controller.communityPostsById.refresh();
+                          // Update UI optimistically - this is still fine in the view
+                          final currentState = widget.post?.isLiked ?? false;
+                          if (mounted) {
+                            setState(() {
+                              post?.isLiked = !currentState;
+                            });
+                          }
+                          controller.communityPostsById.refresh();
 
-                            // Call controller method instead of direct API call
-                            controller.likePostAndSyncState(context, postId, currentState);
-                          },
-                          onSave: () {
-                            final postId = post?.id ?? 0;
-                            if (postId == 0) return;
+                          // Call controller method instead of direct API call
+                          controller.likePostAndSyncState(context, postId, currentState);
+                        },
+                        onSave: () {
+                          final postId = post?.id ?? 0;
+                          if (postId == 0) return;
 
-                            // Update UI optimistically - this is still fine in the view
-                            final currentState = post?.isSaved ?? false;
-                            if (mounted) {
-                              setState(() {
-                                post?.isSaved = !currentState;
-                              });
-                            }
-                            controller.communityPostsById.refresh();
+                          // Update UI optimistically - this is still fine in the view
+                          final currentState = post?.isSaved ?? false;
+                          if (mounted) {
+                            setState(() {
+                              post?.isSaved = !currentState;
+                            });
+                          }
+                          controller.communityPostsById.refresh();
 
-                            // Call controller method instead of direct API call
-                            controller.savePostAndSyncState(context, postId, currentState);
-                          },
-                          onTopicTap: () {
-                            if (widget.fromSearchPage) {
-                              if (widget.post?.groupId != null) {
-                                // Navigate to the group details page
-                                final groupController = Get.find<GroupsController>();
-                                groupController.isLoading(true);
-                                groupController.currentGroupId.value = widget.post?.groupId.toString() ?? '';
-                                groupController.selectedTopic.value = post?.topic?.name ?? "";
-                                // groupController.currentGroupId.value = widget.groupId ?? '';
-                                debugPrint("Here is the group id: ${widget.post?.groupId}");
-
-                                var topicId = post?.topic?.id?.toString();
-                                groupController.fetchGroupsTopic(widget.post?.groupId.toString() ?? '');
-                                // groupController.fetchGroupPosts(widget.groupId!);
-                                // groupController.filterPostsByTopic(post?.topic?.name ?? "", topicId: topicId);
-
-                                groupController.filterPostsByTopic(post?.topic?.name ?? "", topicId: topicId);
-                                context.push(AppRoutes.groupDetails);
-                              } else {
-                                // Navigate to the community feed page
-                                controller.selectedTopic.value = post?.topic?.name ?? "";
-                                controller.selectedTopicId.value = post?.topic?.id?.toString() ?? "";
-                                context.go(AppRoutes.communityFeed);
-                              }
-                            } else if (widget.post?.groupId != null) {
-                              // Navigate to the group details page with the selected topic
+                          // Call controller method instead of direct API call
+                          controller.savePostAndSyncState(context, postId, currentState);
+                        },
+                        onTopicTap: () {
+                          if (widget.fromSearchPage) {
+                            if (widget.post?.groupId != null) {
+                              // Navigate to the group details page
                               final groupController = Get.find<GroupsController>();
+                              groupController.isLoading(true);
+                              groupController.currentGroupId.value =
+                                  widget.post?.groupId.toString() ?? '';
                               groupController.selectedTopic.value = post?.topic?.name ?? "";
-                              groupController.currentGroupId.value = widget.post?.groupId.toString() ?? '';
+                              // groupController.currentGroupId.value = widget.groupId ?? '';
+                              debugPrint("Here is the group id: ${widget.post?.groupId}");
+
+                              var topicId = post?.topic?.id?.toString();
+                              groupController.fetchGroupsTopic(
+                                widget.post?.groupId.toString() ?? '',
+                              );
+                              // groupController.fetchGroupPosts(widget.groupId!);
+                              // groupController.filterPostsByTopic(post?.topic?.name ?? "", topicId: topicId);
+
                               groupController.filterPostsByTopic(
                                 post?.topic?.name ?? "",
-                                topicId: post?.topic?.id?.toString(),
+                                topicId: topicId,
                               );
-                              context.pop();
+                              context.push(AppRoutes.groupDetails);
                             } else {
-                              // Navigate to the community feed page with the selected topic
+                              // Navigate to the community feed page
                               controller.selectedTopic.value = post?.topic?.name ?? "";
                               controller.selectedTopicId.value = post?.topic?.id?.toString() ?? "";
                               context.go(AppRoutes.communityFeed);
                             }
-                          },
-                        ),
+                          } else if (widget.post?.groupId != null) {
+                            // Navigate to the group details page with the selected topic
+                            final groupController = Get.find<GroupsController>();
+                            groupController.selectedTopic.value = post?.topic?.name ?? "";
+                            groupController.currentGroupId.value =
+                                widget.post?.groupId.toString() ?? '';
+                            groupController.filterPostsByTopic(
+                              post?.topic?.name ?? "",
+                              topicId: post?.topic?.id?.toString(),
+                            );
+                            context.pop();
+                          } else {
+                            // Navigate to the community feed page with the selected topic
+                            controller.selectedTopic.value = post?.topic?.name ?? "";
+                            controller.selectedTopicId.value = post?.topic?.id?.toString() ?? "";
+                            context.go(AppRoutes.communityFeed);
+                          }
+                        },
+                      ),
                       Divider(height: 1.h),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
                           "Comments",
-                          style: GoogleFonts.plusJakartaSans(fontSize: 15.sp, fontWeight: FontWeight.w700),
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 15.sp,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                       ),
                       Obx(() {
@@ -336,7 +352,11 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
                               padding: EdgeInsets.symmetric(vertical: 20.h),
                               child: Text(
                                 AppStrings.noCommentsFound,
-                                style: TextStyle(color: Colors.grey, fontSize: 14.sp, fontWeight: FontWeight.w500),
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
                             ),
                           );
@@ -347,9 +367,10 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
                         return SizedBox(
                           height:
                               controller.comments.value.result?.data?.length != null
-                                  ? (controller.comments.value.result?.data?.length)! * 200.h
+                                  ? (controller.comments.value.result?.data?.length)! * 250.h
                                   : 0,
                           child: ListView.builder(
+                            padding: EdgeInsets.only(bottom: 20.h),
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(), // Allow smooth scrolling
                             itemCount: comments.length,
@@ -370,17 +391,33 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
                                   final currentState = comment.isLiked ?? false;
                                   comment.isLiked = !currentState;
                                   controller.comments.refresh();
-                                  controller.likeCommentsAndSyncState(context, commentId, currentState);
+                                  controller.likeCommentsAndSyncState(
+                                    context,
+                                    commentId,
+                                    currentState,
+                                  );
                                 },
-                                isReplyLiked: comment.replies?.any((reply) => reply.isLiked ?? false) ?? false,
+                                isReplyLiked:
+                                    comment.replies?.any((reply) => reply.isLiked ?? false) ??
+                                    false,
                                 onReplyTap: (replyId) {
                                   if (replyId == 0) return;
 
                                   final currentState =
-                                      comment.replies?.firstWhere((reply) => reply.id == replyId).isLiked ?? false;
-                                  comment.replies?.firstWhere((reply) => reply.id == replyId).isLiked = !currentState;
+                                      comment.replies
+                                          ?.firstWhere((reply) => reply.id == replyId)
+                                          .isLiked ??
+                                      false;
+                                  comment
+                                      .replies
+                                      ?.firstWhere((reply) => reply.id == replyId)
+                                      .isLiked = !currentState;
                                   controller.comments.refresh();
-                                  controller.likeCommentsAndSyncState(context, replyId, currentState);
+                                  controller.likeCommentsAndSyncState(
+                                    context,
+                                    replyId,
+                                    currentState,
+                                  );
                                 },
                                 onDelete: () {
                                   // show confirmation dialog
@@ -440,7 +477,11 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
                                               onPressed: () {
                                                 Navigator.of(context).pop();
                                                 controller.selectedPostId.value = post?.id ?? 0;
-                                                controller.deleteComments(value, post?.id?.toString() ?? "", context);
+                                                controller.deleteComments(
+                                                  value,
+                                                  post?.id?.toString() ?? "",
+                                                  context,
+                                                );
                                                 controller.getComments(post?.id.toString() ?? "");
                                               },
                                               child: Text(AppStrings.delete),
@@ -458,7 +499,10 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
                                       _replyingTo = comment.id!; // Set the parent comment ID
                                     });
                                   }
-                                  Future.delayed(Duration(milliseconds: 100), () => _commentFocusNode.requestFocus());
+                                  Future.delayed(
+                                    Duration(milliseconds: 100),
+                                    () => _commentFocusNode.requestFocus(),
+                                  );
                                 },
                               );
                             },
@@ -564,7 +608,8 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
                           _commentController.clear();
                           setState(() {
                             _isReplying = false;
-                            _replyingTo = null; // Reset the parent comment ID after adding the reply
+                            _replyingTo =
+                                null; // Reset the parent comment ID after adding the reply
                           });
                         },
                         icon: SvgPicture.asset(

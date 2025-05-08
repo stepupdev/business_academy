@@ -66,12 +66,16 @@ class CommunityController extends GetxController {
   void onInit() async {
     Get.find<AuthService>().getCurrentUser();
     await getCommunityPosts();
+    filterPostsByTopic('All');
     await getTopic();
 
     Get.find<NotificationController>().checkNotification(Get.context!);
     selectedTopic.listen((value) {
       if (value.isNotEmpty) {
-        final topic = topics.value.result?.data?.firstWhere((t) => t.name == value, orElse: () => topics_model.Topic());
+        final topic = topics.value.result?.data?.firstWhere(
+          (t) => t.name == value,
+          orElse: () => topics_model.Topic(),
+        );
         filterPostsByTopic(value, topicId: topic?.id?.toString());
       }
     });
@@ -342,7 +346,8 @@ class CommunityController extends GetxController {
         debugPrint("inside the success ======");
         communityPostsById.update((post) {
           if (post?.result != null && post!.result!.commentsCount != null) {
-            post.result!.commentsCount = (post.result!.commentsCount! - 1).clamp(0, double.infinity).toInt();
+            post.result!.commentsCount =
+                (post.result!.commentsCount! - 1).clamp(0, double.infinity).toInt();
           }
         });
         // Synchronize the comments count across controllers
@@ -379,7 +384,9 @@ class CommunityController extends GetxController {
     int filteredIndex = filteredPosts.indexWhere((p) => p.id == postIdInt);
     if (filteredIndex != -1) {
       filteredPosts[filteredIndex].commentsCount =
-          ((filteredPosts[filteredIndex].commentsCount ?? 0) + delta).clamp(0, double.infinity).toInt();
+          ((filteredPosts[filteredIndex].commentsCount ?? 0) + delta)
+              .clamp(0, double.infinity)
+              .toInt();
       filteredPosts.refresh();
     }
 
@@ -399,10 +406,12 @@ class CommunityController extends GetxController {
     // Update in MyPostsController if registered
     if (Get.isRegistered<MyPostsController>()) {
       final myPostsController = Get.find<MyPostsController>();
-      int myPostIndex = myPostsController.myPosts.value.result?.data?.indexWhere((p) => p.id == postIdInt) ?? -1;
+      int myPostIndex =
+          myPostsController.myPosts.value.result?.data?.indexWhere((p) => p.id == postIdInt) ?? -1;
       if (myPostIndex != -1) {
         myPostsController.myPosts.value.result!.data![myPostIndex].commentsCount =
-            ((myPostsController.myPosts.value.result!.data![myPostIndex].commentsCount ?? 0) + delta)
+            ((myPostsController.myPosts.value.result!.data![myPostIndex].commentsCount ?? 0) +
+                    delta)
                 .clamp(0, double.infinity)
                 .toInt();
         myPostsController.myPosts.refresh();
@@ -413,10 +422,21 @@ class CommunityController extends GetxController {
     if (Get.isRegistered<SavePostController>()) {
       final savePostController = Get.find<SavePostController>();
       int savedPostIndex =
-          savePostController.savePosts.value.result?.data?.indexWhere((p) => p.post?.id == postIdInt) ?? -1;
+          savePostController.savePosts.value.result?.data?.indexWhere(
+            (p) => p.post?.id == postIdInt,
+          ) ??
+          -1;
       if (savedPostIndex != -1) {
         savePostController.savePosts.value.result!.data![savedPostIndex].post?.commentsCount =
-            ((savePostController.savePosts.value.result!.data![savedPostIndex].post?.commentsCount ?? 0) + delta)
+            ((savePostController
+                            .savePosts
+                            .value
+                            .result!
+                            .data![savedPostIndex]
+                            .post
+                            ?.commentsCount ??
+                        0) +
+                    delta)
                 .clamp(0, double.infinity)
                 .toInt();
         savePostController.savePosts.refresh();
@@ -425,7 +445,9 @@ class CommunityController extends GetxController {
   }
 
   void likePosts(BuildContext context) async {
-    int postIndex = communityPosts.value.result?.data?.indexWhere((post) => post.id == selectedPostId.value) ?? -1;
+    int postIndex =
+        communityPosts.value.result?.data?.indexWhere((post) => post.id == selectedPostId.value) ??
+        -1;
 
     if (postIndex == -1) return;
 
@@ -469,7 +491,9 @@ class CommunityController extends GetxController {
   }
 
   savePost(BuildContext context) async {
-    int postIndex = communityPosts.value.result?.data?.indexWhere((post) => post.id == selectedPostId.value) ?? -1;
+    int postIndex =
+        communityPosts.value.result?.data?.indexWhere((post) => post.id == selectedPostId.value) ??
+        -1;
 
     if (postIndex == -1) return;
 
@@ -533,7 +557,10 @@ class CommunityController extends GetxController {
     if (isCommentsPaginating.value || commentsNextPageUrl.value.isEmpty) return;
     try {
       isCommentsPaginating(true);
-      final response = await CommunityRep().getCommentsByPostId(id: postId, fullUrl: commentsNextPageUrl.value);
+      final response = await CommunityRep().getCommentsByPostId(
+        id: postId,
+        fullUrl: commentsNextPageUrl.value,
+      );
       final newComments = CommentsResponseModel.fromJson(response);
       comments.value.result?.data?.addAll(newComments.result?.data ?? []);
       comments.refresh();
@@ -817,7 +844,8 @@ class CommunityController extends GetxController {
     try {
       if (Get.isRegistered<MyPostsController>()) {
         final myPostsController = Get.find<MyPostsController>();
-        int myPostIndex = myPostsController.myPosts.value.result?.data?.indexWhere((p) => p.id == postId) ?? -1;
+        int myPostIndex =
+            myPostsController.myPosts.value.result?.data?.indexWhere((p) => p.id == postId) ?? -1;
         if (myPostIndex != -1) {
           if (action == 'like') {
             myPostsController.myPosts.value.result!.data![myPostIndex].isLiked = newState;
@@ -836,12 +864,16 @@ class CommunityController extends GetxController {
     try {
       if (Get.isRegistered<SavePostController>()) {
         final savePostController = Get.find<SavePostController>();
-        int savedPostIndex = savePostController.savePosts.value.result?.data?.indexWhere((p) => p.id == postId) ?? -1;
+        int savedPostIndex =
+            savePostController.savePosts.value.result?.data?.indexWhere((p) => p.id == postId) ??
+            -1;
         if (savedPostIndex != -1) {
           if (action == 'like') {
-            savePostController.savePosts.value.result!.data![savedPostIndex].post?.isLiked = newState;
+            savePostController.savePosts.value.result!.data![savedPostIndex].post?.isLiked =
+                newState;
           } else if (action == 'save') {
-            savePostController.savePosts.value.result!.data![savedPostIndex].post?.isSaved = newState;
+            savePostController.savePosts.value.result!.data![savedPostIndex].post?.isSaved =
+                newState;
           }
           savePostController.savePosts.refresh();
         }
