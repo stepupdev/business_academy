@@ -16,7 +16,11 @@ class FullImageViewPage extends StatelessWidget {
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
-      body: PhotoView(imageProvider: NetworkImage(imageUrl)),
+      body: PhotoView(
+        minScale: PhotoViewComputedScale.contained,
+        maxScale: PhotoViewComputedScale.covered * 2,
+        imageProvider: NetworkImage(imageUrl),
+      ),
     );
   }
 }
