@@ -5,6 +5,7 @@ import 'package:business_application/features/auth/presentation/pages/signin_pag
 import 'package:business_application/features/community/presentation/pages/community_feed_page.dart';
 import 'package:business_application/features/community/presentation/pages/create_post.dart';
 import 'package:business_application/features/community/presentation/pages/edit_post.dart';
+import 'package:business_application/features/community/presentation/pages/full_image_view_page.dart';
 import 'package:business_application/features/community/presentation/pages/post_details_page.dart';
 import 'package:business_application/features/groups/presentation/pages/groups_details_page.dart';
 import 'package:business_application/features/groups/presentation/pages/groups_page.dart';
@@ -164,6 +165,15 @@ class AppRouter {
       GoRoute(
         path: AppRoutes.noInternet,
         pageBuilder: (context, state) => MaterialPage(key: state.pageKey, child: NoInternetPage()),
+      ),
+
+      GoRoute(
+        path: AppRoutes.fullImageView,
+        pageBuilder: (context, state) {
+          final String imageUrl = state.extra as String;
+          return MaterialPage(key: state.pageKey, child: FullImageViewPage(imageUrl: imageUrl));
+        },
+        parentNavigatorKey: _rootNavigatorKey,
       ),
     ],
   );

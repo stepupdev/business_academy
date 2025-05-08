@@ -15,4 +15,5 @@ class AppRoutes {
   static const String myPosts = '/my-posts';
   static const String editPost = '/edit-post';
   static const String noInternet = '/no-internet';
+  static const String fullImageView = '/full-image-view';
 }

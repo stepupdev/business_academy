@@ -233,7 +233,11 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       PostDetailsCard(
-                        onTap: () {},
+                        onTap: () {
+                          if (post?.image != null) {
+                            context.push(AppRoutes.fullImageView, extra: post?.image);
+                          }
+                        },
                         name: post?.user?.name ?? "",
                         rank: post?.user?.rank?.name ?? "",
                         topic: post?.topic?.name ?? "",
