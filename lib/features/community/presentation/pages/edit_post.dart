@@ -46,8 +46,9 @@ class _EditPostPageState extends State<EditPostPage> {
 
       // Load topics first
       if (widget.post.groupId != null) {
-        if (isDebug)
+        if (isDebug) {
           debugPrint("EDIT POST PAGE: Loading group topics for group ID ${widget.post.groupId}");
+        }
         final groupsController = Get.find<GroupsController>();
         await groupsController.fetchGroupsTopic(widget.post.groupId.toString());
 
