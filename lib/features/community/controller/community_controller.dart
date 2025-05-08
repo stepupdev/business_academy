@@ -697,7 +697,7 @@ class CommunityController extends GetxController {
       final topicsData = TopicsResponseModel.fromJson(response);
       topicsData.result?.data?.insert(0, topics_model.Topic(name: "All"));
       topics(topicsData);
-      selectedTopic.value = "All";
+      // selectedTopic.value = "All";
     } catch (e) {
       isLoading(false);
       debugPrint("Error fetching topics: $e");

@@ -184,9 +184,8 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen>
           return RefreshIndicator(
             key: controller.refreshKey,
             onRefresh: () async {
+              await controller.getTopic();
               Get.find<NotificationController>().hasNewNotification.value;
-              controller.getTopic();
-              // return controller.getCommunityPosts();
               if (controller.selectedTopic.value.isNotEmpty &&
                   controller.selectedTopicId.value.isNotEmpty &&
                   controller.selectedTopic.value != "All") {

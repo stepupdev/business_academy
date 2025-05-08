@@ -2,7 +2,8 @@ import 'package:business_application/data/posts/posts_models.dart';
 import 'package:business_application/features/community/data/community_posts_model.dart';
 import 'package:business_application/features/groups/data/groups_by_id_model.dart';
 import 'package:business_application/features/groups/data/groups_models.dart';
-import 'package:business_application/features/groups/data/groups_topic_response_model.dart' as groups_topic;
+import 'package:business_application/features/groups/data/groups_topic_response_model.dart'
+    as groups_topic;
 import 'package:business_application/repository/community_rep.dart';
 import 'package:business_application/repository/groups_rep.dart';
 import 'package:flutter/material.dart';
@@ -63,8 +64,11 @@ class GroupsController extends GetxController {
     try {
       var response = await GroupsRep().getGroupsTopic(id);
       groupsTopicResponse(groups_topic.GroupsTopicResponseModel.fromJson(response));
-      groupsTopicResponse.value.result?.data?.insert(0, groups_topic.GroupTopics(id: 0, name: "All"));
-      selectedTopic.value = "All";
+      groupsTopicResponse.value.result?.data?.insert(
+        0,
+        groups_topic.GroupTopics(id: 0, name: "All"),
+      );
+      // selectedTopic.value = "All";
       return true;
     } catch (e) {
       return false;
@@ -129,7 +133,9 @@ class GroupsController extends GetxController {
       // Remove topic_id parameter to fetch all posts for the group
       try {
         isLoading(true);
-        final response = await CommunityRep().getCommunityPosts(params: {'group_id': currentGroupId.value});
+        final response = await CommunityRep().getCommunityPosts(
+          params: {'group_id': currentGroupId.value},
+        );
         groupPosts.assignAll(PostsResponseModel.fromJson(response).result?.data ?? []);
       } catch (e) {
         debugPrint("Error fetching all group posts: $e");
@@ -202,7 +208,9 @@ class GroupsController extends GetxController {
     }
 
     // Send the save request to the server
-    Map<String, dynamic> data = {"post_id": selectedPostId.value}; // CHANGE THIS LINE - was using wrong format
+    Map<String, dynamic> data = {
+      "post_id": selectedPostId.value,
+    }; // CHANGE THIS LINE - was using wrong format
     final response = await CommunityRep().savePost(data, context);
 
     // Revert the state if the server request fails
