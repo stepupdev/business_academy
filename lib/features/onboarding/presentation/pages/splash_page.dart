@@ -1,7 +1,7 @@
-import 'package:business_application/core/config/app_routes.dart';
-import 'package:business_application/core/services/connectivity_service.dart';
-import 'package:business_application/core/utils/auth_utils.dart';
-import 'package:business_application/core/services/auth_services.dart';
+import 'package:stepup_community/core/config/app_routes.dart';
+import 'package:stepup_community/core/services/connectivity_service.dart';
+import 'package:stepup_community/core/utils/auth_utils.dart';
+import 'package:stepup_community/core/services/auth_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';

@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:business_application/core/api/api_manager_wrapper.dart';
-import 'package:business_application/core/api/api_url.dart';
-import 'package:business_application/core/services/auth_services.dart';
-import 'package:business_application/core/utils/ui_support.dart';
+import 'package:stepup_community/core/api/api_manager_wrapper.dart';
+import 'package:stepup_community/core/api/api_url.dart';
+import 'package:stepup_community/core/services/auth_services.dart';
+import 'package:stepup_community/core/utils/ui_support.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -13,9 +13,7 @@ class CommunityRep {
   final APIManagerWrapper manager = APIManagerWrapper();
   Future getCommunityPosts({Map<String, dynamic>? params, String? fullUrl}) async {
     final uri =
-        fullUrl != null
-            ? Uri.parse(fullUrl)
-            : Uri.parse(ApiUrl.communityPosts).replace(queryParameters: params);
+        fullUrl != null ? Uri.parse(fullUrl) : Uri.parse(ApiUrl.communityPosts).replace(queryParameters: params);
     debugPrint("Fetching posts with URI: ${uri.toString()}");
     final response = await manager.getWithHeader(uri.toString(), {
       "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
@@ -122,12 +120,7 @@ class CommunityRep {
     if (imageFile != null) {
       var stream = http.ByteStream(imageFile.openRead());
       var length = await imageFile.length();
-      var multipartFile = http.MultipartFile(
-        'image',
-        stream,
-        length,
-        filename: imageFile.path.split("/").last,
-      );
+      var multipartFile = http.MultipartFile('image', stream, length, filename: imageFile.path.split("/").last);
       request.files.add(multipartFile);
     }
 
@@ -185,12 +178,7 @@ class CommunityRep {
     if (imageFile != null) {
       var stream = http.ByteStream(imageFile.openRead());
       var length = await imageFile.length();
-      var multipartFile = http.MultipartFile(
-        'image',
-        stream,
-        length,
-        filename: imageFile.path.split("/").last,
-      );
+      var multipartFile = http.MultipartFile('image', stream, length, filename: imageFile.path.split("/").last);
       request.files.add(multipartFile);
     }
 
@@ -259,12 +247,11 @@ class CommunityRep {
   }
 
   Future changeCommunity(Map<String, dynamic> body, BuildContext context) async {
-    final response = await manager
-        .postAPICallWithHeader(context, "${ApiUrl.communities}/change", body, {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
-        });
+    final response = await manager.postAPICallWithHeader(context, "${ApiUrl.communities}/change", body, {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      "Authorization": "Bearer ${Get.find<AuthService>().currentUser.value.result!.token}",
+    });
     debugPrint("response: $response");
     if (response['success'] == true) {
       Ui.showSuccessSnackBar(context, message: response['message']);

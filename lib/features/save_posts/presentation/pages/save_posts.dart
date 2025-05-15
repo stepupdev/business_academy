@@ -1,9 +1,9 @@
-import 'package:business_application/core/config/app_colors.dart';
-import 'package:business_application/core/config/app_size.dart';
-import 'package:business_application/core/utils/app_strings.dart';
-import 'package:business_application/features/community/controller/community_controller.dart';
-import 'package:business_application/features/save_posts/controller/save_post_controller.dart';
-import 'package:business_application/widgets/custom_post_cart_widgets.dart';
+import 'package:stepup_community/core/config/app_colors.dart';
+import 'package:stepup_community/core/config/app_size.dart';
+import 'package:stepup_community/core/utils/app_strings.dart';
+import 'package:stepup_community/features/community/controller/community_controller.dart';
+import 'package:stepup_community/features/save_posts/controller/save_post_controller.dart';
+import 'package:stepup_community/widgets/custom_post_cart_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';

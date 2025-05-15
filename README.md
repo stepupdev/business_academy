@@ -1,4 +1,4 @@
-# business_application
+# stepup_community
 
 A new Flutter project.
 

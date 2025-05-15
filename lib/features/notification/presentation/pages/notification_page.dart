@@ -1,8 +1,8 @@
-import 'package:business_application/core/config/app_size.dart';
-import 'package:business_application/core/utils/helper_utils.dart';
-import 'package:business_application/core/utils/ui_support.dart';
-import 'package:business_application/features/community/controller/community_controller.dart';
-import 'package:business_application/features/notification/controller/notification_controller.dart';
+import 'package:stepup_community/core/config/app_size.dart';
+import 'package:stepup_community/core/utils/helper_utils.dart';
+import 'package:stepup_community/core/utils/ui_support.dart';
+import 'package:stepup_community/features/community/controller/community_controller.dart';
+import 'package:stepup_community/features/notification/controller/notification_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';

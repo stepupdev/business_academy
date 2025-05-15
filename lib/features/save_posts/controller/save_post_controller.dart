@@ -1,8 +1,8 @@
-import 'package:business_application/core/utils/app_strings.dart';
-import 'package:business_application/core/utils/ui_support.dart';
-import 'package:business_application/features/community/controller/community_controller.dart';
-import 'package:business_application/features/save_posts/data/save_posts_res_model.dart';
-import 'package:business_application/repository/community_rep.dart';
+import 'package:stepup_community/core/utils/app_strings.dart';
+import 'package:stepup_community/core/utils/ui_support.dart';
+import 'package:stepup_community/features/community/controller/community_controller.dart';
+import 'package:stepup_community/features/save_posts/data/save_posts_res_model.dart';
+import 'package:stepup_community/repository/community_rep.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

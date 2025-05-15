@@ -1,16 +1,16 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:io';
 
-import 'package:business_application/core/config/app_colors.dart';
-import 'package:business_application/core/config/app_routes.dart';
-import 'package:business_application/core/config/app_size.dart';
-import 'package:business_application/core/utils/app_strings.dart';
-import 'package:business_application/core/utils/ui_support.dart';
-import 'package:business_application/data/posts/posts_models.dart';
-import 'package:business_application/data/posts/topic_models.dart';
-import 'package:business_application/features/community/controller/community_controller.dart';
-import 'package:business_application/features/groups/controller/groups_controller.dart';
-import 'package:business_application/features/groups/data/groups_topic_response_model.dart';
+import 'package:stepup_community/core/config/app_colors.dart';
+import 'package:stepup_community/core/config/app_routes.dart';
+import 'package:stepup_community/core/config/app_size.dart';
+import 'package:stepup_community/core/utils/app_strings.dart';
+import 'package:stepup_community/core/utils/ui_support.dart';
+import 'package:stepup_community/data/posts/posts_models.dart';
+import 'package:stepup_community/data/posts/topic_models.dart';
+import 'package:stepup_community/features/community/controller/community_controller.dart';
+import 'package:stepup_community/features/groups/controller/groups_controller.dart';
+import 'package:stepup_community/features/groups/data/groups_topic_response_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -70,9 +70,7 @@ class _EditPostPageState extends State<EditPostPage> {
       }
 
       // Populate the edit fields with the post data
-      controller.editPostController.text = Get.find<CommunityController>().cleanHtml(
-        widget.post.content ?? '',
-      );
+      controller.editPostController.text = Get.find<CommunityController>().cleanHtml(widget.post.content ?? '');
       controller.editVideoController.text = widget.post.videoUrl ?? '';
       controller.editSelectedImage.value = widget.post.image ?? '';
 
@@ -121,10 +119,7 @@ class _EditPostPageState extends State<EditPostPage> {
                 }
 
                 if (controller.editPostController.text.length < 10) {
-                  Ui.showErrorSnackBar(
-                    context,
-                    message: "Post content must be at least 10 characters",
-                  );
+                  Ui.showErrorSnackBar(context, message: "Post content must be at least 10 characters");
                   return;
                 }
 
@@ -201,17 +196,9 @@ class _EditPostPageState extends State<EditPostPage> {
                                               borderRadius: BorderRadius.circular(12),
                                               image: DecorationImage(
                                                 image:
-                                                    controller.editSelectedImage.value.contains(
-                                                          "http",
-                                                        )
-                                                        ? NetworkImage(
-                                                          controller.editSelectedImage.value,
-                                                        )
-                                                        : FileImage(
-                                                              File(
-                                                                controller.editSelectedImage.value,
-                                                              ),
-                                                            )
+                                                    controller.editSelectedImage.value.contains("http")
+                                                        ? NetworkImage(controller.editSelectedImage.value)
+                                                        : FileImage(File(controller.editSelectedImage.value))
                                                             as ImageProvider,
                                                 fit: BoxFit.cover,
                                               ),
@@ -244,19 +231,10 @@ class _EditPostPageState extends State<EditPostPage> {
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: const Color(0xFFE9F0FF),
                                       fixedSize: Size(165.w, 50.h),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12.r),
-                                      ),
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
                                     ),
-                                    label: const Text(
-                                      "Camera",
-                                      style: TextStyle(color: Colors.black),
-                                    ),
-                                    icon: Icon(
-                                      Icons.photo_camera,
-                                      size: 24,
-                                      color: AppColors.primaryColor,
-                                    ),
+                                    label: const Text("Camera", style: TextStyle(color: Colors.black)),
+                                    icon: Icon(Icons.photo_camera, size: 24, color: AppColors.primaryColor),
                                   ),
                                 ),
                                 10.wS,
@@ -266,14 +244,9 @@ class _EditPostPageState extends State<EditPostPage> {
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: const Color(0xFFE9F0FF),
                                       fixedSize: Size(165.w, 50.h),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12.r),
-                                      ),
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
                                     ),
-                                    label: const Text(
-                                      "Add Photos",
-                                      style: TextStyle(color: Colors.black),
-                                    ),
+                                    label: const Text("Add Photos", style: TextStyle(color: Colors.black)),
                                     icon: Icon(
                                       Icons.photo_size_select_actual_rounded,
                                       size: 24,
@@ -313,9 +286,7 @@ class _EditPostPageState extends State<EditPostPage> {
                       return DropdownMenu<String>(
                         hintText: "Select a topic",
                         initialSelection:
-                            controller.editSelectedTopic.value.isNotEmpty
-                                ? controller.editSelectedTopic.value
-                                : null,
+                            controller.editSelectedTopic.value.isNotEmpty ? controller.editSelectedTopic.value : null,
                         inputDecorationTheme: InputDecorationTheme(
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -344,19 +315,14 @@ class _EditPostPageState extends State<EditPostPage> {
                                 .value
                                 .result
                                 ?.data
-                                ?.firstWhere(
-                                  (topic) => topic.name == val,
-                                  orElse: () => GroupTopics(),
-                                );
-                            controller.editSelectedTopicId.value =
-                                editSelectedTopic?.id?.toString() ?? '';
+                                ?.firstWhere((topic) => topic.name == val, orElse: () => GroupTopics());
+                            controller.editSelectedTopicId.value = editSelectedTopic?.id?.toString() ?? '';
                           } else {
                             final selectedTopic = controller.topics.value.result?.data?.firstWhere(
                               (topic) => topic.name == val,
                               orElse: () => Topic(),
                             );
-                            controller.editSelectedTopicId.value =
-                                selectedTopic?.id?.toString() ?? '';
+                            controller.editSelectedTopicId.value = selectedTopic?.id?.toString() ?? '';
                           }
                         },
                         dropdownMenuEntries:

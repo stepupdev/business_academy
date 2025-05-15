@@ -1,15 +1,13 @@
-import 'package:business_application/core/utils/theme/colors.dart';
+import 'package:stepup_community/core/utils/theme/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 
 /* -- Light & Dark Outlined Button Themes -- */
 class TOutlinedButtonTheme {
   TOutlinedButtonTheme._(); //To avoid creating instances
 
-
   /* -- Light Theme -- */
-  static final lightOutlinedButtonTheme  = OutlinedButtonThemeData(
+  static final lightOutlinedButtonTheme = OutlinedButtonThemeData(
     style: OutlinedButton.styleFrom(
       elevation: 0,
       foregroundColor: TColors.dark,

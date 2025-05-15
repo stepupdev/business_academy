@@ -4,8 +4,8 @@
 
 import 'dart:convert';
 
-import 'package:business_application/data/posts/pagination_model.dart';
-import 'package:business_application/data/posts/posts_models.dart';
+import 'package:stepup_community/data/posts/pagination_model.dart';
+import 'package:stepup_community/data/posts/posts_models.dart';
 
 SearchResponseModel searchResponseModelFromJson(String str) => SearchResponseModel.fromJson(json.decode(str));
 

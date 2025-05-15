@@ -1,7 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:business_application/core/config/app_colors.dart';
-import 'package:business_application/core/config/app_routes.dart';
-import 'package:business_application/core/utils/ui_support.dart';
+import 'package:stepup_community/core/config/app_colors.dart';
+import 'package:stepup_community/core/config/app_routes.dart';
+import 'package:stepup_community/core/utils/ui_support.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';

@@ -1,4 +1,4 @@
-import 'package:business_application/features/auth/data/login_response_model.dart';
+import 'package:stepup_community/features/auth/data/login_response_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';

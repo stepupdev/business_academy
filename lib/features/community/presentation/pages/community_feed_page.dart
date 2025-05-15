@@ -1,13 +1,13 @@
-import 'package:business_application/core/config/app_colors.dart';
-import 'package:business_application/core/config/app_routes.dart';
-import 'package:business_application/core/config/app_size.dart';
-import 'package:business_application/core/services/auth_services.dart';
-import 'package:business_application/core/utils/app_strings.dart';
-import 'package:business_application/core/utils/ui_support.dart';
-import 'package:business_application/features/community/controller/community_controller.dart';
-import 'package:business_application/features/community/presentation/widgets/custom_shimmer.dart';
-import 'package:business_application/features/notification/controller/notification_controller.dart';
-import 'package:business_application/widgets/custom_post_cart_widgets.dart';
+import 'package:stepup_community/core/config/app_colors.dart';
+import 'package:stepup_community/core/config/app_routes.dart';
+import 'package:stepup_community/core/config/app_size.dart';
+import 'package:stepup_community/core/services/auth_services.dart';
+import 'package:stepup_community/core/utils/app_strings.dart';
+import 'package:stepup_community/core/utils/ui_support.dart';
+import 'package:stepup_community/features/community/controller/community_controller.dart';
+import 'package:stepup_community/features/community/presentation/widgets/custom_shimmer.dart';
+import 'package:stepup_community/features/notification/controller/notification_controller.dart';
+import 'package:stepup_community/widgets/custom_post_cart_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -22,8 +22,7 @@ class CommunityFeedScreen extends StatefulWidget {
   CommunityFeedScreenState createState() => CommunityFeedScreenState();
 }
 
-class CommunityFeedScreenState extends State<CommunityFeedScreen>
-    with AutomaticKeepAliveClientMixin {
+class CommunityFeedScreenState extends State<CommunityFeedScreen> with AutomaticKeepAliveClientMixin {
   late CommunityController controller;
 
   // The bucket to store scroll positions
@@ -117,14 +116,8 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen>
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'StepUp',
-                  style: TextStyle(fontSize: 12, color: Colors.white, fontWeight: FontWeight.w600),
-                ),
-                Text(
-                  'Community',
-                  style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.w700),
-                ),
+                Text('StepUp', style: TextStyle(fontSize: 12, color: Colors.white, fontWeight: FontWeight.w600)),
+                Text('Community', style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.w700)),
               ],
             ),
           ],
@@ -193,8 +186,7 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen>
                   controller.selectedTopic.value,
                   topicId: controller.selectedTopicId.value,
                 );
-              } else if (controller.selectedTopic.value.isEmpty &&
-                  controller.selectedTopic.value == "All") {
+              } else if (controller.selectedTopic.value.isEmpty && controller.selectedTopic.value == "All") {
                 controller.getTopic();
               } else {
                 return controller.getCommunityPosts();
@@ -223,19 +215,14 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen>
                           Expanded(
                             child: TextButton(
                               onPressed: () {
-                                context.push(
-                                  '/create-post',
-                                  extra: {'isGroupTopics': false},
-                                ); // Pass argument
+                                context.push('/create-post', extra: {'isGroupTopics': false}); // Pass argument
                               },
                               style: TextButton.styleFrom(
                                 alignment: Alignment.centerLeft,
                                 backgroundColor: dark ? AppColors.dark : Colors.white,
                                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
                                 side: BorderSide(color: Colors.blue.shade100, width: 0.5),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(50),
-                                ),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
                               ),
                               child: Text(
                                 AppStrings.createPostButton,
@@ -259,12 +246,7 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen>
                   SliverToBoxAdapter(
                     child: Padding(
                       padding: EdgeInsets.symmetric(vertical: 10.h),
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          color: AppColors.primaryColor,
-                          strokeWidth: 2,
-                        ),
-                      ),
+                      child: Center(child: CircularProgressIndicator(color: AppColors.primaryColor, strokeWidth: 2)),
                     ),
                   ),
                 if (controller.filteredPosts.isEmpty ||
@@ -272,9 +254,7 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen>
                     controller.communityPosts.value.result!.data!.isEmpty)
                   SliverToBoxAdapter(
                     child: SizedBox(
-                      height:
-                          MediaQuery.of(context).size.height *
-                          0.8, // enough height to make it scrollable
+                      height: MediaQuery.of(context).size.height * 0.8, // enough height to make it scrollable
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -294,69 +274,57 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen>
                   )
                 else ...[
                   SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        if (index == controller.filteredPosts.length) {
-                          return Padding(
-                            padding: EdgeInsets.only(top: index == 0 ? 0 : 10.h, bottom: 10.h),
-                            child: Center(
-                              child: CircularProgressIndicator(
-                                color: AppColors.primaryColor,
-                                strokeWidth: 2,
-                              ),
-                            ),
-                          );
-                        }
-                        final posts = controller.filteredPosts[index];
-                        return Column(
-                          children: [
-                            UserPostWidget(
-                              onTap: () {
-                                // First save the scroll position
-                                controller.saveScrollPosition();
-                                controller.shouldRestorePosition.value = true;
-
-                                // Set up for the details page
-                                // Get.find<CommunityController>().getCommunityPostsById(posts.id.toString());
-                                // Get.find<CommunityController>().getComments(posts.id.toString());
-                                controller.selectedPostId.value = posts.id ?? 0;
-
-                                // Navigate using go_router
-                                context.push('/post-details/${posts.id}', extra: {'post': posts});
-                              },
-                              name: posts.user?.name ?? "",
-                              postId: posts.id ?? 0,
-                              rank: posts.user?.rank?.name ?? "",
-                              topic: posts.topic?.name ?? "",
-                              time: posts.createdAt ?? DateTime.now(),
-                              postImage: posts.image ?? "",
-                              videoUrl: posts.videoUrl ?? "",
-                              dp: posts.user?.avatar ?? "",
-                              caption: controller.cleanHtml(posts.content ?? ""),
-                              commentCount: posts.commentsCount?.toString() ?? "0",
-                              isLiked: posts.isLiked ?? false,
-                              isSaved: posts.isSaved ?? false,
-                            ),
-                            if (index != controller.filteredPosts.length - 1) ...[
-                              Divider(height: 2.h, color: AppColors.darkGrey),
-                            ],
-                          ],
+                    delegate: SliverChildBuilderDelegate((context, index) {
+                      if (index == controller.filteredPosts.length) {
+                        return Padding(
+                          padding: EdgeInsets.only(top: index == 0 ? 0 : 10.h, bottom: 10.h),
+                          child: Center(
+                            child: CircularProgressIndicator(color: AppColors.primaryColor, strokeWidth: 2),
+                          ),
                         );
-                      },
-                      childCount:
-                          controller.filteredPosts.length + (controller.isPaginating.value ? 1 : 0),
-                    ),
+                      }
+                      final posts = controller.filteredPosts[index];
+                      return Column(
+                        children: [
+                          UserPostWidget(
+                            onTap: () {
+                              // First save the scroll position
+                              controller.saveScrollPosition();
+                              controller.shouldRestorePosition.value = true;
+
+                              // Set up for the details page
+                              // Get.find<CommunityController>().getCommunityPostsById(posts.id.toString());
+                              // Get.find<CommunityController>().getComments(posts.id.toString());
+                              controller.selectedPostId.value = posts.id ?? 0;
+
+                              // Navigate using go_router
+                              context.push('/post-details/${posts.id}', extra: {'post': posts});
+                            },
+                            name: posts.user?.name ?? "",
+                            postId: posts.id ?? 0,
+                            rank: posts.user?.rank?.name ?? "",
+                            topic: posts.topic?.name ?? "",
+                            time: posts.createdAt ?? DateTime.now(),
+                            postImage: posts.image ?? "",
+                            videoUrl: posts.videoUrl ?? "",
+                            dp: posts.user?.avatar ?? "",
+                            caption: controller.cleanHtml(posts.content ?? ""),
+                            commentCount: posts.commentsCount?.toString() ?? "0",
+                            isLiked: posts.isLiked ?? false,
+                            isSaved: posts.isSaved ?? false,
+                          ),
+                          if (index != controller.filteredPosts.length - 1) ...[
+                            Divider(height: 2.h, color: AppColors.darkGrey),
+                          ],
+                        ],
+                      );
+                    }, childCount: controller.filteredPosts.length + (controller.isPaginating.value ? 1 : 0)),
                   ),
                   if (controller.isPaginating.value)
                     SliverToBoxAdapter(
                       child: Padding(
                         padding: EdgeInsets.symmetric(vertical: 10.h),
-                        child: Center(
-                          child: CircularProgressIndicator(
-                            color: AppColors.primaryColor,
-                            strokeWidth: 2,
-                          ),
-                        ),
+                        child: Center(child: CircularProgressIndicator(color: AppColors.primaryColor, strokeWidth: 2)),
                       ),
                     ),
                 ],
@@ -391,10 +359,7 @@ class _TopicSelectionHeader extends SliverPersistentHeaderDelegate {
         // Ensure the selected topic is centered
         WidgetsBinding.instance.addPostFrameCallback((_) {
           final selectedIndex =
-              controller.topics.value.result?.data?.indexWhere(
-                (t) => t.name == controller.selectedTopic.value,
-              ) ??
-              -1;
+              controller.topics.value.result?.data?.indexWhere((t) => t.name == controller.selectedTopic.value) ?? -1;
 
           if (selectedIndex != -1) {
             final itemWidth = 100.w; // Approximate width of each item
@@ -440,8 +405,7 @@ class _TopicSelectionHeader extends SliverPersistentHeaderDelegate {
                     decoration: BoxDecoration(
                       color: dark ? AppColors.dark : Colors.white,
                       border: Border.all(
-                        color:
-                            isSelected ? AppColors.primaryColor : (Colors.grey[200] ?? Colors.grey),
+                        color: isSelected ? AppColors.primaryColor : (Colors.grey[200] ?? Colors.grey),
                         width: 0.5,
                       ),
                       borderRadius: BorderRadius.circular(50),
@@ -459,10 +423,7 @@ class _TopicSelectionHeader extends SliverPersistentHeaderDelegate {
                         ),
                         if (topic?.postsCount != null && topic?.name != "All") ...[
                           5.wS,
-                          Text(
-                            '(${topic?.postsCount.toString()})',
-                            style: TextStyle(color: Colors.grey.shade400),
-                          ),
+                          Text('(${topic?.postsCount.toString()})', style: TextStyle(color: Colors.grey.shade400)),
                         ],
                       ],
                     ),

@@ -1,9 +1,9 @@
-import 'package:business_application/core/config/app_colors.dart';
-import 'package:business_application/core/config/app_size.dart';
-import 'package:business_application/core/services/auth_services.dart';
-import 'package:business_application/core/utils/helper_utils.dart';
-import 'package:business_application/core/utils/ui_support.dart';
-import 'package:business_application/features/community/data/comments_response_model.dart';
+import 'package:stepup_community/core/config/app_colors.dart';
+import 'package:stepup_community/core/config/app_size.dart';
+import 'package:stepup_community/core/services/auth_services.dart';
+import 'package:stepup_community/core/utils/helper_utils.dart';
+import 'package:stepup_community/core/utils/ui_support.dart';
+import 'package:stepup_community/features/community/data/comments_response_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';

@@ -1,4 +1,4 @@
-import 'package:business_application/core/utils/theme/colors.dart';
+import 'package:stepup_community/core/utils/theme/colors.dart';
 import 'package:flutter/material.dart';
 
 /// Custom Class for Light & Dark Text Themes
@@ -17,10 +17,18 @@ class TTextTheme {
 
     bodyLarge: const TextStyle().copyWith(fontSize: 14.0, fontWeight: FontWeight.w500, color: TColors.dark),
     bodyMedium: const TextStyle().copyWith(fontSize: 14.0, fontWeight: FontWeight.normal, color: TColors.dark),
-    bodySmall: const TextStyle().copyWith(fontSize: 14.0, fontWeight: FontWeight.w500, color: TColors.dark.withOpacity(0.5)),
+    bodySmall: const TextStyle().copyWith(
+      fontSize: 14.0,
+      fontWeight: FontWeight.w500,
+      color: TColors.dark.withOpacity(0.5),
+    ),
 
     labelLarge: const TextStyle().copyWith(fontSize: 12.0, fontWeight: FontWeight.normal, color: TColors.dark),
-    labelMedium: const TextStyle().copyWith(fontSize: 12.0, fontWeight: FontWeight.normal, color: TColors.dark.withOpacity(0.5)),
+    labelMedium: const TextStyle().copyWith(
+      fontSize: 12.0,
+      fontWeight: FontWeight.normal,
+      color: TColors.dark.withOpacity(0.5),
+    ),
   );
 
   /// Customizable Dark Text Theme
@@ -35,9 +43,17 @@ class TTextTheme {
 
     bodyLarge: const TextStyle().copyWith(fontSize: 14.0, fontWeight: FontWeight.w500, color: TColors.light),
     bodyMedium: const TextStyle().copyWith(fontSize: 14.0, fontWeight: FontWeight.normal, color: TColors.light),
-    bodySmall: const TextStyle().copyWith(fontSize: 14.0, fontWeight: FontWeight.w500, color: TColors.light.withOpacity(0.5)),
+    bodySmall: const TextStyle().copyWith(
+      fontSize: 14.0,
+      fontWeight: FontWeight.w500,
+      color: TColors.light.withOpacity(0.5),
+    ),
 
     labelLarge: const TextStyle().copyWith(fontSize: 12.0, fontWeight: FontWeight.normal, color: TColors.light),
-    labelMedium: const TextStyle().copyWith(fontSize: 12.0, fontWeight: FontWeight.normal, color: TColors.light.withOpacity(0.5)),
+    labelMedium: const TextStyle().copyWith(
+      fontSize: 12.0,
+      fontWeight: FontWeight.normal,
+      color: TColors.light.withOpacity(0.5),
+    ),
   );
 }

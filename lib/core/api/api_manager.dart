@@ -1,14 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:business_application/core/api/api_exception.dart';
-import 'package:business_application/core/config/app_router.dart';
-import 'package:business_application/core/config/app_routes.dart';
-import 'package:business_application/core/services/auth_services.dart';
-import 'package:business_application/core/services/connectivity_service.dart';
-import 'package:business_application/core/utils/auth_utils.dart';
-import 'package:business_application/core/utils/ui_support.dart';
-import 'package:business_application/main.dart';
+import 'package:stepup_community/core/api/api_exception.dart';
+import 'package:stepup_community/core/config/app_router.dart';
+import 'package:stepup_community/core/config/app_routes.dart';
+import 'package:stepup_community/core/services/auth_services.dart';
+import 'package:stepup_community/core/services/connectivity_service.dart';
+import 'package:stepup_community/core/utils/auth_utils.dart';
+import 'package:stepup_community/core/utils/ui_support.dart';
+import 'package:stepup_community/main.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -25,11 +25,7 @@ class APIManager {
 
     var responseJson;
     try {
-      final response = await http.post(
-        Uri.parse(url),
-        body: jsonEncode(param),
-        headers: headerData,
-      );
+      final response = await http.post(Uri.parse(url), body: jsonEncode(param), headers: headerData);
       debugPrint("api provider bro bro bro bro ${response.body}");
       var data = jsonDecode(response.body);
 
@@ -49,21 +45,13 @@ class APIManager {
     return responseJson;
   }
 
-  Future<dynamic> putAPICallWithHeader(
-    String url,
-    Map<String, dynamic> param,
-    Map<String, String> headerData,
-  ) async {
+  Future<dynamic> putAPICallWithHeader(String url, Map<String, dynamic> param, Map<String, String> headerData) async {
     debugPrint("Calling API: $url");
     debugPrint("Calling parameters: $param");
 
     var responseJson;
     try {
-      final response = await http.post(
-        Uri.parse(url),
-        body: jsonEncode(param),
-        headers: headerData,
-      );
+      final response = await http.post(Uri.parse(url), body: jsonEncode(param), headers: headerData);
       debugPrint("api provider bro bro bro bro ${response.body}");
       var data = jsonDecode(response.body);
       if (response.statusCode == 422) {
@@ -225,19 +213,9 @@ class APIManager {
       debugPrint("status code is ${response.statusCode}");
       responseJson = _response(response);
     } on FetchDataException catch (_) {
-      Get.snackbar(
-        "Error",
-        "No Internet connection",
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      Get.snackbar("Error", "No Internet connection", backgroundColor: Colors.red, colorText: Colors.white);
     } on SocketException catch (_) {
-      Get.snackbar(
-        "Error",
-        "No Internet connection",
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      Get.snackbar("Error", "No Internet connection", backgroundColor: Colors.red, colorText: Colors.white);
     }
     return responseJson;
   }
@@ -270,9 +248,7 @@ class APIManager {
         case 500:
           throw UnauthorisedException("Internal Server Error");
         default:
-          throw FetchDataException(
-            'Error occurred while communicating with Server: ${response.statusCode}',
-          );
+          throw FetchDataException('Error occurred while communicating with Server: ${response.statusCode}');
       }
     } catch (e) {
       debugPrint("⚠️ Error decoding JSON or handling response: $e");
@@ -280,11 +256,7 @@ class APIManager {
     }
   }
 
-  Future<dynamic> deleteAPICallWithHeader(
-    BuildContext context,
-    String url, {
-    Map<String, String>? headerData,
-  }) async {
+  Future<dynamic> deleteAPICallWithHeader(BuildContext context, String url, {Map<String, String>? headerData}) async {
     debugPrint("Calling DELETE API: $url");
 
     var responseJson;

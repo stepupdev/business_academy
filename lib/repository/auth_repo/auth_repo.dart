@@ -1,5 +1,5 @@
-import 'package:business_application/core/api/api_manager.dart';
-import 'package:business_application/core/api/api_url.dart';
+import 'package:stepup_community/core/api/api_manager.dart';
+import 'package:stepup_community/core/api/api_url.dart';
 import 'package:flutter/material.dart';
 
 class AuthRepository {

@@ -1,4 +1,4 @@
-import 'package:business_application/core/utils/theme/colors.dart';
+import 'package:stepup_community/core/utils/theme/colors.dart';
 import 'package:flutter/material.dart';
 
 class TChipTheme {

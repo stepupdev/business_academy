@@ -1,6 +1,6 @@
 {
-    "name": "business_application",
-    "short_name": "business_application",
+    "name": "stepup_community",
+    "short_name": "stepup_community",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

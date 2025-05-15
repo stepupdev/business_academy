@@ -1,17 +1,17 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:business_application/core/config/app_colors.dart';
-import 'package:business_application/core/config/app_routes.dart';
-import 'package:business_application/core/config/app_size.dart';
-import 'package:business_application/core/services/auth_services.dart';
-import 'package:business_application/core/utils/app_strings.dart';
-import 'package:business_application/core/utils/helper_utils.dart';
-import 'package:business_application/core/utils/ui_support.dart';
-import 'package:business_application/data/posts/posts_models.dart';
-import 'package:business_application/features/community/controller/community_controller.dart';
-import 'package:business_application/features/community/presentation/widgets/comment_widget.dart';
-import 'package:business_application/features/community/presentation/widgets/post_details_card.dart';
-import 'package:business_application/features/community/presentation/widgets/post_details_shimmer.dart';
-import 'package:business_application/features/groups/controller/groups_controller.dart';
+import 'package:stepup_community/core/config/app_colors.dart';
+import 'package:stepup_community/core/config/app_routes.dart';
+import 'package:stepup_community/core/config/app_size.dart';
+import 'package:stepup_community/core/services/auth_services.dart';
+import 'package:stepup_community/core/utils/app_strings.dart';
+import 'package:stepup_community/core/utils/helper_utils.dart';
+import 'package:stepup_community/core/utils/ui_support.dart';
+import 'package:stepup_community/data/posts/posts_models.dart';
+import 'package:stepup_community/features/community/controller/community_controller.dart';
+import 'package:stepup_community/features/community/presentation/widgets/comment_widget.dart';
+import 'package:stepup_community/features/community/presentation/widgets/post_details_card.dart';
+import 'package:stepup_community/features/community/presentation/widgets/post_details_shimmer.dart';
+import 'package:stepup_community/features/groups/controller/groups_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -63,8 +63,7 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
     commentsScrollController = ScrollController();
     commentsScrollController.addListener(() {
       if (commentsScrollController.hasClients) {
-        if (commentsScrollController.position.pixels >=
-            commentsScrollController.position.maxScrollExtent - 300) {
+        if (commentsScrollController.position.pixels >= commentsScrollController.position.maxScrollExtent - 300) {
           communityController.loadNextCommentsPage(widget.postId);
         }
         if (widget.commentId != null) {
@@ -158,9 +157,7 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
                   final isGroupPost = true;
                   final groupId = widget.post?.groupId.toString();
 
-                  debugPrint(
-                    "POST DETAILS: Navigating to edit. isGroupPost=$isGroupPost, groupId=$groupId",
-                  );
+                  debugPrint("POST DETAILS: Navigating to edit. isGroupPost=$isGroupPost, groupId=$groupId");
 
                   // Force fetch group topics if needed
                   if (isGroupPost && groupId != null) {
@@ -183,10 +180,7 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
                           title: Text('Delete Post'),
                           content: Text('Are you sure you want to delete this post?'),
                           actions: [
-                            TextButton(
-                              onPressed: () => Navigator.of(context).pop(),
-                              child: Text('Cancel'),
-                            ),
+                            TextButton(onPressed: () => Navigator.of(context).pop(), child: Text('Cancel')),
                             TextButton(
                               onPressed: () {
                                 controller.deletePost(widget.postId, context).then((_) {
@@ -291,23 +285,17 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
                               // Navigate to the group details page
                               final groupController = Get.find<GroupsController>();
                               groupController.isLoading(true);
-                              groupController.currentGroupId.value =
-                                  widget.post?.groupId.toString() ?? '';
+                              groupController.currentGroupId.value = widget.post?.groupId.toString() ?? '';
                               groupController.selectedTopic.value = post?.topic?.name ?? "";
                               // groupController.currentGroupId.value = widget.groupId ?? '';
                               debugPrint("Here is the group id: ${widget.post?.groupId}");
 
                               var topicId = post?.topic?.id?.toString();
-                              groupController.fetchGroupsTopic(
-                                widget.post?.groupId.toString() ?? '',
-                              );
+                              groupController.fetchGroupsTopic(widget.post?.groupId.toString() ?? '');
                               // groupController.fetchGroupPosts(widget.groupId!);
                               // groupController.filterPostsByTopic(post?.topic?.name ?? "", topicId: topicId);
 
-                              groupController.filterPostsByTopic(
-                                post?.topic?.name ?? "",
-                                topicId: topicId,
-                              );
+                              groupController.filterPostsByTopic(post?.topic?.name ?? "", topicId: topicId);
                               context.push(AppRoutes.groupDetails);
                             } else {
                               // Navigate to the community feed page
@@ -319,8 +307,7 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
                             // Navigate to the group details page with the selected topic
                             final groupController = Get.find<GroupsController>();
                             groupController.selectedTopic.value = post?.topic?.name ?? "";
-                            groupController.currentGroupId.value =
-                                widget.post?.groupId.toString() ?? '';
+                            groupController.currentGroupId.value = widget.post?.groupId.toString() ?? '';
                             groupController.filterPostsByTopic(
                               post?.topic?.name ?? "",
                               topicId: post?.topic?.id?.toString(),
@@ -339,10 +326,7 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
                           "Comments",
-                          style: GoogleFonts.plusJakartaSans(
-                            fontSize: 15.sp,
-                            fontWeight: FontWeight.w700,
-                          ),
+                          style: GoogleFonts.plusJakartaSans(fontSize: 15.sp, fontWeight: FontWeight.w700),
                         ),
                       ),
                       Obx(() {
@@ -356,11 +340,7 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
                               padding: EdgeInsets.symmetric(vertical: 20.h),
                               child: Text(
                                 AppStrings.noCommentsFound,
-                                style: TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 14.sp,
-                                  fontWeight: FontWeight.w500,
-                                ),
+                                style: TextStyle(color: Colors.grey, fontSize: 14.sp, fontWeight: FontWeight.w500),
                               ),
                             ),
                           );
@@ -395,33 +375,17 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
                                   final currentState = comment.isLiked ?? false;
                                   comment.isLiked = !currentState;
                                   controller.comments.refresh();
-                                  controller.likeCommentsAndSyncState(
-                                    context,
-                                    commentId,
-                                    currentState,
-                                  );
+                                  controller.likeCommentsAndSyncState(context, commentId, currentState);
                                 },
-                                isReplyLiked:
-                                    comment.replies?.any((reply) => reply.isLiked ?? false) ??
-                                    false,
+                                isReplyLiked: comment.replies?.any((reply) => reply.isLiked ?? false) ?? false,
                                 onReplyTap: (replyId) {
                                   if (replyId == 0) return;
 
                                   final currentState =
-                                      comment.replies
-                                          ?.firstWhere((reply) => reply.id == replyId)
-                                          .isLiked ??
-                                      false;
-                                  comment
-                                      .replies
-                                      ?.firstWhere((reply) => reply.id == replyId)
-                                      .isLiked = !currentState;
+                                      comment.replies?.firstWhere((reply) => reply.id == replyId).isLiked ?? false;
+                                  comment.replies?.firstWhere((reply) => reply.id == replyId).isLiked = !currentState;
                                   controller.comments.refresh();
-                                  controller.likeCommentsAndSyncState(
-                                    context,
-                                    replyId,
-                                    currentState,
-                                  );
+                                  controller.likeCommentsAndSyncState(context, replyId, currentState);
                                 },
                                 onDelete: () {
                                   // show confirmation dialog
@@ -481,11 +445,7 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
                                               onPressed: () {
                                                 Navigator.of(context).pop();
                                                 controller.selectedPostId.value = post?.id ?? 0;
-                                                controller.deleteComments(
-                                                  value,
-                                                  post?.id?.toString() ?? "",
-                                                  context,
-                                                );
+                                                controller.deleteComments(value, post?.id?.toString() ?? "", context);
                                                 controller.getComments(post?.id.toString() ?? "");
                                               },
                                               child: Text(AppStrings.delete),
@@ -503,10 +463,7 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
                                       _replyingTo = comment.id!; // Set the parent comment ID
                                     });
                                   }
-                                  Future.delayed(
-                                    Duration(milliseconds: 100),
-                                    () => _commentFocusNode.requestFocus(),
-                                  );
+                                  Future.delayed(Duration(milliseconds: 100), () => _commentFocusNode.requestFocus());
                                 },
                               );
                             },
@@ -612,8 +569,7 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
                           _commentController.clear();
                           setState(() {
                             _isReplying = false;
-                            _replyingTo =
-                                null; // Reset the parent comment ID after adding the reply
+                            _replyingTo = null; // Reset the parent comment ID after adding the reply
                           });
                         },
                         icon: SvgPicture.asset(

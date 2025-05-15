@@ -1,6 +1,7 @@
-import 'package:business_application/core/utils/theme/colors.dart';
+import 'package:stepup_community/core/utils/theme/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 class TTextFormFieldTheme {
   TTextFormFieldTheme._();
 
@@ -21,7 +22,7 @@ class TTextFormFieldTheme {
       borderRadius: BorderRadius.circular(12.r),
       borderSide: const BorderSide(width: 1, color: TColors.grey),
     ),
-    focusedBorder:const OutlineInputBorder().copyWith(
+    focusedBorder: const OutlineInputBorder().copyWith(
       borderRadius: BorderRadius.circular(12.r),
       borderSide: const BorderSide(width: 1, color: TColors.dark),
     ),

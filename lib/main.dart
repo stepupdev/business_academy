@@ -1,12 +1,12 @@
 import 'dart:isolate';
 
-import 'package:business_application/core/config/app_router.dart';
-import 'package:business_application/core/config/dependency_injection.dart';
-import 'package:business_application/core/services/auth_services.dart';
-import 'package:business_application/core/services/connectivity_service.dart';
-import 'package:business_application/core/utils/app_strings.dart';
-import 'package:business_application/core/utils/theme/theme.dart';
-import 'package:business_application/features/notification/controller/notification_controller.dart';
+import 'package:stepup_community/core/config/app_router.dart';
+import 'package:stepup_community/core/config/dependency_injection.dart';
+import 'package:stepup_community/core/services/auth_services.dart';
+import 'package:stepup_community/core/services/connectivity_service.dart';
+import 'package:stepup_community/core/utils/app_strings.dart';
+import 'package:stepup_community/core/utils/theme/theme.dart';
+import 'package:stepup_community/features/notification/controller/notification_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

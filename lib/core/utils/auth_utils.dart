@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:business_application/features/auth/data/login_response_model.dart';
+import 'package:stepup_community/features/auth/data/login_response_model.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -82,6 +82,7 @@ class AuthUtlity {
     debugPrint("❌ User is NOT logged in.");
     return false;
   }
+
   static Future<bool> checkSeenOnboarding() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool hasSeenOnboarding = prefs.getBool('hasSeenOnboarding') ?? false;

@@ -1,11 +1,11 @@
-import 'package:business_application/core/utils/theme/colors.dart';
+import 'package:stepup_community/core/utils/theme/colors.dart';
 import 'package:flutter/material.dart';
 
 class AppColors {
   static const primaryColor = Color(0xFF1F5DEE);
   static const borderColor = Color(0xffD9D9D9);
 
-static const Color secondary = Color(0xFFFFE24B);
+  static const Color secondary = Color(0xFFFFE24B);
   static const Color accent = Color(0xFFb0c7ff);
 
   // Text colors
@@ -45,5 +45,4 @@ static const Color secondary = Color(0xFFFFE24B);
   static const Color softGrey = Color(0xFFF4F4F4);
   static const Color lightGrey = Color(0xFFF9F9F9);
   static const Color white = Color(0xFFFFFFFF);
-
 }

@@ -1,7 +1,7 @@
-import 'package:business_application/core/api/api_exception.dart';
-import 'package:business_application/core/config/app_router.dart';
-import 'package:business_application/core/utils/ui_support.dart';
-import 'package:business_application/main.dart';
+import 'package:stepup_community/core/api/api_exception.dart';
+import 'package:stepup_community/core/config/app_router.dart';
+import 'package:stepup_community/core/utils/ui_support.dart';
+import 'package:stepup_community/main.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

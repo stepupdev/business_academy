@@ -1,9 +1,9 @@
-import 'package:business_application/core/config/app_colors.dart';
-import 'package:business_application/core/services/connectivity_service.dart';
-import 'package:business_application/core/utils/ui_support.dart';
-import 'package:business_application/features/community/controller/community_controller.dart';
-import 'package:business_application/features/home/controller/home_controller.dart';
-import 'package:business_application/features/no_internet/presentation/pages/no_internet_page.dart';
+import 'package:stepup_community/core/config/app_colors.dart';
+import 'package:stepup_community/core/services/connectivity_service.dart';
+import 'package:stepup_community/core/utils/ui_support.dart';
+import 'package:stepup_community/features/community/controller/community_controller.dart';
+import 'package:stepup_community/features/home/controller/home_controller.dart';
+import 'package:stepup_community/features/no_internet/presentation/pages/no_internet_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
@@ -77,10 +77,7 @@ class _HomePageState extends State<HomePage> {
                     items: const [
                       BottomNavigationBarItem(icon: HeroIcon(HeroIcons.home), label: 'Home'),
                       BottomNavigationBarItem(icon: HeroIcon(HeroIcons.users), label: 'Groups'),
-                      BottomNavigationBarItem(
-                        icon: HeroIcon(HeroIcons.megaphone),
-                        label: 'Announcements',
-                      ),
+                      BottomNavigationBarItem(icon: HeroIcon(HeroIcons.megaphone), label: 'Announcements'),
                       BottomNavigationBarItem(icon: HeroIcon(HeroIcons.bars3), label: 'Menu'),
                     ],
                   ),

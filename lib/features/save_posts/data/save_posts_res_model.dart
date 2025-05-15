@@ -4,8 +4,8 @@
 
 import 'dart:convert';
 
-import 'package:business_application/data/posts/pagination_model.dart';
-import 'package:business_application/data/posts/posts_models.dart';
+import 'package:stepup_community/data/posts/pagination_model.dart';
+import 'package:stepup_community/data/posts/posts_models.dart';
 
 SavePostResponseModel savePostResponseModelFromJson(String str) => SavePostResponseModel.fromJson(json.decode(str));
 
@@ -145,4 +145,3 @@ class Topic {
 
   Map<String, dynamic> toJson() => {"id": id, "name": name, "icon": icon, "posts_count": postsCount};
 }
-

@@ -1,8 +1,8 @@
 import 'dart:io';
 
 import 'package:app_settings/app_settings.dart';
-import 'package:business_application/core/config/app_routes.dart';
-import 'package:business_application/core/services/connectivity_service.dart';
+import 'package:stepup_community/core/config/app_routes.dart';
+import 'package:stepup_community/core/services/connectivity_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';

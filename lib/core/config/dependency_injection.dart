@@ -1,14 +1,14 @@
-import 'package:business_application/core/services/auth_services.dart';
-import 'package:business_application/features/announcements/controller/announcement_controller.dart';
-import 'package:business_application/features/auth/controller/auth_controller.dart';
-import 'package:business_application/features/community/controller/community_controller.dart';
-import 'package:business_application/features/groups/controller/groups_controller.dart';
-import 'package:business_application/features/home/controller/home_controller.dart';
-import 'package:business_application/features/menu/controller/menu_controller.dart';
-import 'package:business_application/features/my_posts/controller/my_posts_controller.dart';
-import 'package:business_application/features/notification/controller/notification_controller.dart';
-import 'package:business_application/features/save_posts/controller/save_post_controller.dart';
-import 'package:business_application/features/search/controller/search_controller.dart';
+import 'package:stepup_community/core/services/auth_services.dart';
+import 'package:stepup_community/features/announcements/controller/announcement_controller.dart';
+import 'package:stepup_community/features/auth/controller/auth_controller.dart';
+import 'package:stepup_community/features/community/controller/community_controller.dart';
+import 'package:stepup_community/features/groups/controller/groups_controller.dart';
+import 'package:stepup_community/features/home/controller/home_controller.dart';
+import 'package:stepup_community/features/menu/controller/menu_controller.dart';
+import 'package:stepup_community/features/my_posts/controller/my_posts_controller.dart';
+import 'package:stepup_community/features/notification/controller/notification_controller.dart';
+import 'package:stepup_community/features/save_posts/controller/save_post_controller.dart';
+import 'package:stepup_community/features/search/controller/search_controller.dart';
 import 'package:get/get.dart';
 
 class DependencyInjection extends Bindings {

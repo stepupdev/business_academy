@@ -1,10 +1,10 @@
-import 'package:business_application/core/config/app_routes.dart';
-import 'package:business_application/core/services/auth_services.dart';
-import 'package:business_application/core/services/connectivity_service.dart';
-import 'package:business_application/core/utils/auth_utils.dart';
-import 'package:business_application/core/utils/ui_support.dart';
-import 'package:business_application/features/auth/data/login_response_model.dart';
-import 'package:business_application/repository/auth_repo/auth_repo.dart';
+import 'package:stepup_community/core/config/app_routes.dart';
+import 'package:stepup_community/core/services/auth_services.dart';
+import 'package:stepup_community/core/services/connectivity_service.dart';
+import 'package:stepup_community/core/utils/auth_utils.dart';
+import 'package:stepup_community/core/utils/ui_support.dart';
+import 'package:stepup_community/features/auth/data/login_response_model.dart';
+import 'package:stepup_community/repository/auth_repo/auth_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';

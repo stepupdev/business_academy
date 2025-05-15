@@ -1,4 +1,4 @@
-import 'package:business_application/core/config/app_colors.dart';
+import 'package:stepup_community/core/config/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -6,12 +6,7 @@ class ImagePickerWidget extends StatelessWidget {
   final IconData icon;
   final String text;
   final Function() onTap;
-  const ImagePickerWidget({
-    super.key,
-    required this.icon,
-    required this.text,
-    required this.onTap,
-  });
+  const ImagePickerWidget({super.key, required this.icon, required this.text, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -31,14 +26,7 @@ class ImagePickerWidget extends StatelessWidget {
             spacing: 5.w,
             children: [
               Icon(icon, size: 24, color: AppColors.primaryColor),
-              Text(
-                text,
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.w500,
-                  fontSize: 14.sp,
-                ),
-              ),
+              Text(text, style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 14.sp)),
             ],
           ),
         ),

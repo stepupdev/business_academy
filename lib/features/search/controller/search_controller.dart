@@ -1,6 +1,6 @@
-import 'package:business_application/features/community/controller/community_controller.dart';
-import 'package:business_application/features/search/data/search_response_model.dart';
-import 'package:business_application/repository/community_rep.dart';
+import 'package:stepup_community/features/community/controller/community_controller.dart';
+import 'package:stepup_community/features/search/data/search_response_model.dart';
+import 'package:stepup_community/repository/community_rep.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
