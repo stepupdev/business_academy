@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:heroicons/heroicons.dart';
+import 'package:upgrader/upgrader.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, this.child});
@@ -47,7 +48,7 @@ class _HomePageState extends State<HomePage> {
     return Obx(() {
       final isConnect = Get.find<ConnectivityService>().isConnected.value;
       return Scaffold(
-        body: isConnect ? widget.child : const NoInternetPage(),
+        body: isConnect ? UpgradeAlert(child: widget.child) : const NoInternetPage(),
         bottomNavigationBar:
             isConnect
                 ? Obx(
