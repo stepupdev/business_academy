@@ -107,7 +107,7 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen> with Automatic
             ),
           ),
         ),
-        bottom: PreferredSize(preferredSize: Size.fromHeight(24.h), child: SizedBox()),
+        // bottom: PreferredSize(preferredSize: Size.fromHeight(24.h), child: SizedBox()),
         titleSpacing: 10.w,
         title: Row(
           children: [

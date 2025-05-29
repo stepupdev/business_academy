@@ -33,6 +33,8 @@ class AuthController extends GetxController {
         Ui.showErrorSnackBar(context, message: "No internet connection");
         return;
       }
+      await _googleSignIn.signOut();
+      debugPrint("Google Sign In started");
       final user = await _googleSignIn.signIn();
       if (user != null) {
         GoogleSignInAuthentication googleSignInAuthentication = await user.authentication;

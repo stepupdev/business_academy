@@ -351,7 +351,7 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
                         return SizedBox(
                           height:
                               controller.comments.value.result?.data?.length != null
-                                  ? (controller.comments.value.result?.data?.length)! * 250.h
+                                  ? (controller.comments.value.result?.data?.length)! * 200.h
                                   : 0,
                           child: ListView.builder(
                             padding: EdgeInsets.only(bottom: 20.h),

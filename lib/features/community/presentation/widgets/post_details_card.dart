@@ -53,8 +53,8 @@ class PostDetailsCard extends StatefulWidget {
 }
 
 class _PostDetailsState extends State<PostDetailsCard> {
-  bool _isExpanded = false;
-  bool _isOverflowing = false;
+  // bool _isExpanded = false;
+  // bool _isOverflowing = false;
   String? videoThumbnail;
   final bool _isPlaying = false;
 
@@ -68,24 +68,24 @@ class _PostDetailsState extends State<PostDetailsCard> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _checkOverflow();
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   _checkOverflow();
+    // });
     videoThumbnail = getVideoThumbnail(widget.videoUrl);
   }
 
-  void _checkOverflow() {
-    final textSpan = TextSpan(
-      text: Get.find<CommunityController>().cleanHtml(widget.caption),
-      style: GoogleFonts.plusJakartaSans(),
-    );
-    final textPainter = TextPainter(text: textSpan, maxLines: 3, textDirection: TextDirection.ltr)
-      ..layout(maxWidth: MediaQuery.of(context).size.width - 20.w);
+  // void _checkOverflow() {
+  //   final textSpan = TextSpan(
+  //     text: Get.find<CommunityController>().cleanHtml(widget.caption),
+  //     style: GoogleFonts.plusJakartaSans(),
+  //   );
+  //   final textPainter = TextPainter(text: textSpan, maxLines: 3, textDirection: TextDirection.ltr)
+  //     ..layout(maxWidth: MediaQuery.of(context).size.width - 20.w);
 
-    setState(() {
-      _isOverflowing = textPainter.didExceedMaxLines;
-    });
-  }
+  //   setState(() {
+  //     _isOverflowing = textPainter.didExceedMaxLines;
+  //   });
+  // }
 
   @override
   void dispose() {
@@ -161,21 +161,21 @@ class _PostDetailsState extends State<PostDetailsCard> {
                   Text(
                     Get.find<CommunityController>().cleanHtml(widget.caption),
                     style: GoogleFonts.plusJakartaSans(color: dark ? Colors.white : Colors.black),
-                    maxLines: _isExpanded ? null : 3,
-                    overflow: _isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
+                    // maxLines: _isExpanded ? null : 5,
+                    // overflow: _isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
                   ),
-                  if (_isOverflowing)
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _isExpanded = !_isExpanded;
-                        });
-                      },
-                      child: Text(
-                        _isExpanded ? 'Show less' : 'Show more',
-                        style: TextStyle(color: Colors.blue, fontSize: 14.sp, fontWeight: FontWeight.bold),
-                      ),
-                    ),
+                  // if (_isOverflowing)
+                  //   GestureDetector(
+                  //     onTap: () {
+                  //       setState(() {
+                  //         _isExpanded = !_isExpanded;
+                  //       });
+                  //     },
+                  //     child: Text(
+                  //       _isExpanded ? 'Show less' : 'Show more',
+                  //       style: TextStyle(color: Colors.blue, fontSize: 14.sp, fontWeight: FontWeight.bold),
+                  //     ),
+                  //   ),
                 ],
               ),
             ),

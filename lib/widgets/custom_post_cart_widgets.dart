@@ -162,7 +162,7 @@ class _UserPostWidgetState extends State<UserPostWidget> {
                       Text(
                         Get.find<CommunityController>().cleanHtml(widget.caption),
                         style: GoogleFonts.plusJakartaSans(color: dark ? Colors.white : Colors.black),
-                        maxLines: _isExpanded ? null : 3,
+                        maxLines: _isExpanded ? null : 4,
                         overflow: _isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
                       ),
                       if (_isOverflowing)
