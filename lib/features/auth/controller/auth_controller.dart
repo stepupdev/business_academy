@@ -45,7 +45,15 @@ class AuthController extends GetxController {
           userToken.value = token;
           debugPrint("User token: ${userToken.value}");
         }
+        debugPrint('Hello before calling AuthRepository');
         AuthRepository().signInWithGoogle(userToken.value).then((value) async {
+          debugPrint('value from signInWithGoogle: $value');
+          if (value == null) {
+            debugPrint("Login failed: No response from server");
+            isLoading.value = false;
+            Ui.showErrorSnackBar(context, message: "User Not found, Please try another email");
+            return;
+          }
           loginResponseModel(LoginResponseModel.fromJson(value));
           debugPrint("Login response model: ${loginResponseModel.value.result?.user?.name}");
           if (loginResponseModel.value.success == true) {

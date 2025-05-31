@@ -8,6 +8,7 @@ class Posts {
   String? videoUrl;
   int? groupId;
   int? commentsCount;
+  int? likesCount;
   User? user;
   Topic? topic;
   bool? isLiked;
@@ -22,6 +23,7 @@ class Posts {
     this.videoUrl,
     this.groupId,
     this.commentsCount,
+    this.likesCount,
     this.user,
     this.topic,
     this.isLiked,
@@ -37,6 +39,7 @@ class Posts {
     videoUrl: json["video_url"],
     groupId: json["group_id"],
     commentsCount: json["comments_count"],
+    likesCount: json["likes_count"],
     user: json["user"] == null ? null : User.fromJson(json["user"]),
     topic: json["topic"] == null ? null : Topic.fromJson(json["topic"]),
     isLiked: json["is_liked"],
@@ -52,6 +55,7 @@ class Posts {
     "video_url": videoUrl,
     "group_id": groupId,
     "comments_count": commentsCount,
+    "likes_count": likesCount,
     "user": user?.toJson(),
     "topic": topic?.toJson(),
     "is_liked": isLiked,

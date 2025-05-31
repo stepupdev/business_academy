@@ -26,6 +26,7 @@ class UserPostWidget extends StatefulWidget {
     required this.dp,
     required this.caption,
     required this.commentCount,
+    required this.likesCount,
     required this.isLiked,
     required this.isSaved,
   });
@@ -43,6 +44,7 @@ class UserPostWidget extends StatefulWidget {
   final String dp;
   final String caption;
   final String commentCount;
+  final String likesCount;
   final bool isLiked;
   final bool isSaved;
   @override
@@ -239,14 +241,24 @@ class _UserPostWidgetState extends State<UserPostWidget> {
                     },
                 child: Container(
                   padding: EdgeInsets.only(right: 20.w, left: 20.h), // Increased hit area
-                  child: Icon(
-                    widget.isLiked ? Icons.favorite : Icons.favorite_border,
-                    color:
-                        widget.isLiked
-                            ? Colors.red
-                            : dark
-                            ? AppColors.darkGrey
-                            : AppColors.dark,
+                  child: Row(
+                    children: [
+                      Icon(
+                        widget.isLiked ? Icons.favorite : Icons.favorite_border,
+                        color:
+                            widget.isLiked
+                                ? Colors.red
+                                : dark
+                                ? AppColors.darkGrey
+                                : AppColors.dark,
+                      ),
+                      10.wS,
+
+                      Visibility(
+                        visible: widget.likesCount != "0",
+                        child: Text(widget.likesCount, style: GoogleFonts.plusJakartaSans(color: Colors.grey)),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -257,7 +269,10 @@ class _UserPostWidgetState extends State<UserPostWidget> {
                   children: [
                     SvgPicture.asset("assets/icons/comment.svg", color: dark ? AppColors.darkGrey : AppColors.dark),
                     10.wS,
-                    Text(widget.commentCount, style: GoogleFonts.plusJakartaSans(color: Colors.grey)),
+                    Visibility(
+                      visible: widget.commentCount != "0",
+                      child: Text(widget.commentCount, style: GoogleFonts.plusJakartaSans(color: Colors.grey)),
+                    ),
                   ],
                 ),
               ),

@@ -111,6 +111,15 @@ class SavePostController extends GetxController {
       debugPrint("Post index found: $postIndex");
       if (postIndex != -1) {
         bool currentState = savePosts.value.result!.data![postIndex].post?.isLiked ?? false;
+        if (currentState) {
+          // like count should be decremented
+          savePosts.value.result!.data![postIndex].post?.likesCount =
+              (savePosts.value.result!.data![postIndex].post?.likesCount ?? 0) - 1;
+        } else {
+          // like count should be incremented
+          savePosts.value.result!.data![postIndex].post?.likesCount =
+              (savePosts.value.result!.data![postIndex].post?.likesCount ?? 0) + 1;
+        }
         savePosts.value.result!.data![postIndex].post?.isLiked = !currentState;
         savePosts.refresh();
       } else {

@@ -69,7 +69,7 @@ class CommunityController extends GetxController {
     filterPostsByTopic('All');
     await getTopic();
 
-    Get.find<NotificationController>().checkNotification(Get.context!);
+    Get.find<NotificationController>().checkNotification();
     selectedTopic.listen((value) {
       if (value.isNotEmpty) {
         final topic = topics.value.result?.data?.firstWhere((t) => t.name == value, orElse: () => topics_model.Topic());
@@ -430,6 +430,7 @@ class CommunityController extends GetxController {
 
     if (postIndex == -1) return;
 
+    // Check if the post is already liked
     bool previousState = communityPosts.value.result!.data![postIndex].isLiked!;
 
     communityPosts.update((posts) {
@@ -446,6 +447,15 @@ class CommunityController extends GetxController {
       communityPostsById.update((post) {
         post?.result?.isLiked = !previousState;
       });
+    }
+
+    // update the like count. if the post is already liked, decrement the like count
+    if (previousState) {
+      communityPosts.value.result!.data![postIndex].likesCount =
+          (communityPosts.value.result!.data![postIndex].likesCount ?? 0) - 1;
+    } else {
+      communityPosts.value.result!.data![postIndex].likesCount =
+          (communityPosts.value.result!.data![postIndex].likesCount ?? 0) + 1;
     }
 
     Map<String, dynamic> data = {"type": "App\\Models\\Post", "id": selectedPostId.value};
@@ -558,10 +568,14 @@ class CommunityController extends GetxController {
           for (var comment in val?.result?.data ?? []) {
             if (comment.id == commentId) {
               comment.isLiked = currentState;
+              comment.likesCount =
+                  (comment.likesCount ?? 0) + (currentState ? -1 : 1); // Adjust likes count accordingly
             } else {
               for (var reply in comment.replies ?? []) {
                 if (reply.id == commentId) {
                   reply.isLiked = currentState;
+                  reply.likesCount =
+                      (reply.likesCount ?? 0) + (currentState ? -1 : 1); // Adjust likes count accordingly
                 }
               }
             }

@@ -93,7 +93,7 @@ class NotificationPage extends GetView<NotificationController> {
                       if (notification?.isRead == false) {
                         controller.markReadNotification(notification?.id.toString() ?? "", context);
                       }
-                      controller.checkNotification(context);
+                      controller.checkNotification();
 
                       final isComment = notification?.notifiableType == "App\\Models\\Comment";
                       debugPrint("Notification Type: ${notification?.notifiableType}");

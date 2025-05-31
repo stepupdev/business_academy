@@ -168,6 +168,12 @@ class GroupsController extends GetxController {
       filteredPosts.refresh();
     }
 
+    if (previousState) {
+      groupPosts[postIndex].likesCount = (groupPosts[postIndex].likesCount ?? 0) - 1;
+    } else {
+      groupPosts[postIndex].likesCount = (groupPosts[postIndex].likesCount ?? 0) + 1;
+    }
+
     // Send the like request to the server
     Map<String, dynamic> data = {"type": "App\\Models\\Post", "id": selectedPostId.value};
     final response = await CommunityRep().likePosts(data, context);

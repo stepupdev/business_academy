@@ -309,6 +309,7 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen> with Automatic
                             videoUrl: posts.videoUrl ?? "",
                             dp: posts.user?.avatar ?? "",
                             caption: controller.cleanHtml(posts.content ?? ""),
+                            likesCount: posts.likesCount?.toString() ?? "0",
                             commentCount: posts.commentsCount?.toString() ?? "0",
                             isLiked: posts.isLiked ?? false,
                             isSaved: posts.isSaved ?? false,

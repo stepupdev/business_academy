@@ -21,13 +21,13 @@ void checkNotifications(SendPort sendPort) async {
   }
 }
 
-Future<void> startNotificationChecker(BuildContext context) async {
+Future<void> startNotificationChecker() async {
   ReceivePort receivePort = ReceivePort();
   await Isolate.spawn(checkNotifications, receivePort.sendPort);
 
   receivePort.listen((message) async {
     if (message == "check_notifications") {
-      var hasNewNotifications = await Get.find<NotificationController>().checkNotification(context);
+      var hasNewNotifications = await Get.find<NotificationController>().checkNotification();
 
       if (hasNewNotifications) {
         debugPrint("🔔 New notification received!");
@@ -51,7 +51,7 @@ void main() async {
   // );
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_) async {
     runApp(const MyApp());
-    await startNotificationChecker(Get.context!);
+    await startNotificationChecker();
   });
 }
 

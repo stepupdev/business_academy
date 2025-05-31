@@ -89,6 +89,7 @@ class _AnnouncementsPageState extends State<AnnouncementsPage> {
                 videoUrl: announcement?.videoUrl ?? "",
                 dp: announcement?.user?.avatar ?? "",
                 caption: Get.find<CommunityController>().cleanHtml(announcement?.content ?? ""),
+                likesCount: announcement?.likesCount?.toString() ?? "0",
                 commentCount: announcement?.commentsCount?.toString() ?? "0",
                 isLiked: announcement?.isLiked ?? false,
                 isSaved: announcement?.isSaved ?? false,

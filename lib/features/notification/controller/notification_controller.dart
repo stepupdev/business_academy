@@ -29,7 +29,7 @@ class NotificationController extends GetxController {
     }
   }
 
-  Future<bool> checkNotification(BuildContext context) async {
+  Future<bool> checkNotification() async {
     try {
       debugPrint("Checking for new notifications...");
       var response = await NotificationRep().checkNotification();
@@ -72,7 +72,7 @@ class NotificationController extends GetxController {
         notifications.value.result?.data?[notificationIndex].isRead =
             !(notifications.value.result?.data?[notificationIndex].isRead ?? false);
         notifications.refresh(); // Notify listeners about the change
-        await checkNotification(context);
+        await checkNotification();
       }
     } catch (e) {
       debugPrint("Error marking notification as read/unread: $e");
@@ -92,7 +92,7 @@ class NotificationController extends GetxController {
       });
 
       notifications.refresh();
-      await checkNotification(context);
+      await checkNotification();
     } catch (e) {
       debugPrint("Error marking all notifications as read: $e");
     } finally {

@@ -15,6 +15,7 @@ class CommentWidget extends StatelessWidget {
   final String rank;
   final String time;
   final String content;
+  final String? likesCount;
   final List<CommentsResult> replies;
   final VoidCallback? onLikeTap;
   final bool isLiked;
@@ -31,6 +32,7 @@ class CommentWidget extends StatelessWidget {
     required this.time,
     required this.rank,
     required this.content,
+    required this.likesCount,
     required this.onLikeTap,
     required this.isLiked,
     required this.onReplyTap,
@@ -100,6 +102,10 @@ class CommentWidget extends StatelessWidget {
                                     : AppColors.dark,
                           ),
                         ),
+                      Visibility(
+                        visible: likesCount != "0",
+                        child: Text(likesCount ?? '', style: GoogleFonts.plusJakartaSans(color: Colors.grey)),
+                      ),
                         // if (onReply != null)
                         TextButton(
                           onPressed: onReply,

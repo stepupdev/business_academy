@@ -24,6 +24,7 @@ class PostDetailsCard extends StatefulWidget {
     required this.caption,
     this.onCommentTap,
     required this.commentCount,
+    required this.likesCount,
     required this.isLiked,
     required this.isSaved,
     this.onLike,
@@ -46,6 +47,7 @@ class PostDetailsCard extends StatefulWidget {
   final String dp;
   final String caption;
   final String commentCount;
+  final String likesCount;
   final bool isLiked;
   final bool isSaved;
   @override
@@ -216,20 +218,26 @@ class _PostDetailsState extends State<PostDetailsCard> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                GestureDetector(
-                  onTap: widget.onLike,
-                  child: Container(
-                    padding: EdgeInsets.only(right: 20.w, left: 20.w),
-                    child: Icon(
-                      widget.isLiked ? Icons.favorite : Icons.favorite_border,
-                      color:
-                          widget.isLiked
-                              ? Colors.red
-                              : dark
-                              ? AppColors.darkGrey
-                              : AppColors.dark,
+                Row(
+                  children: [
+                    GestureDetector(
+                      onTap: widget.onLike,
+                      child: Container(
+                        padding: EdgeInsets.only(right: 20.w, left: 20.w),
+                        child: Icon(
+                          widget.isLiked ? Icons.favorite : Icons.favorite_border,
+                          color:
+                              widget.isLiked
+                                  ? Colors.red
+                                  : dark
+                                  ? AppColors.darkGrey
+                                  : AppColors.dark,
+                        ),
+                      ),
                     ),
-                  ),
+                    5.wS,
+                    Text(widget.likesCount, style: GoogleFonts.plusJakartaSans(color: Colors.grey)),
+                  ],
                 ),
                 InkWell(
                   onTap: widget.onCommentTap,

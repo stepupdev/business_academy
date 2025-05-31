@@ -241,6 +241,7 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
                         videoUrl: post?.videoUrl ?? "",
                         dp: post?.user?.avatar ?? "",
                         caption: post?.content ?? "",
+                        likesCount: post?.likesCount?.toString() ?? '0',
                         commentCount: ((controller.comments.value.result?.data?.length)).toString(),
                         isLiked: post?.isLiked ?? false,
                         isSaved: post?.isSaved ?? false,
@@ -259,7 +260,10 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
                             });
                           }
                           controller.communityPostsById.refresh();
-
+                          // update the likes count
+                          if (post?.likesCount != null) {
+                            post?.likesCount = currentState ? (post.likesCount ?? 0) - 1 : (post.likesCount ?? 0) + 1;
+                          }
                           // Call controller method instead of direct API call
                           controller.likePostAndSyncState(context, postId, currentState);
                         },
@@ -368,6 +372,7 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
                                 content: comment.content ?? '',
                                 replies: comment.replies ?? [],
                                 isLiked: comment.isLiked ?? false,
+                                likesCount: comment.likesCount?.toString() ?? '0',
                                 onLikeTap: () {
                                   final commentId = comment.id ?? 0;
                                   if (commentId == 0) return;
@@ -375,6 +380,13 @@ class PostDetailsPageState extends State<PostDetailsPage> with AutomaticKeepAliv
                                   final currentState = comment.isLiked ?? false;
                                   comment.isLiked = !currentState;
                                   controller.comments.refresh();
+                                  if (!currentState) {
+                                    // increment likes count
+                                    comment.likesCount = (comment.likesCount ?? 0) + 1;
+                                  } else {
+                                    // decrement likes count
+                                    comment.likesCount = (comment.likesCount ?? 0) - 1;
+                                  }
                                   controller.likeCommentsAndSyncState(context, commentId, currentState);
                                 },
                                 isReplyLiked: comment.replies?.any((reply) => reply.isLiked ?? false) ?? false,

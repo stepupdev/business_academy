@@ -61,6 +61,7 @@ class CommentsResult {
     int? postId;
     int? parentId;
     String? content;
+    int? likesCount;
     User? user;
     List<CommentsResult>? replies;
     bool? isLiked;
@@ -71,6 +72,7 @@ class CommentsResult {
         this.id,
         this.postId,
         this.parentId,
+        this.likesCount,
         this.content,
         this.user,
         this.replies,
@@ -84,6 +86,7 @@ class CommentsResult {
         postId: json["post_id"],
         parentId: json["parent_id"],
         content: json["content"],
+        likesCount: json["likes_count"],
         user: json["user"] == null ? null : User.fromJson(json["user"]),
         replies: json["replies"] == null ? [] : List<CommentsResult>.from(json["replies"]!.map((x) => CommentsResult.fromJson(x))),
         isLiked: json["is_liked"],
@@ -96,6 +99,7 @@ class CommentsResult {
         "post_id": postId,
         "parent_id": parentId,
         "content": content,
+        "likes_count": likesCount,
         "user": user?.toJson(),
         "replies": replies == null ? [] : List<dynamic>.from(replies!.map((x) => x.toJson())),
         "is_liked": isLiked,

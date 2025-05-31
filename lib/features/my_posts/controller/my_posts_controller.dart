@@ -106,6 +106,15 @@ class MyPostsController extends GetxController {
       int postIndex = myPosts.value.result?.data?.indexWhere((p) => p.id == postId) ?? -1;
       if (postIndex != -1) {
         bool currentState = myPosts.value.result!.data![postIndex].isLiked ?? false;
+        if (currentState) {
+          // like count should be decremented
+          myPosts.value.result!.data![postIndex].likesCount =
+              (myPosts.value.result!.data![postIndex].likesCount ?? 0) - 1;
+        } else {
+          // like count should be incremented
+          myPosts.value.result!.data![postIndex].likesCount =
+              (myPosts.value.result!.data![postIndex].likesCount ?? 0) + 1;
+        }
         myPosts.value.result!.data![postIndex].isLiked = !currentState;
         myPosts.refresh();
       }

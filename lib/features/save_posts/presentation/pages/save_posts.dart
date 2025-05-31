@@ -121,6 +121,7 @@ class _SavePostsPageState extends State<SavePostsPage> with AutomaticKeepAliveCl
                   videoUrl: post?.videoUrl ?? "",
                   dp: post?.user?.avatar ?? "",
                   caption: post?.content ?? "",
+                  likesCount: post?.likesCount.toString() ?? "",
                   commentCount: post?.commentsCount.toString() ?? "",
                   isLiked: post?.isLiked ?? false,
                   isSaved: post?.isSaved ?? false,
