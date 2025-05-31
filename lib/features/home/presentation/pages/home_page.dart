@@ -78,7 +78,7 @@ class _HomePageState extends State<HomePage> {
                     items: const [
                       BottomNavigationBarItem(icon: HeroIcon(HeroIcons.home), label: 'Home'),
                       BottomNavigationBarItem(icon: HeroIcon(HeroIcons.users), label: 'Groups'),
-                      BottomNavigationBarItem(icon: HeroIcon(HeroIcons.megaphone), label: 'Announcements'),
+                      BottomNavigationBarItem(icon: HeroIcon(HeroIcons.bookOpen), label: 'Courses'),
                       BottomNavigationBarItem(icon: HeroIcon(HeroIcons.bars3), label: 'Menu'),
                     ],
                   ),

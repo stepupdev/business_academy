@@ -13,12 +13,7 @@ class HomeController extends GetxController {
   late final List<Widget> screens;
 
   // Define tab routes that match your router paths
-  final List<String> tabRoutes = [
-    AppRoutes.communityFeed,
-    AppRoutes.groupsTab,
-    AppRoutes.announcementsTab,
-    AppRoutes.menuTab,
-  ];
+  final List<String> tabRoutes = [AppRoutes.communityFeed, AppRoutes.groupsTab, AppRoutes.course, AppRoutes.menuTab];
 
   @override
   void onInit() {

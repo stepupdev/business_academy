@@ -7,6 +7,8 @@ import 'package:stepup_community/features/community/presentation/pages/create_po
 import 'package:stepup_community/features/community/presentation/pages/edit_post.dart';
 import 'package:stepup_community/features/community/presentation/pages/full_image_view_page.dart';
 import 'package:stepup_community/features/community/presentation/pages/post_details_page.dart';
+import 'package:stepup_community/features/course/course_details_screen.dart';
+import 'package:stepup_community/features/course/course_screen.dart';
 import 'package:stepup_community/features/groups/presentation/pages/groups_details_page.dart';
 import 'package:stepup_community/features/groups/presentation/pages/groups_page.dart';
 import 'package:stepup_community/features/home/presentation/pages/home_page.dart';
@@ -172,6 +174,22 @@ class AppRouter {
         pageBuilder: (context, state) {
           final String imageUrl = state.extra as String;
           return MaterialPage(key: state.pageKey, child: FullImageViewPage(imageUrl: imageUrl));
+        },
+        parentNavigatorKey: _rootNavigatorKey,
+      ),
+      GoRoute(
+        path: AppRoutes.course,
+        pageBuilder: (context, state) {
+          return MaterialPage(key: state.pageKey, child: CourseScreen());
+        },
+        parentNavigatorKey: _rootNavigatorKey,
+      ),
+      GoRoute(
+        path: AppRoutes.courseDetails,
+        name: 'courseDetails',
+        pageBuilder: (context, state) {
+          final String courseId = state.params['courseId']!;
+          return MaterialPage(key: state.pageKey, child: CourseDetailsScreen(courseId: courseId,));
         },
         parentNavigatorKey: _rootNavigatorKey,
       ),
