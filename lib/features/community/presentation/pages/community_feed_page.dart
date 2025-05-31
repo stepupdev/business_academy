@@ -1,19 +1,18 @@
-import 'package:stepup_community/core/config/app_colors.dart';
-import 'package:stepup_community/core/config/app_routes.dart';
-import 'package:stepup_community/core/config/app_size.dart';
-import 'package:stepup_community/core/services/auth_services.dart';
-import 'package:stepup_community/core/utils/app_strings.dart';
-import 'package:stepup_community/core/utils/ui_support.dart';
-import 'package:stepup_community/features/community/controller/community_controller.dart';
-import 'package:stepup_community/features/community/presentation/widgets/custom_shimmer.dart';
-import 'package:stepup_community/features/notification/controller/notification_controller.dart';
-import 'package:stepup_community/widgets/custom_post_cart_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:stepup_community/core/config/app_colors.dart';
+import 'package:stepup_community/core/config/app_routes.dart';
+import 'package:stepup_community/core/config/app_size.dart';
+import 'package:stepup_community/core/services/auth_services.dart';
+import 'package:stepup_community/core/utils/ui_support.dart';
+import 'package:stepup_community/features/community/controller/community_controller.dart';
+import 'package:stepup_community/features/community/presentation/widgets/custom_shimmer.dart';
+import 'package:stepup_community/features/notification/controller/notification_controller.dart';
+import 'package:stepup_community/widgets/custom_post_cart_widgets.dart';
 
 class CommunityFeedScreen extends StatefulWidget {
   const CommunityFeedScreen({super.key});
@@ -97,76 +96,82 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen> with Automatic
     super.build(context); // Required for AutomaticKeepAliveClientMixin
     final dark = Ui.isDarkMode(context);
     return Scaffold(
+      backgroundColor: dark ? const Color(0xFF0A0A0A) : const Color(0xFFF5F7FA),
       appBar: AppBar(
+        elevation: 0,
+        toolbarHeight: 70.h,
+        backgroundColor: Colors.transparent,
         flexibleSpace: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [AppColors.primaryColor, Color(0xFF003BC6)],
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
+              colors: [AppColors.primaryColor.withOpacity(0.9), const Color(0xFF003BC6).withOpacity(0.9)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
+            boxShadow: [
+              BoxShadow(color: AppColors.primaryColor.withOpacity(0.3), blurRadius: 20, offset: const Offset(0, 5)),
+            ],
           ),
         ),
-        // bottom: PreferredSize(preferredSize: Size.fromHeight(24.h), child: SizedBox()),
-        titleSpacing: 10.w,
+        titleSpacing: 20.w,
         title: Row(
           children: [
-            SvgPicture.asset("assets/logo/bg_logo.svg"),
-            10.wS,
+            Container(
+              padding: EdgeInsets.all(8.w),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.15),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.white.withOpacity(0.2)),
+              ),
+              child: SvgPicture.asset("assets/logo/bg_logo.svg", width: 24.w, height: 24.w),
+            ),
+            12.wS,
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('StepUp', style: TextStyle(fontSize: 12, color: Colors.white, fontWeight: FontWeight.w600)),
-                Text('Community', style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.w700)),
+                Text(
+                  'StepUp',
+                  style: GoogleFonts.poppins(
+                    fontSize: 14.sp,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+                Text(
+                  'Community',
+                  style: GoogleFonts.poppins(
+                    fontSize: 18.sp,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.3,
+                  ),
+                ),
               ],
             ),
           ],
         ),
-        actionsPadding: EdgeInsets.only(right: 10.w),
-
         actions: [
-          Stack(
-            children: [
-              CircleAvatar(
-                backgroundColor: AppColors.primaryColor,
-                child: IconButton(
-                  icon: Icon(Icons.notifications_outlined, color: Colors.white),
-                  onPressed: () {
-                    context.push(AppRoutes.notification);
-                  },
-                ),
-              ),
-              Obx(() {
-                return Visibility(
-                  visible: Get.find<NotificationController>().hasNewNotification.value,
-                  child: Positioned(
-                    right: 0,
-                    top: 1,
-                    child: CircleAvatar(
-                      radius: 7,
-                      backgroundColor: AppColors.primaryColor,
-                      child: CircleAvatar(
-                        radius: 6,
-                        backgroundColor: Colors.red,
-                        child: Text('', style: TextStyle(color: Colors.white, fontSize: 10.sp)),
-                      ),
-                    ),
-                  ),
-                );
-              }),
-            ],
+          _buildActionButton(
+            icon: Icons.notifications_outlined,
+            onTap: () => context.push(AppRoutes.notification),
+            showBadge: Get.find<NotificationController>().hasNewNotification.value,
           ),
-          10.wS,
-          CircleAvatar(
-            backgroundColor: AppColors.primaryColor,
-            child: IconButton(
-              icon: Icon(Icons.search, color: Colors.white),
-              onPressed: () {
-                context.push(AppRoutes.search);
-              },
-            ),
-          ),
+          12.wS,
+          _buildActionButton(icon: Icons.search_rounded, onTap: () => context.push(AppRoutes.search)),
+          20.wS,
         ],
+      ),
+      floatingActionButton: AnimatedOpacity(
+        opacity: showTopButton ? 1.0 : 0.0,
+        duration: const Duration(milliseconds: 300),
+        child: FloatingActionButton(
+          mini: true,
+          backgroundColor: AppColors.primaryColor,
+          foregroundColor: Colors.white,
+          onPressed: scrollToTop,
+          child: const Icon(Icons.keyboard_arrow_up),
+        ),
       ),
       body: PageStorage(
         bucket: _bucket,
@@ -194,141 +199,186 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen> with Automatic
             },
             child: CustomScrollView(
               key: PageStorageKey<String>('communityFeed'),
-              controller: controller.feedScrollController, // Use the dedicated ScrollController
+              controller: controller.feedScrollController,
               slivers: [
-                SliverAppBar(
-                  pinned: false,
-                  floating: false,
-                  expandedHeight: 55.h,
-                  flexibleSpace: FlexibleSpaceBar(
-                    background: Container(
-                      color: dark ? AppColors.dark : Color(0xffE9F0FF),
-                      padding: EdgeInsets.symmetric(horizontal: 8.h, vertical: 10.h),
-                      child: Row(
-                        children: [
-                          CircleAvatar(
+                // Create Post Section
+                SliverToBoxAdapter(
+                  child: Container(
+                    margin: EdgeInsets.only(bottom: 4.h),
+                    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                    decoration: BoxDecoration(
+                      color: dark ? const Color(0xFF1A1A1A) : Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: dark ? Colors.black12 : Colors.grey.withOpacity(0.06),
+                          blurRadius: 4,
+                          offset: const Offset(0, 1),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(color: AppColors.primaryColor.withOpacity(0.3), width: 1.5),
+                          ),
+                          child: CircleAvatar(
+                            radius: 18.r,
                             backgroundImage: NetworkImage(
                               Get.find<AuthService>().currentUser.value.result?.user?.avatar ?? "",
                             ),
                           ),
-                          10.wS,
-                          Expanded(
-                            child: TextButton(
-                              onPressed: () {
-                                context.push('/create-post', extra: {'isGroupTopics': false}); // Pass argument
-                              },
-                              style: TextButton.styleFrom(
-                                alignment: Alignment.centerLeft,
-                                backgroundColor: dark ? AppColors.dark : Colors.white,
-                                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-                                side: BorderSide(color: Colors.blue.shade100, width: 0.5),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-                              ),
-                              child: Text(
-                                AppStrings.createPostButton,
-                                style: GoogleFonts.plusJakartaSans(
-                                  color: dark ? AppColors.light : Colors.grey,
-                                  fontWeight: FontWeight.w600,
+                        ),
+                        12.wS,
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              context.push('/create-post', extra: {'isGroupTopics': false});
+                            },
+                            child: Container(
+                              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+                              decoration: BoxDecoration(
+                                color: dark ? const Color(0xFF2A2A2A) : const Color(0xFFF8F9FA),
+                                borderRadius: BorderRadius.circular(25),
+                                border: Border.all(
+                                  color: dark ? Colors.grey.shade700 : Colors.grey.shade200,
+                                  width: 0.8,
                                 ),
+                              ),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      "What's on your mind?",
+                                      style: GoogleFonts.inter(
+                                        color: dark ? Colors.grey.shade400 : Colors.grey.shade600,
+                                        fontSize: 14.sp,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                  ),
+                                  Icon(Icons.image_outlined, color: AppColors.primaryColor, size: 20.sp),
+                                ],
                               ),
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
+
+                // Topics Section
                 SliverPersistentHeader(
                   pinned: true,
-                  delegate: _TopicSelectionHeader(dark: dark, controller: controller),
+                  delegate: _ModernTopicSelectionHeader(dark: dark, controller: controller),
                 ),
+
+                // Loading indicator
                 if (controller.isLoading.value)
                   SliverToBoxAdapter(
                     child: Padding(
-                      padding: EdgeInsets.symmetric(vertical: 10.h),
-                      child: Center(child: CircularProgressIndicator(color: AppColors.primaryColor, strokeWidth: 2)),
+                      padding: EdgeInsets.symmetric(vertical: 20.h),
+                      child: Center(child: CircularProgressIndicator(color: AppColors.primaryColor, strokeWidth: 3)),
                     ),
                   ),
+
+                // Empty state
                 if (controller.filteredPosts.isEmpty ||
                     controller.communityPosts.value.result?.data == null ||
                     controller.communityPosts.value.result!.data!.isEmpty)
                   SliverToBoxAdapter(
-                    child: SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.8, // enough height to make it scrollable
+                    child: Container(
+                      height: MediaQuery.of(context).size.height * 0.6,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.post_add, size: 80.sp, color: Colors.grey.shade400),
-                          10.hS,
-                          Text(
-                            AppStrings.noPostsFound,
-                            style: GoogleFonts.plusJakartaSans(
-                              fontSize: 20.sp,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey.shade600,
+                          Container(
+                            padding: EdgeInsets.all(20.w),
+                            decoration: BoxDecoration(
+                              color: AppColors.primaryColor.withOpacity(0.1),
+                              shape: BoxShape.circle,
                             ),
+                            child: Icon(Icons.article_outlined, size: 48.sp, color: AppColors.primaryColor),
+                          ),
+                          20.hS,
+                          Text(
+                            'No Posts Yet',
+                            style: GoogleFonts.poppins(
+                              fontSize: 20.sp,
+                              fontWeight: FontWeight.w600,
+                              color: dark ? Colors.white : Colors.grey.shade800,
+                            ),
+                          ),
+                          8.hS,
+                          Text(
+                            'Be the first to share something with the community!',
+                            style: GoogleFonts.inter(fontSize: 14.sp, color: Colors.grey.shade500),
+                            textAlign: TextAlign.center,
                           ),
                         ],
                       ),
                     ),
                   )
                 else ...[
+                  // Posts list
                   SliverList(
                     delegate: SliverChildBuilderDelegate((context, index) {
                       if (index == controller.filteredPosts.length) {
                         return Padding(
-                          padding: EdgeInsets.only(top: index == 0 ? 0 : 10.h, bottom: 10.h),
+                          padding: EdgeInsets.symmetric(vertical: 20.h),
                           child: Center(
-                            child: CircularProgressIndicator(color: AppColors.primaryColor, strokeWidth: 2),
+                            child: CircularProgressIndicator(color: AppColors.primaryColor, strokeWidth: 3),
                           ),
                         );
                       }
                       final posts = controller.filteredPosts[index];
-                      return Column(
-                        children: [
-                          UserPostWidget(
-                            onTap: () {
-                              // First save the scroll position
-                              controller.saveScrollPosition();
-                              controller.shouldRestorePosition.value = true;
-
-                              // Set up for the details page
-                              // Get.find<CommunityController>().getCommunityPostsById(posts.id.toString());
-                              // Get.find<CommunityController>().getComments(posts.id.toString());
-                              controller.selectedPostId.value = posts.id ?? 0;
-
-                              // Navigate using go_router
-                              context.push('/post-details/${posts.id}', extra: {'post': posts});
-                            },
-                            name: posts.user?.name ?? "",
-                            postId: posts.id ?? 0,
-                            rank: posts.user?.rank?.name ?? "",
-                            topic: posts.topic?.name ?? "",
-                            time: posts.createdAt ?? DateTime.now(),
-                            postImage: posts.image ?? "",
-                            videoUrl: posts.videoUrl ?? "",
-                            dp: posts.user?.avatar ?? "",
-                            caption: controller.cleanHtml(posts.content ?? ""),
-                            likesCount: posts.likesCount?.toString() ?? "0",
-                            commentCount: posts.commentsCount?.toString() ?? "0",
-                            isLiked: posts.isLiked ?? false,
-                            isSaved: posts.isSaved ?? false,
-                          ),
-                          if (index != controller.filteredPosts.length - 1) ...[
-                            Divider(height: 2.h, color: AppColors.darkGrey),
+                      return Container(
+                        margin: EdgeInsets.only(bottom: 4.h),
+                        decoration: BoxDecoration(
+                          color: dark ? const Color(0xFF1A1A1A) : Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                              color: dark ? Colors.black12 : Colors.grey.withOpacity(0.06),
+                              blurRadius: 4,
+                              offset: const Offset(0, 1),
+                            ),
                           ],
-                        ],
+                        ),
+                        child: UserPostWidget(
+                          onTap: () {
+                            // First save the scroll position
+                            controller.saveScrollPosition();
+                            controller.shouldRestorePosition.value = true;
+
+                            // Set up for the details page
+                            controller.selectedPostId.value = posts.id ?? 0;
+
+                            // Navigate using go_router
+                            context.push('/post-details/${posts.id}', extra: {'post': posts});
+                          },
+                          name: posts.user?.name ?? "",
+                          postId: posts.id ?? 0,
+                          rank: posts.user?.rank?.name ?? "",
+                          topic: posts.topic?.name ?? "",
+                          time: posts.createdAt ?? DateTime.now(),
+                          postImage: posts.image ?? "",
+                          videoUrl: posts.videoUrl ?? "",
+                          dp: posts.user?.avatar ?? "",
+                          caption: controller.cleanHtml(posts.content ?? ""),
+                          likesCount: posts.likesCount?.toString() ?? "0",
+                          commentCount: posts.commentsCount?.toString() ?? "0",
+                          isLiked: posts.isLiked ?? false,
+                          isSaved: posts.isSaved ?? false,
+                        ),
                       );
                     }, childCount: controller.filteredPosts.length + (controller.isPaginating.value ? 1 : 0)),
                   ),
-                  if (controller.isPaginating.value)
-                    SliverToBoxAdapter(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(vertical: 10.h),
-                        child: Center(child: CircularProgressIndicator(color: AppColors.primaryColor, strokeWidth: 2)),
-                      ),
-                    ),
                 ],
+
+                // Bottom spacing
+                SliverToBoxAdapter(child: SizedBox(height: 15.h)),
               ],
             ),
           );
@@ -336,51 +386,70 @@ class CommunityFeedScreenState extends State<CommunityFeedScreen> with Automatic
       ),
     );
   }
+
+  Widget _buildActionButton({required IconData icon, required VoidCallback onTap, bool showBadge = false}) {
+    return Stack(
+      children: [
+        Container(
+          width: 40.w,
+          height: 40.w,
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.15),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.white.withOpacity(0.2)),
+          ),
+          child: IconButton(
+            icon: Icon(icon, color: Colors.white, size: 20.sp),
+            onPressed: onTap,
+            padding: EdgeInsets.zero,
+          ),
+        ),
+        if (showBadge)
+          Positioned(
+            right: 2,
+            top: 2,
+            child: Container(
+              width: 12.w,
+              height: 12.w,
+              decoration: BoxDecoration(
+                color: Colors.red,
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.white, width: 1.5),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
 }
 
-class _TopicSelectionHeader extends SliverPersistentHeaderDelegate {
+class _ModernTopicSelectionHeader extends SliverPersistentHeaderDelegate {
   final bool dark;
   final CommunityController controller;
 
-  _TopicSelectionHeader({required this.dark, required this.controller});
+  _ModernTopicSelectionHeader({required this.dark, required this.controller});
 
   final ScrollController scrollController = ScrollController();
 
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
     return Container(
-      height: 40.h,
-      color: dark ? AppColors.dark : Color(0xffE9F0FF),
-      padding: EdgeInsets.symmetric(vertical: 10.h),
+      decoration: BoxDecoration(
+        color: dark ? const Color(0xFF0A0A0A) : const Color(0xFFF5F7FA),
+        border: Border(bottom: BorderSide(color: dark ? Colors.grey.shade800 : Colors.grey.shade200, width: 0.5)),
+      ),
+      padding: EdgeInsets.symmetric(vertical: 4.h),
       child: Obx(() {
         if (controller.topics.value.result?.data == null) {
-          return Center(child: Text("No topics available", style: TextStyle(color: Colors.grey)));
+          return Center(child: Text("No topics available", style: GoogleFonts.inter(color: Colors.grey.shade500)));
         }
 
-        // Ensure the selected topic is centered
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          final selectedIndex =
-              controller.topics.value.result?.data?.indexWhere((t) => t.name == controller.selectedTopic.value) ?? -1;
-
-          if (selectedIndex != -1) {
-            final itemWidth = 100.w; // Approximate width of each item
-            final screenWidth = MediaQuery.of(context).size.width;
-            final offset = (selectedIndex * itemWidth) - (screenWidth / 2) + (itemWidth / 2);
-
-            scrollController.animateTo(
-              offset.clamp(0.0, scrollController.position.maxScrollExtent),
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOut,
-            );
-          }
-        });
-
         return SizedBox(
-          height: 45.h,
+          height: 26.h,
           child: ListView.separated(
             controller: scrollController,
-            padding: EdgeInsets.symmetric(horizontal: 10.w),
-            separatorBuilder: (context, index) => SizedBox(width: 5.w),
+            padding: EdgeInsets.symmetric(horizontal: 12.w),
+            separatorBuilder: (context, index) => SizedBox(width: 6.w),
             scrollDirection: Axis.horizontal,
             itemCount: controller.topics.value.result?.data?.length ?? 0,
             itemBuilder: (context, index) {
@@ -392,39 +461,83 @@ class _TopicSelectionHeader extends SliverPersistentHeaderDelegate {
                   onTap: () {
                     final topicName = topic?.name ?? "";
                     final topicId = topic?.id?.toString() ?? "";
-                    controller.selectedTopic.value = topic?.name ?? "";
-                    controller.selectedTopicId.value = topic?.id?.toString() ?? "";
-                    if (controller.selectedTopic.value == topicName) {
-                      controller.filterPostsByTopic(topicName, topicId: topicId);
-                    } else {
-                      controller.selectedTopic.value = topicName;
-                      controller.selectedTopicId.value = topicId;
-                    }
+                    controller.selectedTopic.value = topicName;
+                    controller.selectedTopicId.value = topicId;
+                    controller.filterPostsByTopic(topicName, topicId: topicId);
                   },
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 12.w),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
                     decoration: BoxDecoration(
-                      color: dark ? AppColors.dark : Colors.white,
+                      gradient:
+                          isSelected
+                              ? LinearGradient(
+                                colors: [AppColors.primaryColor, const Color(0xFF003BC6)],
+                                begin: Alignment.centerLeft,
+                                end: Alignment.centerRight,
+                              )
+                              : null,
+                      color:
+                          isSelected
+                              ? null
+                              : dark
+                              ? const Color(0xFF1A1A1A)
+                              : Colors.white,
+                      borderRadius: BorderRadius.circular(14),
                       border: Border.all(
-                        color: isSelected ? AppColors.primaryColor : (Colors.grey[200] ?? Colors.grey),
-                        width: 0.5,
+                        color:
+                            isSelected
+                                ? Colors.transparent
+                                : dark
+                                ? Colors.grey.shade700
+                                : Colors.grey.shade300,
+                        width: 0.8,
                       ),
-                      borderRadius: BorderRadius.circular(50),
+                      boxShadow:
+                          isSelected
+                              ? [
+                                BoxShadow(
+                                  color: AppColors.primaryColor.withOpacity(0.25),
+                                  blurRadius: 6,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ]
+                              : null,
                     ),
                     child: Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
                           topic?.name ?? "",
-                          style: GoogleFonts.plusJakartaSans(
-                            color: dark ? AppColors.light : Colors.black,
-                            fontSize: 12.sp,
-                            fontWeight: FontWeight.w600,
-                            height: 1.0,
+                          style: GoogleFonts.inter(
+                            color:
+                                isSelected
+                                    ? Colors.white
+                                    : dark
+                                    ? Colors.white
+                                    : Colors.grey.shade700,
+                            fontSize: 11.sp,
+                            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                           ),
                         ),
                         if (topic?.postsCount != null && topic?.name != "All") ...[
-                          5.wS,
-                          Text('(${topic?.postsCount.toString()})', style: TextStyle(color: Colors.grey.shade400)),
+                          3.wS,
+                          Container(
+                            padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.h),
+                            decoration: BoxDecoration(
+                              color:
+                                  isSelected ? Colors.white.withOpacity(0.2) : AppColors.primaryColor.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            child: Text(
+                              '${topic?.postsCount}',
+                              style: GoogleFonts.inter(
+                                color: isSelected ? Colors.white : AppColors.primaryColor,
+                                fontSize: 8.sp,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
                         ],
                       ],
                     ),
@@ -439,10 +552,10 @@ class _TopicSelectionHeader extends SliverPersistentHeaderDelegate {
   }
 
   @override
-  double get maxExtent => 40.h;
+  double get maxExtent => 34.h;
 
   @override
-  double get minExtent => 40.h;
+  double get minExtent => 34.h;
 
   @override
   bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) => true;

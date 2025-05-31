@@ -1,13 +1,12 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:stepup_community/core/config/app_colors.dart';
 import 'package:stepup_community/core/config/app_size.dart';
 import 'package:stepup_community/core/utils/ui_support.dart';
 import 'package:stepup_community/features/community/controller/community_controller.dart';
 import 'package:stepup_community/features/video_player/presentation/page/yt_video_player.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class PostDetailsCard extends StatefulWidget {
   const PostDetailsCard({
@@ -58,7 +57,6 @@ class _PostDetailsState extends State<PostDetailsCard> {
   // bool _isExpanded = false;
   // bool _isOverflowing = false;
   String? videoThumbnail;
-  final bool _isPlaying = false;
 
   String? getVideoThumbnail(String? videoUrl) {
     if (videoUrl == null || videoUrl.isEmpty) return null;
@@ -100,174 +98,232 @@ class _PostDetailsState extends State<PostDetailsCard> {
     return GestureDetector(
       onTap: widget.onTap,
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: 12.h),
-        color: dark ? AppColors.dark : Colors.white,
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+        color: dark ? const Color(0xFF1A1A1A) : Colors.white,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             /// User Info
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10.w),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CircleAvatar(backgroundImage: NetworkImage(widget.dp)),
-                  10.wS,
-                  Column(
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: AppColors.primaryColor.withOpacity(0.3), width: 1.5),
+                  ),
+                  child: CircleAvatar(radius: 20.r, backgroundImage: NetworkImage(widget.dp)),
+                ),
+                12.wS,
+                Expanded(
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
                         children: [
-                          Text(widget.name, style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600)),
-                          5.wS,
-                          Container(
-                            margin: EdgeInsets.only(left: 5.w),
-                            padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
-                            decoration: BoxDecoration(
-                              color: AppColors.primaryColor.withAlpha(200),
-                              borderRadius: BorderRadius.circular(50),
-                            ),
+                          Expanded(
                             child: Text(
-                              widget.rank,
-                              style: GoogleFonts.plusJakartaSans(color: Colors.white, fontSize: 10.sp),
+                              widget.name,
+                              style: GoogleFonts.poppins(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 15.sp,
+                                color: dark ? Colors.white : Colors.black,
+                              ),
+                            ),
+                          ),
+                          if (widget.rank.isNotEmpty) ...[
+                            8.wS,
+                            Container(
+                              padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [AppColors.primaryColor, const Color(0xFF003BC6)],
+                                  begin: Alignment.centerLeft,
+                                  end: Alignment.centerRight,
+                                ),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(
+                                widget.rank,
+                                style: GoogleFonts.inter(
+                                  color: Colors.white,
+                                  fontSize: 10.sp,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                      4.hS,
+                      Row(
+                        children: [
+                          Text(widget.time, style: GoogleFonts.inter(color: Colors.grey.shade500, fontSize: 12.sp)),
+                          8.wS,
+                          Container(
+                            width: 3.w,
+                            height: 3.w,
+                            decoration: BoxDecoration(color: Colors.grey.shade400, shape: BoxShape.circle),
+                          ),
+                          8.wS,
+                          GestureDetector(
+                            onTap: widget.onTopicTap,
+                            child: Container(
+                              padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
+                              decoration: BoxDecoration(
+                                color: AppColors.primaryColor.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                widget.topic,
+                                style: GoogleFonts.inter(
+                                  color: AppColors.primaryColor,
+                                  fontSize: 11.sp,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
                           ),
                         ],
                       ),
-                      Text(widget.time, style: GoogleFonts.plusJakartaSans(color: Colors.grey)),
                     ],
-                  ),
-                  10.wS,
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: widget.onTopicTap, // Add this line
-                      child: Text(
-                        widget.topic,
-                        style: GoogleFonts.plusJakartaSans(color: Colors.grey, fontSize: 12.sp),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            /// Caption
-            15.hS,
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10.w),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    Get.find<CommunityController>().cleanHtml(widget.caption),
-                    style: GoogleFonts.plusJakartaSans(color: dark ? Colors.white : Colors.black),
-                    // maxLines: _isExpanded ? null : 5,
-                    // overflow: _isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
-                  ),
-                  // if (_isOverflowing)
-                  //   GestureDetector(
-                  //     onTap: () {
-                  //       setState(() {
-                  //         _isExpanded = !_isExpanded;
-                  //       });
-                  //     },
-                  //     child: Text(
-                  //       _isExpanded ? 'Show less' : 'Show more',
-                  //       style: TextStyle(color: Colors.blue, fontSize: 14.sp, fontWeight: FontWeight.bold),
-                  //     ),
-                  //   ),
-                ],
-              ),
-            ),
-            10.hS,
-
-            /// Post Image/Video Thumbnail with Play Icon
-            if (widget.postImage!.isNotEmpty)
-              ClipRRect(child: Image.network(widget.postImage!, width: 1.sw, height: 200.h, fit: BoxFit.cover)),
-            if (widget.videoUrl!.isNotEmpty &&
-                widget.postImage!.isEmpty &&
-                !_isPlaying) // Show play icon overlay if it's a video
-              InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => YouTubeVideoPlayer(videoUrl: widget.videoUrl!)),
-                  );
-                },
-                child: Stack(
-                  children: [
-                    ClipRRect(child: Image.network(videoThumbnail!, width: 1.sw, height: 200.h, fit: BoxFit.cover)),
-                    Positioned(
-                      top: 70.h,
-                      left: 150.w,
-                      child: Container(
-                        width: 60.w,
-                        height: 60.w,
-                        decoration: BoxDecoration(color: Colors.black54, shape: BoxShape.circle),
-                        child: Icon(Icons.play_arrow, color: Colors.white, size: 40.w),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-            /// Actions (Like, Comment, Bookmark)
-            15.hS,
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    GestureDetector(
-                      onTap: widget.onLike,
-                      child: Container(
-                        padding: EdgeInsets.only(right: 20.w, left: 20.w),
-                        child: Icon(
-                          widget.isLiked ? Icons.favorite : Icons.favorite_border,
-                          color:
-                              widget.isLiked
-                                  ? Colors.red
-                                  : dark
-                                  ? AppColors.darkGrey
-                                  : AppColors.dark,
-                        ),
-                      ),
-                    ),
-                    5.wS,
-                    Text(widget.likesCount, style: GoogleFonts.plusJakartaSans(color: Colors.grey)),
-                  ],
-                ),
-                InkWell(
-                  onTap: widget.onCommentTap,
-                  child: Row(
-                    children: [
-                      SvgPicture.asset("assets/icons/comment.svg", color: dark ? AppColors.darkGrey : AppColors.dark),
-                      5.wS,
-                      Text(widget.commentCount, style: GoogleFonts.plusJakartaSans(color: Colors.grey)),
-                    ],
-                  ),
-                ),
-                GestureDetector(
-                  behavior: HitTestBehavior.translucent,
-
-                  onTap: widget.onSave,
-                  child: Container(
-                    padding: EdgeInsets.only(right: 20.w, left: 20.w),
-                    child: Icon(
-                      widget.isSaved ? Icons.bookmark : Icons.bookmark_border,
-                      color:
-                          widget.isSaved
-                              ? Colors.amber
-                              : dark
-                              ? AppColors.darkGrey
-                              : AppColors.dark,
-                    ),
                   ),
                 ),
               ],
             ),
+
+            /// Caption
+            if (widget.caption.isNotEmpty) ...[
+              16.hS,
+              Text(
+                Get.find<CommunityController>().cleanHtml(widget.caption),
+                style: GoogleFonts.inter(color: dark ? Colors.white : Colors.black87, fontSize: 14.sp, height: 1.4),
+              ),
+            ],
+
+            /// Post Image/Video Thumbnail with Play Icon
+            if (widget.postImage!.isNotEmpty || widget.videoUrl!.isNotEmpty) ...[
+              12.hS,
+              // Make only images edge-to-edge, keep videos with padding
+              widget.postImage!.isNotEmpty
+                  ? Transform.translate(
+                    offset: Offset(-16.w, 0),
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      child: GestureDetector(
+                        onTap: widget.onTap,
+                        child: ClipRRect(
+                          child: Image.network(
+                            widget.postImage!,
+                            width: double.infinity,
+                            height: 200.h,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                  : widget.videoUrl!.isNotEmpty
+                  ? ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => YouTubeVideoPlayer(videoUrl: widget.videoUrl!)),
+                        );
+                      },
+                      child: Stack(
+                        children: [
+                          Image.network(videoThumbnail!, width: double.infinity, height: 200.h, fit: BoxFit.cover),
+                          Positioned.fill(
+                            child: Container(
+                              decoration: BoxDecoration(color: Colors.black.withOpacity(0.3)),
+                              child: Center(
+                                child: Container(
+                                  padding: EdgeInsets.all(12.w),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withOpacity(0.9),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(Icons.play_arrow, color: AppColors.primaryColor, size: 32.sp),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                  : const SizedBox(),
+            ],
+
+            /// Actions (Like, Comment, Bookmark)
+            16.hS,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _buildActionButton(
+                  icon: widget.isLiked ? Icons.favorite : Icons.favorite_border,
+                  count: widget.likesCount,
+                  isActive: widget.isLiked,
+                  activeColor: Colors.red,
+                  onTap: widget.onLike,
+                ),
+                _buildActionButton(
+                  icon: Icons.chat_bubble_outline,
+                  count: widget.commentCount,
+                  onTap: widget.onCommentTap,
+                ),
+                _buildActionButton(
+                  icon: widget.isSaved ? Icons.bookmark : Icons.bookmark_border,
+                  isActive: widget.isSaved,
+                  activeColor: Colors.amber,
+                  onTap: widget.onSave,
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildActionButton({
+    required IconData icon,
+    String? count,
+    bool isActive = false,
+    Color? activeColor,
+    VoidCallback? onTap,
+  }) {
+    final dark = Ui.isDarkMode(context);
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              color:
+                  isActive && activeColor != null
+                      ? activeColor
+                      : dark
+                      ? Colors.grey.shade400
+                      : Colors.grey.shade600,
+              size: 20.sp,
+            ),
+            if (count != null) ...[
+              6.wS,
+              Text(
+                count,
+                style: GoogleFonts.inter(color: Colors.grey.shade500, fontSize: 13.sp, fontWeight: FontWeight.w500),
+              ),
+            ],
           ],
         ),
       ),
