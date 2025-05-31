@@ -4,6 +4,7 @@ import 'package:stepup_community/core/services/connectivity_service.dart';
 import 'package:stepup_community/core/utils/auth_utils.dart';
 import 'package:stepup_community/core/utils/ui_support.dart';
 import 'package:stepup_community/features/auth/data/login_response_model.dart';
+import 'package:stepup_community/main.dart';
 import 'package:stepup_community/repository/auth_repo/auth_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -66,10 +67,12 @@ class AuthController extends GetxController {
             await AuthUtlity.saveUserInfo(data);
 
             debugPrint("✅ User logged in successfully.");
+            startNotificationChecker();
             context.go('/home'); // Navigate to Home
             await Get.find<AuthService>().getCurrentUser();
           } else {
             isLoading.value = false;
+            stopNotificationChecker();
           }
         });
       }

@@ -1,4 +1,4 @@
-import 'dart:isolate';
+import 'dart:async';
 
 import 'package:stepup_community/core/config/app_router.dart';
 import 'package:stepup_community/core/config/dependency_injection.dart';
@@ -14,26 +14,43 @@ import 'package:get/get.dart';
 
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
-void checkNotifications(SendPort sendPort) async {
-  while (true) {
-    sendPort.send("check_notifications");
-    await Future.delayed(Duration(seconds: 30));
-  }
-}
+// Replace the isolate-based approach with a Timer-based approach
+Timer? _notificationTimer;
 
 Future<void> startNotificationChecker() async {
-  ReceivePort receivePort = ReceivePort();
-  await Isolate.spawn(checkNotifications, receivePort.sendPort);
+  // Stop any existing timer first
+  stopNotificationChecker();
 
-  receivePort.listen((message) async {
-    if (message == "check_notifications") {
+  debugPrint("🔔 Starting notification checker...");
+
+  // Use Timer.periodic instead of isolate for better integration with GetX
+  _notificationTimer = Timer.periodic(Duration(seconds: 30), (timer) async {
+    try {
+      // Check if user is still authenticated
+      final authService = Get.find<AuthService>();
+      if (authService.currentUser.value.result?.token == null) {
+        debugPrint("⚠️ User not authenticated, stopping notification checker");
+        stopNotificationChecker();
+        return;
+      }
+
       var hasNewNotifications = await Get.find<NotificationController>().checkNotification();
 
       if (hasNewNotifications) {
         debugPrint("🔔 New notification received!");
       }
+    } catch (e) {
+      debugPrint("❌ Error checking notifications: $e");
     }
   });
+}
+
+void stopNotificationChecker() {
+  if (_notificationTimer != null) {
+    _notificationTimer!.cancel();
+    _notificationTimer = null;
+    debugPrint("🛑 Notification checker stopped");
+  }
 }
 
 void main() async {
@@ -51,7 +68,7 @@ void main() async {
   // );
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_) async {
     runApp(const MyApp());
-    await startNotificationChecker();
+    // await startNotificationChecker();
   });
 }
 
